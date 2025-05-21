@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.xiaoxu</groupId>
+  <artifactId>java_arsenal</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>core_se</module>
+    <module>web_boot</module>
+  </modules>
+
+
+              <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <spring-boot.version>3.2.6</spring-boot.version>
+              </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- 手动管理 Spring Boot 依赖版本 -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- 其他公共依赖 -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.11.2</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+                <dependencies>
+                  <dependency>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                    <version>3.8.1</version>
+                    <scope>test</scope>
+                  </dependency>
+<!--          常见操作的工具包   比如字符串、日期、数字等的操作-->
+                  <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.14.0</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                    <version>3.2.2</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                    <version>2.11.0</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                    <version>1.18.34</version>
+                    <scope>provided</scope>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>cn.hutool</groupId>
+                    <artifactId>hutool-all</artifactId>
+                    <version>5.7.22</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>2.0.16</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>1.5.18</version>
+                  </dependency>
+
+                  <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                    <version>1.5.18</version>
+                  </dependency>
+
+
+
+
+
+
+
+
+
+                </dependencies>
+
+
+
+
+
+
+
+
+
+
+
+
+</project>
