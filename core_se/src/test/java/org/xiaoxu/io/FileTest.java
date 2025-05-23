@@ -1,10 +1,16 @@
 package org.xiaoxu.io;
 
+import cn.hutool.core.util.IdUtil;
 import junit.framework.TestCase;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.xiaoxu.entity.Student;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +87,101 @@ public class FileTest  extends TestCase {
                     System.out.print((char)data);
                 }
             }
+
+            public void testObjectsAPI(){
+                Student student = new Student();
+                student.setId("1");
+                Student message = Objects.requireNonNull(student, "student 不能为空");
+                log.info("{}",message);
+            }
+
+
+            public void testCommonsIO() throws IOException {
+                File file = new File("E:\\dev-gradual\\毕业源代码\\node.txt");
+                String content = FileUtils.readFileToString(file, "utf-8");
+//                FileUtils.writeStringToFile(file, "测试FileUtils", "utf-8",false);
+                log.info("{}",content);
+
+                String extension = FilenameUtils.getExtension("node.txt");
+                log.info(" 后缀名为： {}",extension);
+            }
+
+    public void testCommonsIO2() throws IOException {
+        File file = new File("output.txt");
+        String content = "你好，世界";
+
+        // 写入文件，指定 UTF-8 编码
+        FileUtils.writeStringToFile(file, content, "UTF-8", false);
+        log.info(" 写入完成 {}",content);
+    }
+
+
+
+
+            public void testRandomFileName(){
+                File file = new File("E:\\dev-gradual\\毕业源代码\\node.txt");
+                String fileName = file.getName();
+                String randRomName = this.getFileName(fileName);
+                log.info("{}",randRomName);
+            }
+
+            public void testObjectStream(){
+
+            String filePath = "student.txt";
+//            serializeObject(filePath);
+
+
+                deserializeObject(filePath);
+
+            }
+
+
+    public static void serializeObject(String filePath) {
+        // 创建一个 Person 对象
+        Student student = new Student();
+        student.setId("1");
+        student.setName("xtq");
+        student.setAge(23);
+
+        try (FileOutputStream fileOut = new FileOutputStream(filePath);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            // 将对象写入文件
+            objectOut.writeObject(student);
+            System.out.println("序列化完成，对象已写入文件: " + filePath);
+            System.out.println("序列化的对象: " + student);
+
+        } catch (IOException e) {
+          log.error("序列化对象时发生错误: " + e.getMessage());
         }
+    }
+
+    // 反序列化方法
+    public static void deserializeObject(String filePath) {
+        try (FileInputStream fileIn = new FileInputStream(filePath);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+
+            // 从文件读取对象
+            Student person = (Student) objectIn.readObject();
+            System.out.println("反序列化完成，对象已从文件读取");
+            System.out.println("反序列化的对象: " + person);
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+            public String getFileName(String fileName){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String datePart = dateFormat.format(new Date());
+                long prefixName = IdUtil.getSnowflakeNextId();
+                String extension = FilenameUtils.getExtension(fileName);
+                return String.format("%s/%s.%s", datePart, prefixName, extension);
+            }
+
+
+}
 
 
 
