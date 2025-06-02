@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.xiaoxu.enums.Week;
 
 /**
  * Unit test for simple App.
@@ -43,6 +44,21 @@ public class AppTest
     {
         log.info("testApp2");
     }
+
+    public void testApp3()
+    {
+        Week[] values = Week.values();
+        for (Week value : values) {
+            log.info("value.nums: {}",value.getNums());
+            log.info("value.names: {}",value.getName());
+        }
+    }
+
+    public void testApp4(){
+
+     log.info("testApp4 {}", Week.MONDAY.getName());
+    }
+
 
 
     public void testStringUtil(){

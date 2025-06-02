@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: cloud
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+        ip: 192.168.200.1
+        port: 8080
+        namespace: public
+
+
+logging:
+  level:
+    root: info

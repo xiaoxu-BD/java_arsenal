@@ -1,9 +1,12 @@
 package org.xiaoxu.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,7 +17,8 @@ import java.util.List;
  * @description:
  */
 @Data
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class Student implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,4 +26,9 @@ public class Student implements Serializable {
 //    private List<String> ids;
     private String name;
     private Integer age;
+
+    public  List<String> convertToList(String id){
+
+        return Arrays.stream(id.split(",")).toList();
+    }
 }

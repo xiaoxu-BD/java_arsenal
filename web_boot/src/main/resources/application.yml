@@ -14,4 +14,4 @@ spring:
 
 logging:
   level:
-    org.springframework.boot: info
+   root: info

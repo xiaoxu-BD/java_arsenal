@@ -10,6 +10,7 @@
     <module>core_se</module>
     <module>web_boot</module>
     <module>juc_demo</module>
+      <module>cloud</module>
   </modules>
 
 
