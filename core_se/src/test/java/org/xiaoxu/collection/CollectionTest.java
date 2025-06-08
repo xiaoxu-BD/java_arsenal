@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.xiaoxu.entity.Student;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @className: CollectionTest

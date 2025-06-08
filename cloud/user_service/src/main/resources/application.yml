@@ -1,0 +1,23 @@
+server:
+  port: 23010
+spring:
+  application:
+    name: server-user
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+  datasource:
+    url: jdbc:mysql://localhost:3306/ito_op
+    username: root
+    password: xiaoxu
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+
+
+logging:
+  level:
+    root: info

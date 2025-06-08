@@ -22,3 +22,5 @@ spring:
           uri: lb://server-order
           predicates:
             - Path=/order/**
+          filters:
+          - PrefixPath=/order

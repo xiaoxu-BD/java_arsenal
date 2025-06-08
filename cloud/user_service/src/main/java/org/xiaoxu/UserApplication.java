@@ -2,19 +2,16 @@ package org.xiaoxu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
- * Hello world!
+ * user 测试类
  *
  */
 @SpringBootApplication
-// 开启动态刷新功能
-@RefreshScope
-public class GatewayApplication
+public class UserApplication
 {
     public static void main( String[] args )
     {
-        SpringApplication.run(GatewayApplication.class, args);
+        SpringApplication.run(UserApplication.class, args);
     }
 }
