@@ -34,7 +34,7 @@ public class LogAop {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
 //        log("方法名称：{}", joinPoint.getSignature().getDeclaringTypeName());
-        log("方法参数：{}", joinPoint.getArgs());
+//        log("方法参数：{}", joinPoint.getArgs());
         log("执行方法：{},开始时间:{}", joinPoint.getSignature().getName(), DateUtil.now());
         Object result = joinPoint.proceed();
         long endTime = System.currentTimeMillis();

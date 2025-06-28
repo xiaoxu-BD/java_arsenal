@@ -1,5 +1,6 @@
 server:
-  port: 9999
+  port: 8082
+
 
 spring:
   datasource:
@@ -15,6 +16,8 @@ spring:
     port: 5672
     username: guest
     password: guest
+  application:
+    name: consumer-service
 
 
 logging:
