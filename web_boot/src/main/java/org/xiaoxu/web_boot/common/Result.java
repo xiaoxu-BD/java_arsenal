@@ -117,5 +117,4 @@ public class Result<T> implements Serializable {
         return timestamp;
     }
 
-    // 你也可以根据需要添加 Setters，但通常响应对象是不可变的
 }

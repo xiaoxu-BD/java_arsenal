@@ -180,6 +180,37 @@ public class FileTest  extends TestCase {
                 return String.format("%s/%s.%s", datePart, prefixName, extension);
             }
 
+    public void testSerializable () throws Exception {
+        A a1 = new A(123, "abc");
+        String objectFile = "serializable.txt";
+
+//        - 创建一个对象输出流，它内部包装了 `FileOutputStream`。
+//        - `FileOutputStream` 打开（或创建）指定的文件用于写入字节；
+//        - `ObjectOutputStream` 用于将对象以序列化形式写入字节流
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile));
+        objectOutputStream.writeObject(a1);
+        objectOutputStream.close();
+
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(objectFile));
+        A a2 = (A) objectInputStream.readObject();
+        objectInputStream.close();
+        System.out.println(a2);
+    }
+
+    private static class A implements Serializable {
+        private int x;
+        private String y;
+
+        A(int x, String y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "x = " + x + "  " + "y = " + y;
+        }
+    }
 
 }
 

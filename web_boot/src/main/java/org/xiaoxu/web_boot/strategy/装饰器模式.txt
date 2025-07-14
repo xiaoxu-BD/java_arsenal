@@ -1,0 +1,6 @@
+装饰器模式:
+1. 角色组成:
+  Component:抽象组件 :定义对象的接口
+  ConcreteComponent:具体组件: 定义具体对象，也可以被装饰
+  Decorator:抽象装饰类: 持有抽象组件Component类型的对象的引用,实现了Component接口
+  ConcreteDecorator:具体装饰类: 负责给组件添加功能

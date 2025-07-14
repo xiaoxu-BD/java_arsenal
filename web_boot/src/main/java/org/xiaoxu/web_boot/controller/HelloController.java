@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.web_boot.common.Result;
+import org.xiaoxu.web_boot.entity.NodeDesc;
 import org.xiaoxu.web_boot.service.OrderService;
+import org.xiaoxu.web_boot.service.impl.JSONService;
 
 
 @RestController
@@ -60,6 +62,21 @@ public class HelloController {
     public String testAsync(@RequestParam("orderId") String orderId) {
         orderService.processOrder(orderId);
         return "已使用Async发起异步任务";
+    }
+
+    @Autowired
+    JSONService jsonService;
+
+    @PostMapping("/testMap")
+    public Result jsonTest(@RequestBody NodeDesc desc) {
+       String json =  jsonService.receive(desc);
+       return  Result.success(json);
+    }
+
+    @PostMapping("/testMap2")
+    public Result jsonTest2(@RequestBody NodeDesc desc) {
+      NodeDesc entity  =   jsonService.parse(desc);
+      return  Result.success(entity);
     }
 
 

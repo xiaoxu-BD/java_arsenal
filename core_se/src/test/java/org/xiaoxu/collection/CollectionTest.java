@@ -5,6 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.xiaoxu.entity.Student;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -105,4 +108,40 @@ public class CollectionTest extends TestCase {
         linkedHashSet.add("Alice"); // 添加重复元素不会重复添加
         log.info("{}",linkedHashSet);
     }
+
+    public void testBlockingQueue(){
+        BlockingQueue<String> arrayQueue = new ArrayBlockingQueue<>(3);
+        arrayQueue.add("a");
+        arrayQueue.add("b");
+        arrayQueue.add("c");
+        log.info("{}",arrayQueue);
+        arrayQueue.add("d");
+        log.info("我被阻塞了");
+    }
+    public void testBlockingQueue2(){
+
+        //两把锁
+        BlockingQueue<String> linkedQueue = new LinkedBlockingQueue<>(3);
+        linkedQueue.add("a");
+        linkedQueue.add("b");
+        linkedQueue.add("c");
+        log.info("{}",linkedQueue);
+        linkedQueue.add("d");
+        log.info("我也被阻塞了");
+    }
+
+
+    public void testToMap(){
+        List<Student> students = Arrays.asList(
+                new Student("1", "Alice", 20),
+                new Student("2", "Bob", 22),
+                new Student("3", "Charlie", 21)
+        );
+        Map<String, Student> mapStudent = students.stream().collect(Collectors.toMap(Student::getId, s->s));
+
+        Student student = mapStudent.get("1");
+        log.info("{}",student);
+    }
+
+
 }
