@@ -28,7 +28,7 @@
         <!-- 数据库连接的信息 -->
         <jdbcConnection
                 driverClass="com.mysql.cj.jdbc.Driver"
-                connectionURL="jdbc:mysql://localhost:3306/ito_op?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8"
+                connectionURL="jdbc:mysql://localhost:3306/revi_sq?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=GMT%2B8"
                 userId="root"
                 password="xiaoxu">
             <!-- 设置可以获取tables remarks信息 -->
@@ -73,9 +73,11 @@
         </javaClientGenerator>
 
         <!-- 要生成的表 -->
-        <table tableName="it_user"
-               domainObjectName="itUser">
-        <generatedKey column="id" sqlStatement="JDBC"/>
+        <table
+                schema="revi_sq"
+                tableName="revi_user"
+               domainObjectName="User">
+<!--        <generatedKey column="id" sqlStatement="JDBC"/>-->
         </table>
 
     </context>

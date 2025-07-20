@@ -36,6 +36,12 @@ public class GlobalExceptionHandler {
         return Result.success("系统异常，请稍后再试");
     }
 
+    @ExceptionHandler(CustomException.class)
+    @ResponseBody
+    public Result<?> handleRuntimeException(CustomException e) {
+        return Result.error(e.getMessage());
+    }
+
     private String getStackTrace(Throwable e) {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : e.getStackTrace()) {

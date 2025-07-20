@@ -12,7 +12,7 @@ server:
 spring:
   datasource:
     ds1:
-      url: jdbc:mysql://127.0.0.1:3306/ito_op?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+      url: jdbc:mysql://127.0.0.1:3306/revi_sq?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
       username: root
       password: xiaoxu
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -72,10 +72,10 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 192.168.200.131
       port: 6379
       password: NFTurbo666
-      database: 0
+      database: 6
   mail:
     host: smtp.163.com
     username: tingqq7z@163.com
