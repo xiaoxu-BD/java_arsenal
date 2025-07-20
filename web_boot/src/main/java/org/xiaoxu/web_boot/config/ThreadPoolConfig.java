@@ -15,6 +15,8 @@ public class ThreadPoolConfig {
     @Primary
     @Bean
     public ThreadPoolExecutor highThread() {
+        //主要作用是 ——
+        //创建线程时自动加上可自定义前缀的线程名
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory("OrderHighThread-");
         return new ThreadPoolExecutor(100, 100, 0,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<>(100000), threadFactory,

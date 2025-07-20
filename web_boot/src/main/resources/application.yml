@@ -1,13 +1,47 @@
 server:
   port: 9999
 
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/ito_op
+#    username: root
+#    password: xiaoxu
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    type: com.alibaba.druid.pool.DruidDataSource
+
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ito_op
-    username: root
-    password: xiaoxu
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
+    ds1:
+      url: jdbc:mysql://127.0.0.1:3306/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+      username: root
+      password: xiaoxu
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    ds2:
+      url: jdbc:mysql://124.221.151.196:3310/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+      username: root
+      password: 1234
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+#spring:
+#  datasource:
+#    dynamic:
+#      primary: master  # 默认数据源
+#      strict: false    # 严格模式，未匹配抛异常
+#      datasource:
+#        master:
+#          url: jdbc:mysql://localhost:3306/ito_op
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#          type: com.alibaba.druid.pool.DruidDataSource
+#          username: root
+#          password: xiaoxu
+#        slave:
+#          url: jdbc:mysql://124.221.151.196:3310/ito_sap
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#          type: com.alibaba.druid.pool.DruidDataSource
+#          username: root
+#          password: 1234
 
 
   rabbitmq:
@@ -16,6 +50,8 @@ spring:
     username: guest
     password: guest
 
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
 
 logging:
   level:

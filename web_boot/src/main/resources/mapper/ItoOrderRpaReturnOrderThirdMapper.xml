@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.web_boot.mapper.ItoOrderRpaReturnOrderThirdMapper">
+  <resultMap id="BaseResultMap" type="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ouc" jdbcType="VARCHAR" property="ouc" />
+    <result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
+    <result column="order_sn" jdbcType="VARCHAR" property="orderSn" />
+    <result column="invoice_payer_id" jdbcType="VARCHAR" property="invoicePayerId" />
+    <result column="coh_order_id" jdbcType="VARCHAR" property="cohOrderId" />
+    <result column="coh_line_no" jdbcType="VARCHAR" property="cohLineNo" />
+    <result column="coh_sort" jdbcType="VARCHAR" property="cohSort" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="accepted_delivery_quantity" jdbcType="INTEGER" property="acceptedDeliveryQuantity" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="total_net_price" jdbcType="DECIMAL" property="totalNetPrice" />
+    <result column="invoice_date" jdbcType="DATE" property="invoiceDate" />
+    <result column="origin_place" jdbcType="VARCHAR" property="originPlace" />
+    <result column="invoice_no" jdbcType="VARCHAR" property="invoiceNo" />
+    <result column="invoice_line" jdbcType="VARCHAR" property="invoiceLine" />
+    <result column="return_quantity" jdbcType="INTEGER" property="returnQuantity" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="package_code" jdbcType="VARCHAR" property="packageCode" />
+    <result column="real_return_quantity" jdbcType="INTEGER" property="realReturnQuantity" />
+    <result column="value_added_tax" jdbcType="VARCHAR" property="valueAddedTax" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="parent_coh_order_id" jdbcType="VARCHAR" property="parentCohOrderId" />
+    <result column="parent_coh_line_no" jdbcType="VARCHAR" property="parentCohLineNo" />
+    <result column="parent_coh_sort" jdbcType="VARCHAR" property="parentCohSort" />
+    <result column="top_coh_order_id" jdbcType="VARCHAR" property="topCohOrderId" />
+    <result column="top_coh_line_no" jdbcType="VARCHAR" property="topCohLineNo" />
+    <result column="top_coh_sort" jdbcType="VARCHAR" property="topCohSort" />
+    <result column="parent_invoice_no" jdbcType="VARCHAR" property="parentInvoiceNo" />
+    <result column="parent_invoice_line" jdbcType="VARCHAR" property="parentInvoiceLine" />
+    <result column="parent_data_source" jdbcType="VARCHAR" property="parentDataSource" />
+    <result column="packing_list_no" jdbcType="VARCHAR" property="packingListNo" />
+    <result column="invoice_type" jdbcType="VARCHAR" property="invoiceType" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ouc, customer_no, order_sn, invoice_payer_id, coh_order_id, coh_line_no, coh_sort, 
+    model, accepted_delivery_quantity, unit_price, total_net_price, invoice_date, origin_place, 
+    invoice_no, invoice_line, return_quantity, version, create_by, create_date, update_by, 
+    update_date, del_flag, remarks, package_code, real_return_quantity, value_added_tax, 
+    `level`, parent_coh_order_id, parent_coh_line_no, parent_coh_sort, top_coh_order_id, 
+    top_coh_line_no, top_coh_sort, parent_invoice_no, parent_invoice_line, parent_data_source, 
+    packing_list_no, invoice_type, tenant_id, data_source
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ito_order_rpa_return_order_third
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getOnCondition" resultType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
+    select id, customer_no,coh_order_id,coh_line_no,coh_sort
+    from ito_order_rpa_return_order_third
+    where customer_no is not null and customer_no != ''
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ito_order_rpa_return_order_third
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird" useGeneratedKeys="true">
+    insert into ito_order_rpa_return_order_third (ouc, customer_no, order_sn, 
+      invoice_payer_id, coh_order_id, coh_line_no, 
+      coh_sort, model, accepted_delivery_quantity, 
+      unit_price, total_net_price, invoice_date, 
+      origin_place, invoice_no, invoice_line, 
+      return_quantity, version, create_by, 
+      create_date, update_by, update_date, 
+      del_flag, remarks, package_code, 
+      real_return_quantity, value_added_tax, `level`, 
+      parent_coh_order_id, parent_coh_line_no, parent_coh_sort, 
+      top_coh_order_id, top_coh_line_no, top_coh_sort, 
+      parent_invoice_no, parent_invoice_line, parent_data_source, 
+      packing_list_no, invoice_type, tenant_id, 
+      data_source)
+    values (#{ouc,jdbcType=VARCHAR}, #{customerNo,jdbcType=VARCHAR}, #{orderSn,jdbcType=VARCHAR}, 
+      #{invoicePayerId,jdbcType=VARCHAR}, #{cohOrderId,jdbcType=VARCHAR}, #{cohLineNo,jdbcType=VARCHAR}, 
+      #{cohSort,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, #{acceptedDeliveryQuantity,jdbcType=INTEGER}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{totalNetPrice,jdbcType=DECIMAL}, #{invoiceDate,jdbcType=DATE}, 
+      #{originPlace,jdbcType=VARCHAR}, #{invoiceNo,jdbcType=VARCHAR}, #{invoiceLine,jdbcType=VARCHAR}, 
+      #{returnQuantity,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{packageCode,jdbcType=VARCHAR}, 
+      #{realReturnQuantity,jdbcType=INTEGER}, #{valueAddedTax,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, 
+      #{parentCohOrderId,jdbcType=VARCHAR}, #{parentCohLineNo,jdbcType=VARCHAR}, #{parentCohSort,jdbcType=VARCHAR}, 
+      #{topCohOrderId,jdbcType=VARCHAR}, #{topCohLineNo,jdbcType=VARCHAR}, #{topCohSort,jdbcType=VARCHAR}, 
+      #{parentInvoiceNo,jdbcType=VARCHAR}, #{parentInvoiceLine,jdbcType=VARCHAR}, #{parentDataSource,jdbcType=VARCHAR}, 
+      #{packingListNo,jdbcType=VARCHAR}, #{invoiceType,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, 
+      #{dataSource,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird" useGeneratedKeys="true">
+    insert into ito_order_rpa_return_order_third
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ouc != null">
+        ouc,
+      </if>
+      <if test="customerNo != null">
+        customer_no,
+      </if>
+      <if test="orderSn != null">
+        order_sn,
+      </if>
+      <if test="invoicePayerId != null">
+        invoice_payer_id,
+      </if>
+      <if test="cohOrderId != null">
+        coh_order_id,
+      </if>
+      <if test="cohLineNo != null">
+        coh_line_no,
+      </if>
+      <if test="cohSort != null">
+        coh_sort,
+      </if>
+      <if test="model != null">
+        model,
+      </if>
+      <if test="acceptedDeliveryQuantity != null">
+        accepted_delivery_quantity,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="totalNetPrice != null">
+        total_net_price,
+      </if>
+      <if test="invoiceDate != null">
+        invoice_date,
+      </if>
+      <if test="originPlace != null">
+        origin_place,
+      </if>
+      <if test="invoiceNo != null">
+        invoice_no,
+      </if>
+      <if test="invoiceLine != null">
+        invoice_line,
+      </if>
+      <if test="returnQuantity != null">
+        return_quantity,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="packageCode != null">
+        package_code,
+      </if>
+      <if test="realReturnQuantity != null">
+        real_return_quantity,
+      </if>
+      <if test="valueAddedTax != null">
+        value_added_tax,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="parentCohOrderId != null">
+        parent_coh_order_id,
+      </if>
+      <if test="parentCohLineNo != null">
+        parent_coh_line_no,
+      </if>
+      <if test="parentCohSort != null">
+        parent_coh_sort,
+      </if>
+      <if test="topCohOrderId != null">
+        top_coh_order_id,
+      </if>
+      <if test="topCohLineNo != null">
+        top_coh_line_no,
+      </if>
+      <if test="topCohSort != null">
+        top_coh_sort,
+      </if>
+      <if test="parentInvoiceNo != null">
+        parent_invoice_no,
+      </if>
+      <if test="parentInvoiceLine != null">
+        parent_invoice_line,
+      </if>
+      <if test="parentDataSource != null">
+        parent_data_source,
+      </if>
+      <if test="packingListNo != null">
+        packing_list_no,
+      </if>
+      <if test="invoiceType != null">
+        invoice_type,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="dataSource != null">
+        data_source,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ouc != null">
+        #{ouc,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null">
+        #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSn != null">
+        #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="invoicePayerId != null">
+        #{invoicePayerId,jdbcType=VARCHAR},
+      </if>
+      <if test="cohOrderId != null">
+        #{cohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="cohLineNo != null">
+        #{cohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cohSort != null">
+        #{cohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null">
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptedDeliveryQuantity != null">
+        #{acceptedDeliveryQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalNetPrice != null">
+        #{totalNetPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="invoiceDate != null">
+        #{invoiceDate,jdbcType=DATE},
+      </if>
+      <if test="originPlace != null">
+        #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNo != null">
+        #{invoiceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceLine != null">
+        #{invoiceLine,jdbcType=VARCHAR},
+      </if>
+      <if test="returnQuantity != null">
+        #{returnQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="packageCode != null">
+        #{packageCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realReturnQuantity != null">
+        #{realReturnQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="valueAddedTax != null">
+        #{valueAddedTax,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentCohOrderId != null">
+        #{parentCohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCohLineNo != null">
+        #{parentCohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCohSort != null">
+        #{parentCohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohOrderId != null">
+        #{topCohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohLineNo != null">
+        #{topCohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohSort != null">
+        #{topCohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInvoiceNo != null">
+        #{parentInvoiceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInvoiceLine != null">
+        #{parentInvoiceLine,jdbcType=VARCHAR},
+      </if>
+      <if test="parentDataSource != null">
+        #{parentDataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="packingListNo != null">
+        #{packingListNo,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceType != null">
+        #{invoiceType,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSource != null">
+        #{dataSource,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
+    update ito_order_rpa_return_order_third
+    <set>
+      <if test="ouc != null">
+        ouc = #{ouc,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null">
+        customer_no = #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSn != null">
+        order_sn = #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="invoicePayerId != null">
+        invoice_payer_id = #{invoicePayerId,jdbcType=VARCHAR},
+      </if>
+      <if test="cohOrderId != null">
+        coh_order_id = #{cohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="cohLineNo != null">
+        coh_line_no = #{cohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cohSort != null">
+        coh_sort = #{cohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null">
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptedDeliveryQuantity != null">
+        accepted_delivery_quantity = #{acceptedDeliveryQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalNetPrice != null">
+        total_net_price = #{totalNetPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="invoiceDate != null">
+        invoice_date = #{invoiceDate,jdbcType=DATE},
+      </if>
+      <if test="originPlace != null">
+        origin_place = #{originPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNo != null">
+        invoice_no = #{invoiceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceLine != null">
+        invoice_line = #{invoiceLine,jdbcType=VARCHAR},
+      </if>
+      <if test="returnQuantity != null">
+        return_quantity = #{returnQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="packageCode != null">
+        package_code = #{packageCode,jdbcType=VARCHAR},
+      </if>
+      <if test="realReturnQuantity != null">
+        real_return_quantity = #{realReturnQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="valueAddedTax != null">
+        value_added_tax = #{valueAddedTax,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentCohOrderId != null">
+        parent_coh_order_id = #{parentCohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCohLineNo != null">
+        parent_coh_line_no = #{parentCohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentCohSort != null">
+        parent_coh_sort = #{parentCohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohOrderId != null">
+        top_coh_order_id = #{topCohOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohLineNo != null">
+        top_coh_line_no = #{topCohLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="topCohSort != null">
+        top_coh_sort = #{topCohSort,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInvoiceNo != null">
+        parent_invoice_no = #{parentInvoiceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="parentInvoiceLine != null">
+        parent_invoice_line = #{parentInvoiceLine,jdbcType=VARCHAR},
+      </if>
+      <if test="parentDataSource != null">
+        parent_data_source = #{parentDataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="packingListNo != null">
+        packing_list_no = #{packingListNo,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceType != null">
+        invoice_type = #{invoiceType,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSource != null">
+        data_source = #{dataSource,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
+    update ito_order_rpa_return_order_third
+    set ouc = #{ouc,jdbcType=VARCHAR},
+      customer_no = #{customerNo,jdbcType=VARCHAR},
+      order_sn = #{orderSn,jdbcType=VARCHAR},
+      invoice_payer_id = #{invoicePayerId,jdbcType=VARCHAR},
+      coh_order_id = #{cohOrderId,jdbcType=VARCHAR},
+      coh_line_no = #{cohLineNo,jdbcType=VARCHAR},
+      coh_sort = #{cohSort,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR},
+      accepted_delivery_quantity = #{acceptedDeliveryQuantity,jdbcType=INTEGER},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      total_net_price = #{totalNetPrice,jdbcType=DECIMAL},
+      invoice_date = #{invoiceDate,jdbcType=DATE},
+      origin_place = #{originPlace,jdbcType=VARCHAR},
+      invoice_no = #{invoiceNo,jdbcType=VARCHAR},
+      invoice_line = #{invoiceLine,jdbcType=VARCHAR},
+      return_quantity = #{returnQuantity,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      package_code = #{packageCode,jdbcType=VARCHAR},
+      real_return_quantity = #{realReturnQuantity,jdbcType=INTEGER},
+      value_added_tax = #{valueAddedTax,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=INTEGER},
+      parent_coh_order_id = #{parentCohOrderId,jdbcType=VARCHAR},
+      parent_coh_line_no = #{parentCohLineNo,jdbcType=VARCHAR},
+      parent_coh_sort = #{parentCohSort,jdbcType=VARCHAR},
+      top_coh_order_id = #{topCohOrderId,jdbcType=VARCHAR},
+      top_coh_line_no = #{topCohLineNo,jdbcType=VARCHAR},
+      top_coh_sort = #{topCohSort,jdbcType=VARCHAR},
+      parent_invoice_no = #{parentInvoiceNo,jdbcType=VARCHAR},
+      parent_invoice_line = #{parentInvoiceLine,jdbcType=VARCHAR},
+      parent_data_source = #{parentDataSource,jdbcType=VARCHAR},
+      packing_list_no = #{packingListNo,jdbcType=VARCHAR},
+      invoice_type = #{invoiceType,jdbcType=VARCHAR},
+      tenant_id = #{tenantId,jdbcType=VARCHAR},
+      data_source = #{dataSource,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

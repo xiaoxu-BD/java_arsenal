@@ -1,5 +1,6 @@
 package org.xiaoxu.web_boot.config.datasource;
 
+import com.alibaba.druid.DbType;
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,8 @@ public class DataSourceConfig {
 
 
         try {
-            dataSource.setFilters("stat,wall,slf4j");
+//            dataSource.setFilters("stat,wall,slf4j");
+            dataSource.setDbType(DbType.mysql); // mysql 取决于你用的数据库
         } catch (Exception e) {
            log.error("druid configuration initialization filter", e);
         }
