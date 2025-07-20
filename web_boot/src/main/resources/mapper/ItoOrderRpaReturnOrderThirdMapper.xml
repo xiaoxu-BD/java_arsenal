@@ -60,9 +60,21 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="getOnCondition" resultType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
-    select id, customer_no,coh_order_id,coh_line_no,coh_sort
+    select id,model, customer_no,coh_order_id,coh_line_no,coh_sort
     from ito_order_rpa_return_order_third
     where customer_no is not null and customer_no != ''
+  </select>
+  <select id="getByName" resultType="org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird">
+    select id, model,customer_no,coh_order_id,coh_line_no,coh_sort
+    from ito_order_rpa_return_order_third
+ <where>
+    <if test="id!= null">
+      and id = #{id}
+    </if>
+    <if test="name!= null and name!=''">
+      and model like concat('%', #{name}, '%')
+    </if>
+    </where>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from ito_order_rpa_return_order_third

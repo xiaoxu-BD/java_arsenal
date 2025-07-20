@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.web_boot.mapper.PersonMapper">
+
+    <resultMap id="getPersonAndAddressInfo" type="org.xiaoxu.web_boot.entity.Person">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="create_time" property="createTime"/>
+        <collection property="addressList" ofType="org.xiaoxu.web_boot.entity.Address">
+            <id column="id" property="id"/>
+            <result column="province" property="province"/>
+            <result column="city" property="city"/>
+            <result column="detail" property="detail"/>
+            <result column="type" property="type"/>
+        </collection>
+    </resultMap>
+    <update id="updateBatch" parameterType="java.util.List">
+        update  person
+        set gender = case
+                         WHEN gender % 2 = 1 THEN 1
+                         WHEN gender % 2 = 0 THEN 0
+            END
+       where id in
+       <foreach collection="list" item ="item" open="(" separator="," close=")">
+           #{item}
+    </foreach>
+    </update>
+
+    <select id="getPersonInfo" resultMap="getPersonAndAddressInfo">
+        SELECT person.id ,person.gender,address.city,address.detail
+        from person
+                 join address
+                      on person.id = address.person_id
+        where person.id = #{id}
+    </select>
+</mapper>

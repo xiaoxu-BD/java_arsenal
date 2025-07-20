@@ -21,4 +21,6 @@ public interface ItoOrderRpaReturnOrderThirdMapper extends BaseMapper<ItoOrderRp
     int updateByPrimaryKey(ItoOrderRpaReturnOrderThird record);
 
     List<ItoOrderRpaReturnOrderThird> getOnCondition();
+
+    List<ItoOrderRpaReturnOrderThird> getByName(String id, String name);
 }

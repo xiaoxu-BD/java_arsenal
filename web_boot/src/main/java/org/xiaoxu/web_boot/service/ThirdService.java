@@ -1,7 +1,11 @@
 package org.xiaoxu.web_boot.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
+import org.xiaoxu.web_boot.common.PageResult;
 import org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird;
+import org.xiaoxu.web_boot.entity.vo.ThirdVO;
 
 import java.util.List;
 
@@ -16,4 +20,10 @@ public interface ThirdService extends IService<ItoOrderRpaReturnOrderThird> {
 
     List<ItoOrderRpaReturnOrderThird> getOnCondition();
     List<String> getValue(List<ItoOrderRpaReturnOrderThird> list);
+
+    PageInfo<ThirdVO> getPage(int pageNo, int pageSize);
+
+    PageInfo<?> getPageByCondition(String id, String name, int pageNo, int pageSize);
+
+    PageResult getPageResult(int pageNo, int pageSize);
 }

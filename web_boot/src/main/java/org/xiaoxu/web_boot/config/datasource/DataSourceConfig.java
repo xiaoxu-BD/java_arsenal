@@ -31,6 +31,8 @@ public class DataSourceConfig {
         dataSource.setTestOnBorrow(true);
         dataSource.setTestOnReturn(false);
         dataSource.setTestWhileIdle(true);
+        //     # ❗连接失败时不重试、不创建线程，而是直接抛出异常，默认值为false
+        dataSource.setBreakAfterAcquireFailure(Boolean.TRUE);
 
 
         try {

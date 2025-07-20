@@ -12,7 +12,7 @@ server:
 spring:
   datasource:
     ds1:
-      url: jdbc:mysql://127.0.0.1:3306/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+      url: jdbc:mysql://127.0.0.1:3306/ito_op?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
       username: root
       password: xiaoxu
       driver-class-name: com.mysql.cj.jdbc.Driver
