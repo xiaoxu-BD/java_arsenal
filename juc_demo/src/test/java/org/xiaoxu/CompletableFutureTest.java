@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CompletableFutureTest  extends TestCase {
 
@@ -18,6 +19,9 @@ public class CompletableFutureTest  extends TestCase {
             System.err.println("捕获到异常：" + throwable.getMessage());
             return 3232; // 提供默认值
         }).thenAccept(System.out::println);
+    }
+
+    public void testThreadPoolExecutor(){
     }
 
 

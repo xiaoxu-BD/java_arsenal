@@ -1,0 +1,27 @@
+<configuration>
+    <property name="console.log.pattern"
+              value="%red({yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{50}%n) - %msg%n" />
+    />
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+<!--            <pattern>%cyan(traceId:[%X{traceId}]) %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level){DEBUG=blue,INFO=green,WARN=yellow,ERROR=red} %logger{50} - %msg%n</pattern>-->
+            <pattern>%red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{50}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!--文件输出-->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log}/%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>traceId:[%X{traceId}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="console" />
+<!--        <appender-ref ref="file" />-->
+    </root>
+
+</configuration>

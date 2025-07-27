@@ -2,11 +2,15 @@ package org.xiaoxu.collection;
 import junit.framework.TestCase;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
+import org.xiaoxu.entity.Person;
 import org.xiaoxu.entity.Student;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
@@ -143,5 +147,100 @@ public class CollectionTest extends TestCase {
         log.info("{}",student);
     }
 
+    public void testComparable(){
+        Student student1 = new Student("1","Alice", 20);
+        Student student2 = new Student("2","Bob", 20);
+        assertTrue(student1.compareTo(student2) < 0);
+    }
+
+
+    /**
+     * 测试学生姓名和年龄都相同的情况
+     */
+    public void testCompareTo_NamesAndAgesEqual() {
+        Student student1 = new Student("1", "Alice", 20);
+        Student student2 = new Student("2", "Alice", 20);
+        assertEquals(0, student1.compareTo(student2));
+    }
+
+
+
+    public void testCompareToByComparator() {
+        List<Person> personList = Arrays.asList(new Person("Alice", 20), new Person("Bob", 20), new Person("Charlie", 21));
+        //按照名字排序 名字相同  按照年龄排序
+        Collections.sort(personList, Comparator.comparing(Person::getName,Comparator.reverseOrder()).thenComparingInt(Person::getAge));
+        log.info("{}", personList);
+
+    }
+
+
+    public void testModifyCurrent() {
+        List<Person> personList = Arrays.asList(new Person("Alice", 20), new Person("Bob", 20), new Person("Charlie", 21));
+    }
+    //HashSet —— 快速去重判断是否访问
+//    你只关心某个资源是否被访问过（不关心顺序、不追踪频率）；
+//    比如：防止用户重复点击同一个按钮。
+    public void testHashSet(){
+        Set<Integer> accessedResources = new HashSet<>();
+        accessedResources.add(1001);
+        accessedResources.add(1002);
+        //Collections.contains()
+        boolean accessed = accessedResources.contains(1001);
+        assertTrue(accessed);
+    }
+
+    //LinkedHashSet —— 去重 + 保留访问顺序
+//    你关心某个资源是否被访问过，并且需要追踪访问顺序；
+//    比如：实现一个LRU（Least Recently Used）缓存。
+    public void testLinkedHashSet2() {
+        Set<Integer> accessedResources = new LinkedHashSet<>();
+        accessedResources.add(1001);
+        accessedResources.add(1002);
+        accessedResources.add(1003);
+        for (Integer accessedResource : accessedResources) {
+            log.info("{}",accessedResource);
+        }
+        BitSet bitSet = new BitSet(100);
+        bitSet.set(100);
+        bitSet.set(101);
+        bitSet.set(102);
+        boolean b = bitSet.get(100);
+        log.info("{}", b);
+
+    }
+
+
+    public void testHash(){
+        Class<Object> objectClass = Object.class;
+        int i = objectClass.hashCode();
+        log.info("{}", i);
+    }
+
+
+    public void testMap11(){
+        Map<String,String> map = new HashMap<>();
+        map.put("key1", "value1");
+        map.put("key2", "value1");
+        map.put("key3", "value1");
+    }
+
+
+    public void testFloat(){
+        System.out.println(0.1 + 0.2);
+    }
+
+
+    public void testBigDecimal(){
+        BigDecimal b1 = BigDecimal.valueOf(1.0);
+        BigDecimal b2 = BigDecimal.valueOf(1);
+        //由于Long int 都是整数, scale精度都是为0 所以比较结果为true
+        //但是valueOf方法会将传入的参数转换成String 类型就相当于: new BigDecimal("1.0")
+        System.out.println(b1.equals(b2));
+        //比较大小
+        //b1 大于 b2 返回 1
+        //b1 小于 b2 返回 -1
+        //b1 等于 b2 返回 0
+        System.out.println(b1.compareTo(b2));
+    }
 
 }

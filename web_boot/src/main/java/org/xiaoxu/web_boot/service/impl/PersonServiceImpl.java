@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.xiaoxu.web_boot.aop.DS;
 import org.xiaoxu.web_boot.common.PageResult;
 import org.xiaoxu.web_boot.entity.Person;
@@ -36,6 +38,7 @@ public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> impleme
 
     @DS("ds1")
     @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void updateBatch() {
         List<Person> personList = personMapper.selectList(new LambdaQueryWrapper<Person>().isNotNull(Person::getId));
         List<Long> idList = personList.stream().map(Person::getId).toList();
@@ -52,5 +55,10 @@ public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> impleme
           return   PageResult.of(personPage);
         }
         return null;
+    }
+
+    @Override
+    public List<Person> getPersonByName(String name) {
+        return personMapper.getPeronInfoByName(name);
     }
 }

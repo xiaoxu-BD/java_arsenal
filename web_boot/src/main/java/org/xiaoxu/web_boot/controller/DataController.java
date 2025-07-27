@@ -1,5 +1,6 @@
 package org.xiaoxu.web_boot.controller;
 
+import cn.hutool.extra.spring.SpringUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,4 +78,14 @@ public class DataController {
     public Result<?> getPersonPage(int pageNo, int pageSize){
         return Result.success(personService.getPersonPage(pageNo, pageSize));
     }
+
+    @Operation(summary = "测试xml中动态sql IF")
+    @GetMapping("getPersonByName")
+    public Result<?> getPersonByName(String name){
+        ///用来获取spring上下文中的bean
+//        SpringUtil.getBean()
+        return Result.success(personService.getPersonByName(name));
+    }
+
+
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student implements Serializable {
+public class Student implements Serializable,Comparable<Student> {
     @Serial
     private static final long serialVersionUID = 1L;
     private String id;
@@ -30,5 +30,14 @@ public class Student implements Serializable {
     public  List<String> convertToList(String id){
 
         return Arrays.stream(id.split(",")).toList();
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        int flag = this.name.compareTo(o.name);
+        if (flag == 0){
+            return this.age.compareTo(o.age);
+        }
+        return flag;
     }
 }

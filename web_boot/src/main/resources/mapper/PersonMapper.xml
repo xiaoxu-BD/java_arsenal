@@ -35,4 +35,13 @@
                       on person.id = address.person_id
         where person.id = #{id}
     </select>
+    <select id="getPeronInfoByName" resultType="org.xiaoxu.web_boot.entity.Person">
+        SELECT * from
+                     person
+        <where>
+            <if test = "name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
 </mapper>
