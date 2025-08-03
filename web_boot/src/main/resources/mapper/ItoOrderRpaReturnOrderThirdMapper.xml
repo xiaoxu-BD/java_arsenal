@@ -45,16 +45,16 @@
     <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, ouc, customer_no, order_sn, invoice_payer_id, coh_order_id, coh_line_no, coh_sort, 
-    model, accepted_delivery_quantity, unit_price, total_net_price, invoice_date, origin_place, 
-    invoice_no, invoice_line, return_quantity, version, create_by, create_date, update_by, 
-    update_date, del_flag, remarks, package_code, real_return_quantity, value_added_tax, 
-    `level`, parent_coh_order_id, parent_coh_line_no, parent_coh_sort, top_coh_order_id, 
-    top_coh_line_no, top_coh_sort, parent_invoice_no, parent_invoice_line, parent_data_source, 
+    id, ouc, customer_no, order_sn, invoice_payer_id, coh_order_id, coh_line_no, coh_sort,
+    model, accepted_delivery_quantity, unit_price, total_net_price, invoice_date, origin_place,
+    invoice_no, invoice_line, return_quantity, version, create_by, create_date, update_by,
+    update_date, del_flag, remarks, package_code, real_return_quantity, value_added_tax,
+    `level`, parent_coh_order_id, parent_coh_line_no, parent_coh_sort, top_coh_order_id,
+    top_coh_line_no, top_coh_sort, parent_invoice_no, parent_invoice_line, parent_data_source,
     packing_list_no, invoice_type, tenant_id, data_source
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from ito_order_rpa_return_order_third
     where id = #{id,jdbcType=BIGINT}

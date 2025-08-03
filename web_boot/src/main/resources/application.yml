@@ -23,16 +23,16 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 
-dubbo:
-  application:
-    name: dubbo-provider
-  registry:
-    address: zookeeper://127.0.0.1:2181  # Zookeeper 地址
-  protocol:
-    name: dubbo
-    port: 20880
-  scan:
-    base-packages: org.xiaoxu.web_boot.service.dubbo
+#dubbo:
+#  application:
+#    name: dubbo-provider
+#  registry:
+#    address: zookeeper://127.0.0.1:2181  # Zookeeper 地址
+#  protocol:
+#    name: dubbo
+#    port: 20880
+#  scan:
+#    base-packages: org.xiaoxu.web_boot.service.dubbo
 
   # 其他你的配置...
 
@@ -75,3 +75,10 @@ mybatis:
 logging:
   level:
    root: info
+
+#   分布式文件服务
+rustfs:
+  endpoint: http://127.0.0.1:9000
+  bucketName: master-xu
+  accessKey: rustfsadmin
+  secretKey: rustfsadmin

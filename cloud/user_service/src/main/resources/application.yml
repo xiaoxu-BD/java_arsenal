@@ -15,9 +15,16 @@ spring:
     password: xiaoxu
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-
+  data:
+    redis:
+      host: 124.221.151.196
+      port: 6379
 
 
 logging:
   level:
     root: info
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

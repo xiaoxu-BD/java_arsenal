@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompletableFutureTest  extends TestCase {
 
@@ -100,4 +101,15 @@ public class CompletableFutureTest  extends TestCase {
 //        }
 //    }
 
+
+    public void testAtomic(){
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+
+        for (int i  = 0;  i < 10000 ; i++) {
+            new Thread(atomicInteger::incrementAndGet).start();
+        }
+        // 等待线程结束后输出
+        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+        System.out.println("最终结果：" + atomicInteger.get());
+    }
 }

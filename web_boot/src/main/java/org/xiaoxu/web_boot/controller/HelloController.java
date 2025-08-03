@@ -1,13 +1,17 @@
 package org.xiaoxu.web_boot.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.xiaoxu.web_boot.common.Result;
 import org.xiaoxu.web_boot.entity.NodeDesc;
 import org.xiaoxu.web_boot.service.OrderService;
 import org.xiaoxu.web_boot.service.impl.JSONService;
+import org.xiaoxu.web_boot.utils.RustFSUploadUtils;
 
 
 @RestController
@@ -64,7 +68,7 @@ public class HelloController {
         return "已使用Async发起异步任务";
     }
 
-    @Autowired
+    @Resource
     JSONService jsonService;
 
     @PostMapping("/testMap")
@@ -79,5 +83,21 @@ public class HelloController {
       return  Result.success(entity);
     }
 
+
+    @Operation(summary = "使用编程式事务")
+    @GetMapping("/testTransaction")
+    public String testTransaction() {
+        orderService.testTransaction();
+        return "已使用编程式事务";
+    }
+
+    @Autowired
+    private RustFSUploadUtils rustFSUploadUtils;
+
+    @Operation(summary = "使用rustfs上传文件")
+    @PostMapping("/upload")
+    public Result uploadFile(@RequestParam("file") MultipartFile file) {
+        return Result.success(rustFSUploadUtils.upload(file));
+    }
 
 }

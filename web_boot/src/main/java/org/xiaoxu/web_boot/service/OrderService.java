@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -48,5 +51,24 @@ public class OrderService {
             Thread.sleep(1000); // 模拟耗时
         } catch (InterruptedException ignored) {}
         System.out.println("（@Async）订单处理完成：" + orderId);
+    }
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    public void testTransaction() {
+        DefaultTransactionDefinition def  = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(def);
+
+        try {
+            // 事务逻辑
+            System.out.println(1/0);
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            log.info("事务处理，回滚{}",e.getMessage());
+            transactionManager.rollback(status);
+        }
+
+
     }
 }

@@ -1,6 +1,8 @@
 package org.xiaoxu.web_boot.service.dubbo.impl;
 
-import org.apache.dubbo.config.annotation.DubboService;
+//import org.apache.dubbo.config.annotation.DubboService;
+//import org.xiaoxu.web_boot.service.dubbo.HelloService;
+
 import org.xiaoxu.web_boot.service.dubbo.HelloService;
 
 /**
@@ -10,7 +12,7 @@ import org.xiaoxu.web_boot.service.dubbo.HelloService;
  * @Version: 1.0
  * @description:
  */
-@DubboService //	用于服务提供者，发布服务
+//@DubboService //	用于服务提供者，发布服务
 public class HelloServiceImpl implements HelloService {
 
     @Override
