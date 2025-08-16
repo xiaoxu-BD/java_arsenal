@@ -13,6 +13,7 @@
         <module>cloud</module>
       <module>cloud/cloud_gateway</module>
         <module>dubbo-springboot</module>
+        <module>design-mode</module>
     </modules>
 
 

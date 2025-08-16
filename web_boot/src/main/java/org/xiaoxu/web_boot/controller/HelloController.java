@@ -100,4 +100,12 @@ public class HelloController {
         return Result.success(rustFSUploadUtils.upload(file));
     }
 
+
+    @GetMapping("/test3")
+    public Result test3(@RequestParam("orderId") String orderId) {
+        int i = 1;
+        int result = i / Integer.parseInt(orderId);
+        return Result.success(result);
+    }
+
 }

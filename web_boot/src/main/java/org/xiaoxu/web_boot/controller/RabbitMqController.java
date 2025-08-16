@@ -27,7 +27,7 @@ public class RabbitMqController {
     private RabbitTemplate rabbitTemplate;
 
     @GetMapping("/send")
-    public String send(@RequestParam("") String msg) {
+    public String send(String msg) {
 
         rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE_NAME,
                 RabbitMqConfig.ROUTING_KEY,

@@ -16,6 +16,8 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @className: RustFSUploadUtils
  * @author: xiaoxu
@@ -27,6 +29,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Slf4j
 public class RustFSUploadUtils {
 
+    private static final String UPLOAD_KEY = "user:avatar:upload";
+    @Resource
+    private RedisUtils redisUtils;
 
     @Resource
     private S3Client s3Client;
@@ -71,6 +76,10 @@ public class RustFSUploadUtils {
             RustFSUploadResult uploadResult = new RustFSUploadResult();
             uploadResult.setName(file.getOriginalFilename());
             uploadResult.setUrl(ENDPOINT + "/" + BUCKET_NAME + "/" + file.getOriginalFilename());
+
+
+
+            redisUtils.set(UPLOAD_KEY, uploadResult,1000, TimeUnit.SECONDS);
             return uploadResult.getUrl();
         } catch (Exception e) {
             log.error("Error uploading file to RustFS: {}", e.getMessage());

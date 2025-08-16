@@ -20,16 +20,16 @@ spring:
     name: consumer-service
 
 
-dubbo:
-  application:
-    name: dubbo-provider
-  registry:
-    address: zookeeper://127.0.0.1:2181  # Zookeeper 地址
-  protocol:
-    name: dubbo
-    port: 20881
-  scan:
-    base-packages: org.xiaoxu.web_boot.service.dubbo
+#dubbo:
+#  application:
+#    name: dubbo-provider
+#  registry:
+#    address: zookeeper://127.0.0.1:2181  # Zookeeper 地址
+#  protocol:
+#    name: dubbo
+#    port: 20881
+#  scan:
+#    base-packages: org.xiaoxu.web_boot.service.dubbo
 
 logging:
   level:

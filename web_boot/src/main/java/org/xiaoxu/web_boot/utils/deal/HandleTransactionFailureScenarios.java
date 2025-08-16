@@ -39,6 +39,7 @@ public class HandleTransactionFailureScenarios {
                     proxy.handleThirdData(cohToCustomerMap);
                     proxy.handleThirdListData(cohToCustomerMap);
                 } catch (Exception e) {
+                    status.setRollbackOnly();
                     log.error("Transaction failed: {}", e.getMessage());
                     throw new RuntimeException(e);
                 }

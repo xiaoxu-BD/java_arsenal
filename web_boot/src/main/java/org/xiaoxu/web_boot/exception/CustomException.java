@@ -8,7 +8,7 @@ package org.xiaoxu.web_boot.exception;
  * @description:
  */
 public class CustomException extends RuntimeException{
-    private int code;
+    private final int code;
 
     public CustomException(int code, String message) {
         super(message);

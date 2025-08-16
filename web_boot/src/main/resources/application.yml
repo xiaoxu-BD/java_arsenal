@@ -17,9 +17,9 @@ spring:
       password: xiaoxu
       driver-class-name: com.mysql.cj.jdbc.Driver
     ds2:
-      url: jdbc:mysql://124.221.151.196:3310/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+      url: jdbc:mysql://127.0.0.1:3333/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
       username: root
-      password: 1234
+      password: root
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 
@@ -35,7 +35,6 @@ spring:
 #    base-packages: org.xiaoxu.web_boot.service.dubbo
 
   # 其他你的配置...
-
 
 
 
@@ -66,6 +65,32 @@ spring:
     username: guest
     password: guest
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: redis
+      database: 0
+  mail:
+    host: smtp.163.com
+    username: tingqq7z@163.com
+#    授权码
+    password: THQNv5kfSEFfHEe7
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+##            #  搜索引擎
+#  elasticsearch:
+#    uris: http://localhost:9200
+#    username: elastic
+#    password: es123456
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 #  驼峰映射
@@ -82,3 +107,24 @@ rustfs:
   bucketName: master-xu
   accessKey: rustfsadmin
   secretKey: rustfsadmin
+
+
+
+
+#监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  health:
+    elasticsearch:
+      enabled: true
+      request-timeout: 10s
+      # 下面这行是关键，指向你的用户名密码
+      credentials:
+        username: elastic
+        password: es123456
