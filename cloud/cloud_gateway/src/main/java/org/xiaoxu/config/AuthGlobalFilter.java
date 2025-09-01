@@ -1,6 +1,7 @@
 package org.xiaoxu.config;
 
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.UTF8;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -25,42 +26,57 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        String path = request.getURI().getPath();
 
-        // 1. 定义白名单路径 (登录和注册接口)
-        List<String> whitelist = List.of("/api/user/login", "/api/user/register");
-        for (String pattern : whitelist) {
-            if (antPathMatcher.match(pattern, path)) {
-                return chain.filter(exchange); // 是白名单，直接放行
-            }
+        String path = exchange.getRequest().getPath().toString();
+        String method = exchange.getRequest().getMethod().toString();
+        System.out.println("请求路径path: " + path + "请求方法method: " + method);
+        String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+        if (StringUtils.isEmpty(token) || !token.startsWith("Bearer-")) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete(); // 直接返回 401
         }
 
-        // 2. 获取Token
-        String token = request.getHeaders().getFirst("Authorization");
-        if (token == null || !token.startsWith("bearer-")) {
-            return unauthorizedResponse(exchange, "Token missing");
-        }
 
-        // 3. 验证Token
-        String redisKey = "session:" + token;
-        String userInfoJson =   redisUtil.get(redisKey);
+        // 3. 放行请求（继续执行后续过滤器或转发到微服务）
+        return chain.filter(exchange);
 
-        if (userInfoJson == null) {
-            return unauthorizedResponse(exchange, "Token is valid");
-        }
 
-        // 4. (可选) 刷新Token有效期
-
-//        redisTemplate.expire(redisKey, 30, java.util.concurrent.TimeUnit.MINUTES);
+//        ServerHttpRequest request = exchange.getRequest();
+//        String path = request.getURI().getPath();
 //
-        // 5. 将用户信息传递给下游服务
-        ServerHttpRequest mutatedRequest = request.mutate()
-                .header("X-User-Info", userInfoJson)
-                .build();
-        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
-
-        return chain.filter(mutatedExchange);
+//        // 1. 定义白名单路径 (登录和注册接口)
+//        List<String> whitelist = List.of("/api/user/login", "/api/user/register");
+//        for (String pattern : whitelist) {
+//            if (antPathMatcher.match(pattern, path)) {
+//                return chain.filter(exchange); // 是白名单，直接放行
+//            }
+//        }
+//
+//        // 2. 获取Token
+//        String token = request.getHeaders().getFirst("Authorization");
+//        if (token == null || !token.startsWith("bearer-")) {
+//            return unauthorizedResponse(exchange, "Token missing");
+//        }
+//
+//        // 3. 验证Token
+//        String redisKey = "session:" + token;
+//        String userInfoJson =   redisUtil.get(redisKey);
+//
+//        if (userInfoJson == null) {
+//            return unauthorizedResponse(exchange, "Token is valid");
+//        }
+//
+//        // 4. (可选) 刷新Token有效期
+//
+////        redisTemplate.expire(redisKey, 30, java.util.concurrent.TimeUnit.MINUTES);
+////
+//        // 5. 将用户信息传递给下游服务
+//        ServerHttpRequest mutatedRequest = request.mutate()
+//                .header("X-User-Info", userInfoJson)
+//                .build();
+//        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+//
+//        return chain.filter(mutatedExchange);
     }
 
     @Override

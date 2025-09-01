@@ -17,8 +17,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   data:
     redis:
-      host: 124.221.151.196
+      host: 127.0.0.1
       port: 6379
+      password: NFTurbo666
 
 
 logging:

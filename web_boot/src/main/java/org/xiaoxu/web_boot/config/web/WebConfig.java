@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.xiaoxu.web_boot.interceptor.LogInterceptor;
+import org.xiaoxu.web_boot.interceptor.LoginInterceptor;
 
 /**
  * @className: WebConfig
@@ -13,17 +14,20 @@ import org.xiaoxu.web_boot.interceptor.LogInterceptor;
  * @Version: 1.0
  * @description:
  */
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class WebConfig implements WebMvcConfigurer {
     private final LogInterceptor logInterceptor;
+    private final LoginInterceptor loginInterceptor;
 
-    public WebConfig(LogInterceptor logInterceptor) {
-        this.logInterceptor = logInterceptor;
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(logInterceptor);
+        // 注册登录拦截器
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/api/log/**")
+                .excludePathPatterns("/admin/login"); // 排除登录接口
+
     }
 }

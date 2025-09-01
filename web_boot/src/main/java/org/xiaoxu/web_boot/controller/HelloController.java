@@ -91,11 +91,11 @@ public class HelloController {
         return "已使用编程式事务";
     }
 
-    @Autowired
+//    @Autowired todo
     private RustFSUploadUtils rustFSUploadUtils;
 
     @Operation(summary = "使用rustfs上传文件")
-    @PostMapping("/upload")
+//    @PostMapping("/upload")  todo
     public Result uploadFile(@RequestParam("file") MultipartFile file) {
         return Result.success(rustFSUploadUtils.upload(file));
     }

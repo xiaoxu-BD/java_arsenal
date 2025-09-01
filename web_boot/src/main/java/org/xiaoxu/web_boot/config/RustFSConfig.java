@@ -1,6 +1,7 @@
 package org.xiaoxu.web_boot.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -13,7 +14,7 @@ import java.net.URI;
 /**
  * S3 客户端配置
  */
-@Configuration
+//@Configuration
 public class RustFSConfig {
 
  @Value("${rustfs.endpoint}")
@@ -24,6 +25,7 @@ public class RustFSConfig {
  private String SECRET_KEY;
 
  @Bean
+ @ConditionalOnClass(S3Client.class)
  public S3Client s3Client(){
    // 初始化 S3 客户端
    return S3Client.builder()

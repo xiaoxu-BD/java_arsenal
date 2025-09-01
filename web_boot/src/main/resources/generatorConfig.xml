@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <context id="mysql" targetRuntime="MyBatis3">
+    <context id="mysql" targetRuntime="MyBatis3Simple">
 
         <!-- 生成的Java文件的编码 -->
         <property name="javaFileEncoding" value="UTF-8"/>
@@ -18,7 +18,7 @@
         <!-- 注释生成器 -->
         <commentGenerator>
             <!-- 是否生成注释 -->
-            <property name="suppressAllComments" value="false"/>
+            <property name="suppressAllComments" value="true"/>
             <!-- 是否生成注释代时间戳 -->
             <property name="suppressDate" value="true"/>
             <!-- 是否添加数据库表中字段的注释 -->
@@ -74,16 +74,8 @@
 
         <!-- 要生成的表 -->
         <table tableName="exception_log"
-               domainObjectName="ExceptionLog"
-               enableCountByExample="true"
-               enableUpdateByExample="true"
-               enableDeleteByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!-- 是否生成对应字段的构造方法 -->
-            <property name="constructorBased" value="false"/>
-            <!-- 数据库表主键 -->
-            <generatedKey column="id" sqlStatement="JDBC"/>
+               domainObjectName="ExceptionLog">
+        <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
     </context>

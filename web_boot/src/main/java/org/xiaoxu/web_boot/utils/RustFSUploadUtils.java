@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @Version: 1.0
  * @description:
  */
-@Component
+//@Component todo
 @Slf4j
 public class RustFSUploadUtils {
 
@@ -33,7 +33,7 @@ public class RustFSUploadUtils {
     @Resource
     private RedisUtils redisUtils;
 
-    @Resource
+//    @Resource todo
     private S3Client s3Client;
 
     @Value("${rustfs.bucketName}")

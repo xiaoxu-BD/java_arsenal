@@ -16,16 +16,16 @@ spring:
       username: root
       password: xiaoxu
       driver-class-name: com.mysql.cj.jdbc.Driver
-    ds2:
-      url: jdbc:mysql://127.0.0.1:3333/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
-      username: root
-      password: root
-      driver-class-name: com.mysql.cj.jdbc.Driver
-    ds3:
-      url: jdbc:mysql://127.0.0.1:3333/monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
-      username: root
-      password: root
-      driver-class-name: com.mysql.cj.jdbc.Driver
+#    ds2:
+#      url: jdbc:mysql://127.0.0.1:3333/ito_sap?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+#      username: root
+#      password: root
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#    ds3:
+#      url: jdbc:mysql://127.0.0.1:3333/monitor?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
+#      username: root
+#      password: root
+#      driver-class-name: com.mysql.cj.jdbc.Driver
 
 
 #dubbo:
@@ -64,17 +64,17 @@ spring:
 #          password: 1234
 
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
 
   data:
     redis:
       host: localhost
       port: 6379
-      password: redis
+      password: NFTurbo666
       database: 0
   mail:
     host: smtp.163.com
@@ -107,29 +107,29 @@ logging:
    root: info
 
 #   分布式文件服务
-rustfs:
-  endpoint: http://127.0.0.1:9000
-  bucketName: master-xu
-  accessKey: rustfsadmin
-  secretKey: rustfsadmin
+#rustfs:
+#  endpoint: http://127.0.0.1:9000
+#  bucketName: master-xu
+#  accessKey: rustfsadmin
+#  secretKey: rustfsadmin
 
 
 
 
 #监控
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
-  endpoint:
-    prometheus:
-      enabled: true
-  health:
-    elasticsearch:
-      enabled: true
-      request-timeout: 10s
-      # 下面这行是关键，指向你的用户名密码
-      credentials:
-        username: elastic
-        password: es123456
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,prometheus
+#  endpoint:
+#    prometheus:
+#      enabled: true
+#  health:
+#    elasticsearch:
+#      enabled: true
+#      request-timeout: 10s
+#      # 下面这行是关键，指向你的用户名密码
+#      credentials:
+#        username: elastic
+#        password: es123456
