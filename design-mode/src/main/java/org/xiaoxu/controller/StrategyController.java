@@ -24,7 +24,7 @@ public class StrategyController {
 
     @GetMapping("pay")
     public String pay(@RequestParam("type") String type, @RequestParam("amount") double amount) {
-        payService.doPay(type, amount);
+        payService.pay(type, amount);
         return "支付成功";
     }
 }

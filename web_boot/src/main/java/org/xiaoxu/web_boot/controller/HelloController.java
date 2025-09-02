@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xiaoxu.web_boot.common.Result;
 import org.xiaoxu.web_boot.entity.NodeDesc;
+import org.xiaoxu.web_boot.entity.vo.UserInfo;
+import org.xiaoxu.web_boot.service.ItUserService;
 import org.xiaoxu.web_boot.service.OrderService;
 import org.xiaoxu.web_boot.service.impl.JSONService;
 import org.xiaoxu.web_boot.utils.RustFSUploadUtils;
@@ -106,6 +108,16 @@ public class HelloController {
         int i = 1;
         int result = i / Integer.parseInt(orderId);
         return Result.success(result);
+    }
+
+    @Autowired
+    private ItUserService   itUserService;
+
+
+    @GetMapping("mapToVO")
+    public Result<?> mapToVO() {
+        UserInfo userInfo = itUserService.getUserInfo();
+        return Result.success(userInfo);
     }
 
 }

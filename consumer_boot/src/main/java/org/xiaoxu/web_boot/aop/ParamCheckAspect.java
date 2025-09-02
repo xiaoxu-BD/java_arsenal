@@ -1,8 +1,6 @@
 package org.xiaoxu.web_boot.aop;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -40,7 +38,6 @@ public class ParamCheckAspect {
     @Around("@annotation(org.xiaoxu.web_boot.aop.ParamCheck)")
     public Object checkParams(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-
         ParamCheck paramCheck = signature.getMethod().getAnnotation(ParamCheck.class);
         if (paramCheck != null && paramCheck.ignore()){
             Object[] args = joinPoint.getArgs();

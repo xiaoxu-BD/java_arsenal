@@ -1,2 +1,11 @@
 server:
   port: 7891
+
+
+
+
+
+
+logging:
+  level:
+    root: info
