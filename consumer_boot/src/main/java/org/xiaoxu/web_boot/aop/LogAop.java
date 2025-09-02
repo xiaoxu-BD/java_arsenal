@@ -1,13 +1,14 @@
 package org.xiaoxu.web_boot.aop;
 
 import cn.hutool.core.date.DateUtil;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Aspect
 @Component
@@ -40,6 +41,24 @@ public class LogAop {
         long endTime = System.currentTimeMillis();
         log("结束方法：{}， 用时：{} 毫秒, 结束时间:{} , ", joinPoint.getSignature().getName(), endTime - startTime, DateUtil.now());
         return result;
+    }
+
+
+    @Pointcut("execution(* org.xiaoxu.web_boot.controller.ConsumerController.aopTest(..))")
+    public void pointcut() {
+
+    }
+
+    @Before("execution(* org.xiaoxu.web_boot.controller.*.*(..))")
+    public void before(JoinPoint joinPoint) {
+        logger.info("9-2 进入图书馆学习");
+        log("执行方法：{}", joinPoint.getSignature().getName());
+      logger.info("结束时 当前时间" + LocalDateTime.now());
+    }
+
+//    @AfterThrowing("pointcut()")
+    public void afterThrowing(JoinPoint joinPoint) {
+        logger.info("发生了异常{}", joinPoint.getSignature().getName());
     }
 
 }

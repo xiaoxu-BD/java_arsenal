@@ -13,6 +13,7 @@ import java.lang.reflect.Proxy;
  */
 public class MyInvocation implements InvocationHandler {
 
+    //持有真实对象的引用(目标对象)
     private Object target;
 
     public MyInvocation(Object target) {

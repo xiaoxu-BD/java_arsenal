@@ -20,7 +20,7 @@ import java.io.IOException;
 @Slf4j
 public class ConsumerService {
 
-    @RabbitListener(queues = RabbitMqConfig.QUEUE_NAME,ackMode = "MANUAL")
+//    @RabbitListener(queues = RabbitMqConfig.QUEUE_NAME,ackMode = "MANUAL")
     public void receive(String message, Channel channel, Message amqpMessage) throws IOException {
         log.info("receive message: {}", message);
         // 模拟异常，消息不被确认
