@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,7 +24,8 @@ public class HandleTransactionFailureScenarios {
     private static final Logger log = LoggerFactory.getLogger(HandleTransactionFailureScenarios.class);
     @Resource
     private PlatformTransactionManager transactionManager;
-
+    @Resource(name = "commonThreadPoolTaskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
     private ApplicationContext applicationContext;
 
@@ -39,6 +41,7 @@ public class HandleTransactionFailureScenarios {
                     proxy.handleThirdData(cohToCustomerMap);
                     proxy.handleThirdListData(cohToCustomerMap);
                 } catch (Exception e) {
+                    //标记事务回滚
                     status.setRollbackOnly();
                     log.error("Transaction failed: {}", e.getMessage());
                     throw new RuntimeException(e);
@@ -46,7 +49,7 @@ public class HandleTransactionFailureScenarios {
                 return null;
             });
 
-        });
+        },threadPoolTaskExecutor);
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

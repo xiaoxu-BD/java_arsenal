@@ -30,7 +30,14 @@ public class StringTest {
 //        System.out.println(res);
 
         String str = "ABc";
-        String st2 = "abc";
+        String st2 = "ABc";
+
+        String intern = new String("BAC").intern();
+        System.out.println(intern);
+        System.out.println(str.hashCode());
+        System.out.println(st2.hashCode());
+
+        System.out.println(str.equals(st2));
 
         if (StringUtils.equalsIgnoreCase(str, st2)) {
             log.info("已经忽略了大小写了 ");

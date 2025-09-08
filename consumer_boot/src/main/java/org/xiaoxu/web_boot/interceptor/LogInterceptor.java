@@ -35,4 +35,18 @@ public class LogInterceptor implements HandlerInterceptor {
         // 清理 MDC，避免线程复用时泄漏
         MDC.remove(TRACE_ID);
     }
+
+    public static void main(String[] args) {
+        int i = 1;
+
+        //无符号右移
+        //x << n,相当于 x 乘以 2 的 n 次方(不溢出的情况下)。
+        // >> :带符号右移，向右移若干位，高位补符号位，低位丢弃。正数高位补 0,负数高位补 1。x >> n,相当于 x 除以 2 的 n 次方。
+        //------
+
+
+    }
+
+
+
 }

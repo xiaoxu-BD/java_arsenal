@@ -12,6 +12,7 @@ import org.xiaoxu.web_boot.entity.NodeDesc;
 import org.xiaoxu.web_boot.entity.vo.UserInfo;
 import org.xiaoxu.web_boot.service.ItUserService;
 import org.xiaoxu.web_boot.service.OrderService;
+import org.xiaoxu.web_boot.service.entity.UserService;
 import org.xiaoxu.web_boot.service.impl.JSONService;
 import org.xiaoxu.web_boot.utils.RustFSUploadUtils;
 
@@ -21,6 +22,8 @@ import org.xiaoxu.web_boot.utils.RustFSUploadUtils;
 public class HelloController {
 
    private  static final Logger logger  = LoggerFactory.getLogger(HelloController.class);
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/log")
     public String hello() {
@@ -120,4 +123,8 @@ public class HelloController {
         return Result.success(userInfo);
     }
 
+
+    @GetMapping("/findUserInfoById")
+    public Result<?> findUserInfoById(String id) {return Result.success(userService.getByIdCard(id));
+    }
 }

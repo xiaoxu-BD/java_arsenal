@@ -10,11 +10,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.xiaoxu.web_boot.aop.SPLParams;
 import org.xiaoxu.web_boot.common.request.RegisterParam;
 import org.xiaoxu.web_boot.consts.UserConst;
 import org.xiaoxu.web_boot.entity.User;
 import org.xiaoxu.web_boot.entity.vo.UserVO;
 import org.xiaoxu.web_boot.exception.CustomException;
+import org.xiaoxu.web_boot.local.UserInfoThread;
 import org.xiaoxu.web_boot.mapper.UserMapper;
 import org.xiaoxu.web_boot.mapper.convert.UserVOConvert;
 import org.xiaoxu.web_boot.service.entity.UserService;
@@ -49,7 +51,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.insertUser(user);
         //先插入数据,防止插入数据库失败,filter中添加脏数据
         bloomFilter.add(user.getIdCard());
-
+        //将用户信息存入ThreadLocal
+        UserInfoThread.setUserInfoThread(user.getIdCard());
     }
 
     @Override
@@ -73,10 +76,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = this.getById(userVO.getUserId());
         //如果user已经存在才能更新使用更新插入的方法:
         userMapper.updateExistUser(userVO);
+        //更新 也要加入到布隆过滤器
+        bloomFilter.add(user.getIdCard());
 
     }
 
     @Override
+    @SPLParams("'用户执行了查询操作方法=' + #methodName + '，身份证id=' + #idCard")
     public UserVO getByIdCard(String idCard) {
         // 先查询Bloom Filter
         boolean exist = isExist(idCard);

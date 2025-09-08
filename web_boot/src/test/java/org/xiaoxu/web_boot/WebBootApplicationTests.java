@@ -1,6 +1,10 @@
 package org.xiaoxu.web_boot;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.xiaoxu.web_boot.consts.UserConst;
+import org.xiaoxu.web_boot.utils.trans.ContextHolder;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @SpringBootTest
 @Slf4j
@@ -78,6 +82,21 @@ class WebBootApplicationTests {
 //		Assert.isNull(condition,"内容必须为空");
 		Assert.isTrue(true,"内容必须为true");
 
+	}
+
+	@Autowired
+	@Qualifier("commonThreadPoolTaskExecutor")
+	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+	@Test
+	public void testTransmittableThreadLocal() throws ExecutionException, InterruptedException {
+		for (int i = 0; i < 3; i++) {
+			ContextHolder.CONTEXT.set("父线程值-" + i);
+			CompletableFuture.runAsync(() -> {
+				System.out.println(Thread.currentThread().getName() +
+						" -> 子线程读取到: " + ContextHolder.CONTEXT.get());
+			}, threadPoolTaskExecutor).get(); // get() 保证顺序执行
+		}
 	}
 
 
@@ -188,11 +207,12 @@ class WebBootApplicationTests {
 
 		public static void main(String[] args) {
 
-			String paramsStr = "{\"name\":\"xiaoxu\",\"age\":20,\"address\":{\"city\":\"beijing\",\"street\":\"beijing\"}}";
+			String paramsStr = "{\"name\":\"xiaoxu\",\"age\":23,\"address\":{\"city\":\"beijing\",\"street\":\"beijing\"}}";
 
-			String str = "{\\\"parameters\\\":{\\\"topic\\\":\\\"12312\\\",\\\"jsonParameters\\\":true,\\\"messageJson\\\":\\\"{\\\\n  \\\\\\\"code\\\\\\\": 0,     // 2131231\\\\n  \\\\\\\"msg\\\\\\\": \\\\\\\"ok\\\\\\\",     // 张金海1\\\\n  \\\\\\\"count\\\\\\\": 0,\\\\n  \\\\\\\"data\\\\\\\": {\\\\n    \\\\\\\"permissions\\\\\\\": true,\\\\n    \\\\\\\"allCount\\\\\\\": 6,     // 年度问题数量\\\\n    \\\\\\\"rectificationCount\\\\\\\": 3,     // 整改数量\\\\n    \\\\\\\"notRectificationCount\\\\\\\": 3     // 未整改数量\\\\n  },\\\\n  \\\\\\\"define\\\\\\\": {},\\\\n  \\\\\\\"ok\\\\\\\": true\\\\n}\\\",\\\"options\\\":{\\\"acks\\\":true,\\\"compression\\\":true}},\\\"credentials\\\":{\\\"kafka\\\":{\\\"clientId\\\":\\\"12312\\\",\\\"brokers\\\":\\\"1231\\\",\\\"ssl\\\":false,\\\"authentication\\\":false,\\\"username\\\":\\\"\\\",\\\"password\\\":\\\"\\\",\\\"saslMechanism\\\":\\\"\\\"}}}";
-			String result = parseAndFormatParams(str);
-			log.info("result: {}", result);
+			JSONObject jsonObject = JSONUtil.parseObj(paramsStr);
+			String address = jsonObject.getStr("address");
+			log.info("address:{}", address);
+			log.info("jsonObject:{}", jsonObject);
 		}
 	}
 
