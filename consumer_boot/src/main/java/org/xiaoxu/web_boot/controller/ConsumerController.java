@@ -1,10 +1,7 @@
 package org.xiaoxu.web_boot.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.web_boot.aop.ParamCheck;
 import org.xiaoxu.web_boot.common.Result;
 import org.xiaoxu.web_boot.exception.BizException;
@@ -38,6 +35,11 @@ public class ConsumerController {
             throw new BizException("内容不能相等");
         }
         return Result.success("内容不相等");
+    }
+
+    @RequestMapping(value = "/arthas",method = RequestMethod.GET)
+    public Result testArthas(@RequestParam Integer a ,@RequestParam Integer b){
+        return Result.success(a+b);
     }
 
 

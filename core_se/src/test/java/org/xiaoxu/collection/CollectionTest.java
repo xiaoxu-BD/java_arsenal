@@ -242,5 +242,4 @@ public class CollectionTest extends TestCase {
         //b1 等于 b2 返回 0
         System.out.println(b1.compareTo(b2));
     }
-
 }

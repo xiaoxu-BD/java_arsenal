@@ -70,12 +70,12 @@ spring:
 #    username: guest
 #    password: guest
 
-  data:
-    redis:
-      host: 192.168.200.131
-      port: 6379
-      password: NFTurbo666
-      database: 6
+#  data:
+##    redis:
+##      host: 192.168.200.131
+##      port: 6379
+##      password: NFTurbo666
+##      database: 6
   mail:
     host: smtp.163.com
     username: tingqq7z@163.com

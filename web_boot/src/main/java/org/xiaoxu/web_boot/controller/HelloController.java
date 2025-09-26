@@ -22,7 +22,7 @@ import org.xiaoxu.web_boot.utils.RustFSUploadUtils;
 public class HelloController {
 
    private  static final Logger logger  = LoggerFactory.getLogger(HelloController.class);
-    @Autowired
+//    @Autowired
     private UserService userService;
 
     @GetMapping("/log")

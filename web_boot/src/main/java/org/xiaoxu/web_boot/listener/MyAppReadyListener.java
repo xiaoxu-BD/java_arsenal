@@ -17,6 +17,6 @@ public class MyAppReadyListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
-        System.out.println("✅ SpringBoot 启动完成，ApplicationReadyEvent 被触发！");
+        System.out.println("✅ SpringBoot 启动完成，bloomFilter 被触发！");
     }
 }

@@ -1,4 +1,6 @@
 <configuration>
+    <conversionRule conversionWord="sensitive"
+                    converterClass="com.github.houbb.sensitive.logback.converter.SensitiveLogbackConverter" />
     <property name="console.log.pattern"
               value="%red({yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{50}%n) - %msg%n" />
     />
