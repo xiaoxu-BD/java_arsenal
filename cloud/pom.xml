@@ -19,6 +19,11 @@
         <module>order-service</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
+
 
 
 </project>

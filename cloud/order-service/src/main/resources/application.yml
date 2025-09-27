@@ -2,7 +2,7 @@ spring:
   application:
     name: order-service   # 服务名，也用作默认DataID
   config:
-    import: "nacos:order-service"
+    import: nacos:order-service
   cloud:
     nacos:
       config:
@@ -10,5 +10,6 @@ spring:
         namespace: public            # 命名空间ID，可选
         file-extension: yaml          # 配置文件格式
         group: DEFAULT_GROUP          # 配置分组，默认 DEFAULT_GROUP
-      discovery:
-        enabled: false    #关闭自动注册
+      server-addr: 192.168.200.131:8848
+      username: nacos
+      password: nacos

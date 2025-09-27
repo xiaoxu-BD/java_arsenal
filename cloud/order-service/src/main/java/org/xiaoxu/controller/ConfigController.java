@@ -18,7 +18,7 @@ import java.util.function.Function;
  * @description:
  */
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/order/config")
 public class ConfigController {
     @Value("${app.name}")
     private String appName;

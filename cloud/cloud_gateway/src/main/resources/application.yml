@@ -6,7 +6,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 192.168.200.131:8848
         username: nacos
         password: nacos
     gateway:
@@ -18,12 +18,10 @@ spring:
           uri: lb://server-user
           predicates:
             - Path=/api/user/**
-        - id: server-order
-          uri: lb://server-order
+        - id: order-service
+          uri: lb://order-service
           predicates:
             - Path=/order/**
-          filters:
-          - PrefixPath=/order
       globalcors:
         cors-configurations:
           '[/**]': # '[/**]' 匹配所有路径
@@ -39,7 +37,7 @@ spring:
             max-age: 3600 # 预检请求的缓存时间（秒）
   data:
     redis:
-      host: 127.0.0.1
+      host: 192.168.200.131
       port: 6379
       password: NFTurbo666
       database: 0
