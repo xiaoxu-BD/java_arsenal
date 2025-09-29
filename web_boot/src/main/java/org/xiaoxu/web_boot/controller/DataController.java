@@ -2,6 +2,7 @@ package org.xiaoxu.web_boot.controller;
 
 import cn.hutool.extra.spring.SpringUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaoxu.web_boot.common.Result;
+import org.xiaoxu.web_boot.entity.Address;
 import org.xiaoxu.web_boot.entity.ItoOrderRpaReturnOrderThird;
+import org.xiaoxu.web_boot.entity.vo.AddressVO;
 import org.xiaoxu.web_boot.service.AddressService;
 import org.xiaoxu.web_boot.service.PersonService;
 import org.xiaoxu.web_boot.service.ThirdService;
@@ -33,6 +36,9 @@ public class DataController {
 
     @Autowired
     private PersonService personService;
+
+    @Resource
+    private AddressService addressService;
 
     @GetMapping("/get")
     public Result<?> getKey(){
@@ -86,6 +92,14 @@ public class DataController {
         ///用来获取spring上下文中的bean
 //        SpringUtil.getBean()
         return Result.success(personService.getPersonByName(name));
+    }
+
+    @Operation(summary = "缓存和数据得一致性问题,不操作缓存,使用job来更新缓存,对于写数据,只更新数据库")
+    @GetMapping("getAddress")
+    public Result<?> getAddress(Long userId){
+         AddressVO result =  addressService.operateData(userId);
+         log.info("result:{}",result);
+        return Result.success(result);
     }
 
 }

@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.xiaoxu.web_boot.entity.Address;
+import org.xiaoxu.web_boot.entity.vo.AddressVO;
 import org.xiaoxu.web_boot.mapper.AddressMapper;
 import org.xiaoxu.web_boot.service.AddressService;
 import org.xiaoxu.web_boot.utils.RedisUtils;
@@ -27,6 +29,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     private RedisUtils redisUtils;
 
     private final String REDIS_ADDRESS_KEY = "address:";
+
+    @Autowired
+    private AddressMapper addressMapper;
     @Override
     public Object getFromRedis(String key) {
 
@@ -64,5 +69,18 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         this.save(addressInMysql);
         //插入到redis中
         redisUtils.set(REDIS_ADDRESS_KEY + address.getId(), addressInMysql);
+    }
+
+    @Override
+    public AddressVO operateData(Long userId) {
+
+        Assert.notNull(userId, "userId不能为空");
+
+        AddressVO addressVO = redisUtils.get(REDIS_ADDRESS_KEY + userId, AddressVO.class);
+
+        if (ObjectUtil.isEmpty(addressVO)) {
+//            addressMapper.selectByPersonId(userId);
+        }
+        return null;
     }
 }
