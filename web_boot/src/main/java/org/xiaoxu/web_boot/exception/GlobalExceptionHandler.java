@@ -1,7 +1,10 @@
 package org.xiaoxu.web_boot.exception;
 
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,6 +12,7 @@ import org.xiaoxu.web_boot.common.Result;
 import org.xiaoxu.web_boot.utils.EmailUtil;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 /**
  * @className: GlobalExceptionHandler
@@ -40,6 +44,21 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result<?> handleRuntimeException(CustomException e) {
         return Result.error(e.getMessage());
+    }
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+
+        HashMap<String, String> errorMap = Maps.newHashMapWithExpectedSize(16);
+        ex.getBindingResult().getAllErrors().forEach(error->{
+
+            FieldError fieldError = (FieldError) error;
+            String field = fieldError.getField();
+            String message = fieldError.getDefaultMessage();
+            errorMap.put(field,message);
+        });
+        return Result.error(400, "参数错误", errorMap);
     }
 
     private String getStackTrace(Throwable e) {

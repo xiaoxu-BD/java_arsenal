@@ -1,0 +1,5 @@
+rocketmq:
+  name-server: 192.168.200.131:9876 # 使用和你主配置相同的 Name Server 地址
+  producer:
+    # 为测试环境定义一个 group，可以和主应用相同或不同
+    group: demo-producer-group-test

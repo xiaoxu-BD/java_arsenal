@@ -14,6 +14,8 @@
       <module>cloud/cloud_gateway</module>
         <module>dubbo-springboot</module>
         <module>design-mode</module>
+        <module>rocketmq-boot</module>
+        <module>permissions-sys</module>
     </modules>
 
 
