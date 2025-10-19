@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @className: PersonSerizlizable
+ * @className: Serializable
  * @author: xiaoxu
  * @date: 2025/7/30 7:37
  * @Version: 1.0

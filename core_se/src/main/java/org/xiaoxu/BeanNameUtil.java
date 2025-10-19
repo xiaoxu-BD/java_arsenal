@@ -1,5 +1,7 @@
 package org.xiaoxu;
 
+import com.google.common.base.CaseFormat;
+
 /**
  * @className: BeanNameUtil
  * @author: xiaoxu

@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
-import static cn.hutool.core.lang.Console.print;
 
 /**
  * @className: StringTest
@@ -41,7 +40,6 @@ public class StringTest extends TestCase {
 
     public void testDeSugar(){
         List<String> list = Arrays.asList("apple", "pear", "banana", "orange");
-        print(String.valueOf(list));
         }
 
 
