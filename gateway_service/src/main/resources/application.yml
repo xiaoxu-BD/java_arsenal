@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: @application.name@
+  config:
+    import: classpath:config.yml
+
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedHeaders: '*'
+            allowedMethods: '*'
+            allowedOrigins: '*'
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+        - id: post-service
+          uri: lb://post-service
+          predicates:
+            - Path=/api/posts/**
+
+#  main:
+#    web-application-type: reactive
+#    allow-bean-definition-overriding: true
+server:
+  port: 18080
+

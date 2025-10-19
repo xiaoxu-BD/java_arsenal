@@ -12,17 +12,21 @@
         <module>juc_demo</module>
         <module>design-mode</module>
         <module>common_services</module>
+        <module>gateway_service</module>
     </modules>
 
 
     <properties>
+
+        <spring-boot.version>3.2.2</spring-boot.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
+        <dubbo.version>3.2.10</dubbo.version>
+
         <project.sourceEncoding>UTF-8</project.sourceEncoding>
         <mysql.connector.version>8.0.33</mysql.connector.version> <!-- 定义 MySQL 驱动版本 -->
         <java.version>17</java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.3.0</spring-boot.version>
-        <spring-cloud.version>2023.0.2</spring-cloud.version>
-        <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
         <fastjson.version>1.2.83</fastjson.version>
         <oshi-core.version>6.2.2</oshi-core.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -61,13 +65,7 @@
         <spotless-maven-plugin.version>2.22.1</spotless-maven-plugin.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-3-starter</artifactId>
-            <version>${druid.version}</version>
-        </dependency>
-    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -117,11 +115,10 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-openfeign</artifactId>
-                <version>4.0.4</version>
+                <groupId>org.xiaoxu</groupId>
+                <artifactId>config-service</artifactId>
+                <version>1.0</version>
             </dependency>
-
 
 
             <!--      父类有这个 cloud 的dependencies 子类只需要引入-->
@@ -144,6 +141,26 @@
                 <groupId>org.xiaoxu</groupId>
                 <artifactId>common_services</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+
+
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-registry-nacos</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.xiaoxu</groupId>
+                <artifactId>base-service</artifactId>
+                <version>1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -15,6 +15,10 @@
     <name>common_services</name>
     <modules>
         <module>config-service</module>
+        <module>cache-service</module>
+        <module>datasource-service</module>
+        <module>rpc-service</module>
+        <module>base-service</module>
     </modules>
 
     <properties>
@@ -77,24 +81,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-
-        <!-- Spring Cloud Alibaba 版本控制 -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-            <version>${spring-cloud-alibaba.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
         </dependency>
 
     </dependencies>

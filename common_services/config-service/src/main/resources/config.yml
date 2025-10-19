@@ -2,8 +2,8 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${spring.cloud.nacos.server-addr}
+        server-addr: 192.168.200.131:8848
       config:
-        server-addr: ${spring.cloud.nacos.server-addr}
+        server-addr: 192.168.200.131:8848
         file-extension: properties
         name: ${spring.application.name}
