@@ -103,7 +103,7 @@ public class CollectionTest {
 //        System.out.println("\n问题2：给所有学生成绩加5分");
     @Test
     public void testAdd5Point(){
-        Map<String, Integer> maps = studentScores.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,value -> value.getValue() + 5));
+        Map<String, Integer> maps = studentScores.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, value -> value.getValue() + 5));
         maps.forEach((k,v)->{
             System.out.println(k+":"+v);
         });

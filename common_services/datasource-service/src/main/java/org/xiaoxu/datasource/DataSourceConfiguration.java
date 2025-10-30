@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.xiaoxu.handler.DataObjectHandler;
@@ -18,7 +17,6 @@ import org.xiaoxu.handler.DataObjectHandler;
  * @description:
  */
 @Configuration
-@MapperScan(basePackages = "org.xiaoxu.entity")
 public class DataSourceConfiguration {
 
         @Bean
