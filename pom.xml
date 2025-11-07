@@ -13,6 +13,7 @@
         <module>design-mode</module>
         <module>common_services</module>
         <module>gateway_service</module>
+        <module>business-service</module>
     </modules>
 
 

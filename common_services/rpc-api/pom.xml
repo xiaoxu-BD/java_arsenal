@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.xiaoxu</groupId>
-        <artifactId>java_arsenal</artifactId>
+        <artifactId>common_services</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>juc_demo</artifactId>
+    <artifactId>rpc-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>juc_demo</name>
+    <name>rpc-api</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -18,15 +18,14 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
+
 
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <groupId>org.xiaoxu</groupId>
+            <artifactId>base-service</artifactId>
         </dependency>
+
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

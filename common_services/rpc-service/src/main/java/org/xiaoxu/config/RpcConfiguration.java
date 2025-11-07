@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.xiaoxu.facade.FacadeAspect;
 
-@EnableDubbo
+@EnableDubbo(scanBasePackages = "org.xiaoxu")
 @Configuration
 public class RpcConfiguration {
 

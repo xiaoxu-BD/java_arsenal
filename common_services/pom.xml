@@ -19,6 +19,7 @@
         <module>datasource-service</module>
         <module>rpc-service</module>
         <module>base-service</module>
+        <module>rpc-api</module>
     </modules>
 
     <properties>

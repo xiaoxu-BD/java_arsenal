@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.xiaoxu.web_boot.common.Result;
-import org.xiaoxu.web_boot.utils.EmailUtil;
+//import org.xiaoxu.web_boot.utils.EmailUtil;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private final EmailUtil emailUtil;
+//    private final EmailUtil emailUtil;
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
         // 发送邮件
         String subject = "【系统异常报警】" + e.getClass().getSimpleName();
         String content = "当前时间: " + LocalDateTime.now() + "\n" + "系统异常信息: " + e.getMessage() + "\n\n详细堆栈:\n" + getStackTrace(e);
-        emailUtil.sendErrorMail("tingqq7@gmail.com",subject,content);
+//        emailUtil.sendErrorMail("tingqq7@gmail.com",subject,content);
 
         return Result.success("系统异常，请稍后再试");
     }

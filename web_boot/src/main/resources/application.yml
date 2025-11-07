@@ -26,6 +26,27 @@ spring:
 #      username: root
 #      password: root
 #      driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 47.100.183.252
+      port: 6379
+      username: root
+
+  application:
+    name: web-boot
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: nacos://192.168.200.131:8848
+    parameters:
+      namespace: 2ce8cce8-7fa1-457a-a3d0-c5b7fa07faaa
+      group: studyRPC
+#      只注册实列
+    register-mode: instance
+  application:
+    name: ${spring.application.name}
 
 
 #dubbo:
@@ -70,24 +91,18 @@ spring:
 #    username: guest
 #    password: guest
 
-#  data:
-##    redis:
-##      host: 192.168.200.131
-##      port: 6379
-##      password: NFTurbo666
-##      database: 6
-  mail:
-    host: smtp.163.com
-    username: tingqq7z@163.com
-#    授权码
-    password: THQNv5kfSEFfHEe7
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
+#  mail:
+#    host: smtp.163.com
+#    username: tingqq7z@163.com
+##    授权码
+#    password: THQNv5kfSEFfHEe7
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#            required: true
 
 
 ##            #  搜索引擎
