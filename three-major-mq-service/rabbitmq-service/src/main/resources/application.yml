@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: rabbitmq-service
+  rabbitmq:
+    host: 192.168.200.131
+    port: 5672
+    username: admin
+    password: tingqq7zZ
+
+
+#    发送方确认:
+    publisher-confirm-type: CORRELATED
+#    到交换机但是没有路由到队列
+    publisher-returns: true # 开启返回机制
+
+#  消息投递失败返回给发送方
+    template:
+      mandatory: true
+
+    listener:
+      simple:
+#        设置手动ACK
+        acknowledge-mode: MANUAL
+
+
+
+
+
+server:
+  port: 15960
+
