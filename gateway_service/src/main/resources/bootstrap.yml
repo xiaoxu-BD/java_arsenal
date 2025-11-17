@@ -3,3 +3,6 @@ spring:
     name: @application.name@
   config:
     import: classpath:config.yml
+
+
+

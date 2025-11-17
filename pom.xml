@@ -15,6 +15,7 @@
         <module>gateway_service</module>
         <module>business-service</module>
         <module>three-major-mq-service</module>
+        <module>permission-system</module>
     </modules>
 
 

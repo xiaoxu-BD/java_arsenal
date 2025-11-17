@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: permission-service
+
+
+  datasource:
+    username: root
+    url: jdbc:mysql://192.168.200.131:3306/permission_system
+    password: NFTurbo666
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  data:
+    redis:
+      host: 192.168.200.131
+      port: 6379
+      password: NFTurbo666
+server:
+  port: 13690

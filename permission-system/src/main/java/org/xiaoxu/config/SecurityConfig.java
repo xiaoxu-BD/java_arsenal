@@ -1,0 +1,100 @@
+package org.xiaoxu.config;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.xiaoxu.auth.TokenAuthenticationFilter;
+import org.xiaoxu.auth.handler.AccessDeniedHandlerImpl;
+import org.xiaoxu.auth.handler.AuthenticationEntryPointImpl;
+
+/**
+ * @className: SecurityConfig
+ * @author: xiaoxu
+ * @date: 2025/11/17 13:58
+ * @Version: 1.0
+ * @description:
+ */
+@Order(1)
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    //放行 login 拦截其他的接口:
+
+    @Resource
+    private TokenAuthenticationFilter tokenAuthenticationFilter;
+
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+         http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // 放行所有登录相关接口（不管你是 /login 还是 /api/auth/login）
+                        .requestMatchers("/login", "/api/auth/login", "/auth/login", "/auth/**").permitAll()
+                        .requestMatchers("/", "/error", "/favicon.ico", "/css/**", "/js/**", "/images/**").permitAll()
+                        // 跨域预检也放行（必须！）
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+         return http.build();
+    }
+
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AccessDeniedHandlerImpl();
+    }
+
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new AuthenticationEntryPointImpl();
+    }
+
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+}

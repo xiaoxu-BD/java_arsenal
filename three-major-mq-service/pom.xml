@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rabbitmq-service</module>
+        <module>kafka-service</module>
     </modules>
 
     <properties>
