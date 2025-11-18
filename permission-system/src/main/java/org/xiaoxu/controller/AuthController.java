@@ -15,18 +15,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.auth.LoginRequest;
-import org.xiaoxu.common.excepiton.user.AuthErrorCode;
-import org.xiaoxu.common.excepiton.user.UserException;
 import org.xiaoxu.common.utils.JwtTokenProvider;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.mapper.*;
-import org.xiaoxu.pojo.dto.SystemUserDTO;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**

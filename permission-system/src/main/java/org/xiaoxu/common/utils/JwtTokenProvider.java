@@ -28,6 +28,46 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    /**
+     * 验证 token 是否有效（签名、过期时间）
+     */
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 从 token 中获取用户名
+     */
+    public String getUsername(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.getSubject();
+    }
+
+    /**
+     * 从 token 中获取权限列表
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getPermissions(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return (List<String>) claims.get("permissions");
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
