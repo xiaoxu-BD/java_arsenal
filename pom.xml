@@ -16,6 +16,8 @@
         <module>business-service</module>
         <module>three-major-mq-service</module>
         <module>permission-system</module>
+        <module>spring-practice-service</module>
+        <module>spring-ai-aly</module>
     </modules>
 
 
