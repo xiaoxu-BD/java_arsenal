@@ -1,17 +1,7 @@
-server:
-  port: 25255
-
-
-spring:
-  application:
-    name: spring-practice-service
-
-
-
 xxl:
   job:
     admin:
-      address: http://192.168.200.131:8082/xxl-job-admin/
+      address: http://192.168.200.131:8082/xxl-job-admin
     executor:
       appName: xxl-job-executor-demo
       port: 9999

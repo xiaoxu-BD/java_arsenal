@@ -20,6 +20,7 @@
         <module>rpc-service</module>
         <module>base-service</module>
         <module>rpc-api</module>
+        <module>job-service</module>
     </modules>
 
     <properties>
