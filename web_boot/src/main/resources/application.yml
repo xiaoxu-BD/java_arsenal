@@ -32,6 +32,7 @@ spring:
       port: 6379
       username: root
       password: NFTurbo666
+      database: 9
 
   application:
     name: web-boot

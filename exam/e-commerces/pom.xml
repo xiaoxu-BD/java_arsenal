@@ -3,35 +3,27 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.xiaoxu</groupId>
-        <artifactId>java_arsenal</artifactId>
+        <artifactId>exam</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>juc_demo</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>e-commerces</artifactId>
+    <packaging>pom</packaging>
 
-    <name>juc_demo</name>
+    <name>e-commerces</name>
     <url>http://maven.apache.org</url>
+    <modules>
+        <module>order-service</module>
+        <module>inventory-service</module>
+        <module>coupon-service</module>
+        <module>notification-service</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

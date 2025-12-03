@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: commerce-order
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.200.131:3306/revi_sql?
+    username: root
+    password: NFTurbo666
+  rabbitmq:
+    host: 192.168.200.131
+    port: 5672
+    username: admin
+    password: tingqq7zZ
+server:
+  port: 8520
+

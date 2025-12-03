@@ -18,6 +18,8 @@
         <module>permission-system</module>
         <module>spring-practice-service</module>
         <module>spring-ai-aly</module>
+        <module>exam</module>
+        <module>exam/e-commerces</module>
     </modules>
 
 

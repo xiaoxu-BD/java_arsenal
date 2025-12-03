@@ -5,8 +5,17 @@ server:
 spring:
   application:
     name: spring-practice-service
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/mysql2026
+    username: root
+    password: xiaoxu
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 
+#mybatis-plus:
+#  type-handlers-package: org.xiaoxu.handler
+#  configuration:
+#    map-underscore-to-camel-case: true
 
 xxl:
   job:
