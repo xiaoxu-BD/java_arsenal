@@ -267,16 +267,17 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>org.xiaoxu</groupId>
-            <artifactId>rpc-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xiaoxu</groupId>
-            <artifactId>rpc-service</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        TODO 这里去掉了Dubbo-->
+<!--        <dependency>-->
+<!--            <groupId>org.xiaoxu</groupId>-->
+<!--            <artifactId>rpc-api</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.xiaoxu</groupId>-->
+<!--            <artifactId>rpc-service</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
 
 
 

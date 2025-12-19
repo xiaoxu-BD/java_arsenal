@@ -2,6 +2,7 @@ package org.xiaoxu.web_boot;
 
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.slf4j.Logger;
@@ -10,7 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.xiaoxu.web_boot.entity.User;
+import org.xiaoxu.web_boot.service.RedisLockService;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,4 +60,35 @@ public class RedisDEM {
         User user = bucket.get();
         log.info("user: {}", user);
     }
+
+
+    @Autowired
+    private RedisLockService redisLockService;
+
+    @Test
+    public void testRedisDistributeLock() throws InterruptedException {
+        int threadCount = 3;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 1; i <= threadCount; i++) {
+            final String clientId = "Client-" + i;
+            executor.submit(() -> {
+                try {
+                    String result = redisLockService.deductStock(clientId);
+                    System.out.println(">>> " + result);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        executor.shutdown();
+    }
+
+
+
 }

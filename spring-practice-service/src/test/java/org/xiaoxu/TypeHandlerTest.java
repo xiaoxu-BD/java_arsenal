@@ -15,8 +15,5 @@ import java.sql.SQLException;
  * @description:
  */
 public class TypeHandlerTest {
-    public static void main(String[] args) throws SQLException {
-
-
-    }}
+}
 

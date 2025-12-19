@@ -1,5 +1,6 @@
 package org.xiaoxu.web_boot;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -197,4 +198,13 @@ public class CollectionTest {
         log.info("nsList:{}",nsList);
 
     }
-}
+
+
+    @Test
+    public void testDistinct(){
+       List<Integer> arrayList = Lists.newArrayList(5, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        List<Integer> listWithNoRe = arrayList.stream().distinct().collect(Collectors.toList());
+        System.out.println(listWithNoRe);
+    }
+
+    }
