@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.xiaoxu.web_boot.aop.RateLimit;
 import org.xiaoxu.web_boot.common.Result;
 import org.xiaoxu.web_boot.entity.NodeDesc;
 import org.xiaoxu.web_boot.entity.vo.UserInfo;
@@ -126,5 +127,12 @@ public class HelloController {
 
     @GetMapping("/findUserInfoById")
     public Result<?> findUserInfoById(String id) {return Result.success(userService.getByIdCard(id));
+    }
+
+
+    @GetMapping("/order")
+    @RateLimit(qps = 3)
+    public String order() {
+        return "ok";
     }
 }
