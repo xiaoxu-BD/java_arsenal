@@ -12,4 +12,12 @@
             #{menuId}
         </foreach>
     </select>
+    <select id="getPermissionCodeByUserId" resultType="java.lang.String">
+        SELECT DISTINCT sm.permission
+        FROM system_menu sm
+                 JOIN system_role_menu srm ON sm.id = srm.menu_id
+                 JOIN system_user_role ur ON srm.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+
+    </select>
 </mapper>

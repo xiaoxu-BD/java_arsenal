@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.web_boot.mapper.EmployeeProjectMapper">
+    <insert id="batchInsert">
+        <if test="projectIds != null and projectIds.size() > 0">
+            insert into employee_project(emp_id,project_id )
+            values
+            <foreach collection="projectIds" item="projectId" separator=",">
+                (#{empId},#{projectId})
+            </foreach>
+        </if>
+    </insert>
+
+
+    <select id="listByEmpIds" resultType="org.xiaoxu.web_boot.entity.domain.dto.EmployeeProjectDTO">
+        SELECT
+        ep.emp_id,
+        pr.project_name
+        FROM employee_project ep
+        JOIN project pr ON ep.project_id = pr.id
+        WHERE ep.emp_id IN
+        <foreach collection="empIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.web_boot.mapper.EmployeeMapper">
+
+
+    <select id="getAllEmployees" resultType="org.xiaoxu.web_boot.entity.domain.dto.EmployeeDTO">
+        SELECT
+            e.id,
+            e.emp_no,
+            e.emp_name,
+            d.dept_name,
+            p.position_name
+        FROM employee e
+                 JOIN department d ON e.dept_id = d.id
+                 JOIN position p ON e.position_id = p.id
+        WHERE e.status = 1
+          AND e.emp_name LIKE CONCAT('%', #{empName}, '%')
+        ORDER BY e.id DESC
+        limit 0,20
+
+    </select>
+</mapper>

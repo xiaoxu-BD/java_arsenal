@@ -36,12 +36,18 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired(required = false)
-    private UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+        if ((path.equals("/login") || path.equals("/api/auth/login") || path.equals("/auth/login") || path.contains("/api/auth/login"))
+            && "POST".equalsIgnoreCase(method)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         // 1. 从请求头获取 Token
         String authHeader = request.getHeader("Authorization");

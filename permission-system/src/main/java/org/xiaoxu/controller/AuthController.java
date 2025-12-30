@@ -5,11 +5,13 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,8 +32,9 @@ import java.util.concurrent.TimeUnit;
  * @Version: 1.0
  * @description:
  */
+@Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/auth/")
 public class AuthController {
 
 
@@ -66,12 +69,19 @@ public class AuthController {
     private RoleMenuMapper roleMenuMapper;
 
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public Result<?> login(@RequestBody LoginRequest loginRequest){
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            log.info("登陆失败");
+            log.info(e.getMessage());
+            throw new RuntimeException(e);
+        }
 
         //将认证信息存储在SecurityContextHolder中
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -88,19 +98,6 @@ public class AuthController {
         // Instead of storing the authentication object directly, store user details
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         redisTemplate.opsForValue().set(cacheKey, userDetails.getUsername(), 1, TimeUnit.HOURS);
-        
-//        // 5. 返回菜单
-//        SystemUserDTO user = userMapper.getOne(userDetails.getUsername());
-//        Assert.notNull(user,()-> new UserException(AuthErrorCode.USER_NAME_NOT_EXIST));
-        // 查询用户角色ID  通过角色id 去查询 菜单表
-        // Set<Long> roleIds = userRoleMapper.getRoleIdsByUserId(user.getId());
-        // // roleIds 去 查询 菜单表
-        // List<Long> roleids = new ArrayList<>(roleIds);
-        // Set<Long> menuIds = roleMenuMapper.getMenuIdsByRoleId(roleids);
-        // Set<String> permissionsCode =    menuMapper.getPermissionCodeByMenuIds(menuIds);
-
-
-
         return Result.success(token);
 
     }
