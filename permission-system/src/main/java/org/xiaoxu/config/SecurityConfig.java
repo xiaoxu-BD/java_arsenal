@@ -86,6 +86,11 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
 
+    /**
+     * 流程: filter(构造哪种authentication) -> Manager -> provider -> userDetailsService & passwordEncoder
+     * 注册你要使用的那个策略 daoAuthenticationProvider 决定是否认证成功
+     * @return
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();

@@ -74,6 +74,7 @@ public class AuthController {
 
         Authentication authentication = null;
         try {
+            // 调用：UsernamePasswordAuthenticationFilter
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
