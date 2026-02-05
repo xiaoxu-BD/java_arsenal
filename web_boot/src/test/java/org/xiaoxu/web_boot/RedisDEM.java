@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.xiaoxu.web_boot.entity.User;
+import org.xiaoxu.web_boot.mapper.convert.UserVOConvert;
 import org.xiaoxu.web_boot.service.RedisLockService;
 
 import java.util.concurrent.CountDownLatch;
@@ -90,5 +91,12 @@ public class RedisDEM {
     }
 
 
+    @Autowired
+    private UserVOConvert userConvertor;
+
+    @Test
+    public void testPage(){
+
+    }
 
 }

@@ -1,5 +1,6 @@
 package org.xiaoxu.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -10,6 +11,7 @@ import lombok.Data;
  * @description:
  */
 @Data
+@AllArgsConstructor
 public class Employee {
     private Long id;
     private Long departmentId;

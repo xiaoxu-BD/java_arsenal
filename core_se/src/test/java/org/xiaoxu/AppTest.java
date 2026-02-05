@@ -57,6 +57,7 @@ public class AppTest
     public void testApp4(){
 
      log.info("testApp4 {}", Week.MONDAY.getName());
+
     }
 
 

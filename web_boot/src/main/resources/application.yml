@@ -1,6 +1,7 @@
 server:
   port: 9191
 
+
 #spring:
 #  datasource:
 #    url: jdbc:mysql://localhost:3306/ito_op
@@ -36,6 +37,9 @@ spring:
 
   application:
     name: web-boot
+  mvc:
+    favicon:
+      enabled: false
 dubbo:
   protocol:
     name: dubbo

@@ -5,7 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
+import org.xiaoxu.web_boot.mapper.convert.UserConvertor;
+import org.xiaoxu.web_boot.mapper.convert.UserVOConvert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -206,5 +209,8 @@ public class CollectionTest {
         List<Integer> listWithNoRe = arrayList.stream().distinct().collect(Collectors.toList());
         System.out.println(listWithNoRe);
     }
+
+
+
 
     }
