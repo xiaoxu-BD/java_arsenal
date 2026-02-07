@@ -24,6 +24,11 @@
 | `core_se/` | Java SE 核心技术与语法练习 |
 | `juc_demo/` | 并发/JUC 相关示例 |
 | `design-mode/` | 设计模式演练 |
+| `three-major-mq-service/` | MQ 相关示例（RabbitMQ / Kafka） |
+| `spring-practice-service/` | Spring 基础能力练习（AOP、Validation 等） |
+| `spring-ai-aly/` | Spring AI（阿里云 DashScope）示例 |
+| `sharding-jdbc-mysql/` | ShardingSphere JDBC + MySQL 分库分表示例 |
+| `exam/` | 综合实战题/电商案例（多服务拆分） |
 | `docs/` | 使用指南与技术文档（如 Starter + Nacos 配置指南） |
 
 ---
@@ -61,11 +66,49 @@ cd permission-system && mvn spring-boot:run
 
 ---
 
+## 模块结构（基于子模块拆分）
+
+### common_services（自研 Starter 仓库）
+
+- `config-service`：配置类能力沉淀
+- `cache-service`：缓存能力（如 Redis 等）
+- `datasource-service`：多数据源/数据库连接能力
+- `rpc-service`：RPC 自动装配（如 Dubbo）
+- `rpc-api`：RPC 接口定义
+- `base-service`：通用基础能力
+- `job-service`：任务/调度相关能力
+
+### business-service
+
+- `demo-service`：业务示例模块（Consumer 角色）
+
+### three-major-mq-service
+
+- `rabbitmq-service`：RabbitMQ 示例
+- `kafka-service`：Kafka 示例
+
+### exam/e-commerces
+
+- `order-service`：订单服务
+- `inventory-service`：库存服务
+- `coupon-service`：优惠券服务
+- `notification-service`：通知服务
+
+---
+
 ## 权限系统示例（permission-system）
 
 - 登录：`POST /login`（JWT 签发 + Redis 缓存 token）
 - 访问资源：请求头携带 `Authorization: Bearer <token>`
 - 核心组件：`SecurityConfig`、`UserDetailsServiceImpl`、`TokenAuthenticationFilter`、`JwtTokenProvider`
+
+---
+
+## 网关与流量治理（gateway_service）
+
+- Spring Cloud Gateway 作为 API 入口
+- Sentinel 作为限流与规则管理
+- Sa-Token 作为权限认证方案（WebFlux 环境）
 
 ---
 
