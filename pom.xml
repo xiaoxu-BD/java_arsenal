@@ -21,6 +21,7 @@
         <module>exam</module>
         <module>exam/e-commerces</module>
         <module>sharding-jdbc-mysql</module>
+        <module>co_insurance</module>
     </modules>
 
 
