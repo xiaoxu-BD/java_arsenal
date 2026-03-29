@@ -12,8 +12,8 @@ spring:
 
   data:
     redis:
-      host: 192.168.200.131
-      port: 6379
-      password: NFTurbo666
+      host: 127.0.0.1
+      port: 32768
+#      password:
 server:
   port: 13690

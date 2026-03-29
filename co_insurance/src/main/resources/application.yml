@@ -2,15 +2,16 @@ server:
   port: 9191
 spring:
   datasource:
-    ds1:
-      url: jdbc:mysql://127.0.0.1:3306/2026mysql_ds
+
+#      url: jdbc:mysql://127.0.0.1:3306/2026mysql_ds
+      url: jdbc:mysql://127.0.0.1:3306/mysql2026
       username: root
       password: xiaoxu
       driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 32768
       username: root
       password:
       database: 9

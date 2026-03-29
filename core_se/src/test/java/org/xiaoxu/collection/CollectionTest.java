@@ -242,4 +242,15 @@ public class CollectionTest extends TestCase {
         //b1 等于 b2 返回 0
         System.out.println(b1.compareTo(b2));
     }
+
+    public void testReduce(){
+        List<Integer> nums = new ArrayList<>();
+        nums.add(1);
+        nums.add(1);
+        nums.add(1);
+
+        Optional<Integer> sumresult = nums.stream().reduce(Integer::sum);
+        System.out.println(sumresult.get());
+
+    }
 }

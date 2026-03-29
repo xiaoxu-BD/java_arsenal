@@ -56,8 +56,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
+//                 增加处理器机制判断 登录失败的场景
+                 .exceptionHandling(exception -> exception
+                         .authenticationEntryPoint(authenticationEntryPoint())
+                         .accessDeniedHandler(accessDeniedHandler())
+                 )
                 // 只在非公开路径上添加 token 认证过滤器
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
          return http.build();
     }
