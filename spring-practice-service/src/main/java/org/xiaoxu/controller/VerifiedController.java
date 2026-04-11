@@ -1,6 +1,6 @@
 package org.xiaoxu.controller;
 
-import com.xxl.job.core.handler.annotation.XxlJob;
+//import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +23,9 @@ public class VerifiedController {
         return "String type can be cast !";
     }
 
-    @XxlJob("demoHandler")
-    @OpLog(scene = "xxl-job")
-    public void demoHandler() {
-        log.info("xxl-job is ready ");
-    }
+//    @XxlJob("demoHandler")
+//    @OpLog(scene = "xxl-job")
+//    public void demoHandler() {
+//        log.info("xxl-job is ready ");
+//    }
 }

@@ -27,4 +27,14 @@ public class SimpleDateFormatDemo extends TestCase {
         String format = sdf.format(new Date());
         System.out.println(format);
     }
+
+    public void testisValid(){
+        boolean flag = true;
+
+        if (!flag){
+            System.out.println("黑体");
+            return;
+        }
+        System.out.println("宋体");
+    }
 }

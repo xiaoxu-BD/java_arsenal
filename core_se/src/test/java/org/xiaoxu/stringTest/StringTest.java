@@ -1,5 +1,7 @@
 package org.xiaoxu.stringTest;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,15 @@ public class StringTest extends TestCase {
         int a =1 ;
         int b = 2;
         assert a == b;
+     }
+
+
+     public void testStringJSON(){
+        String json = "{\"form\":{\"inline\":false,\"hideRequiredAsterisk\":false,\"labelPosition\":\"right\",\"size\":\"default\",\"labelWidth\":\"100px\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"formName\":\"新表单\"}";
+
+         Object parse = JSON.parse(json);
+         String prettyJson = JSON.toJSONString(parse, JSONWriter.Feature.PrettyFormat);
+         System.out.println(prettyJson);
      }
     }
 

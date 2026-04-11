@@ -10,11 +10,11 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1
       port: 32768
-      username: root
-      password:
-      database: 9
+#      username: root
+##      password:
+#      database: 9
 
   application:
     name: co_insurance
@@ -28,11 +28,20 @@ mybatis:
   #  驼峰映射
   configuration:
     map-underscore-to-camel-case: true
-
+    #    开启sql日志审查
 logging:
   level:
     root: info
+    #   日志级别
+    org.xiaoxu.mapper: debug
 
+
+
+
+mybatis-plus: # 如果用的是 MP，建议统一写在 mybatis-plus 下
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
 
 
 

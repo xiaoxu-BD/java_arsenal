@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: idea_remote_debug
+
+server:
+  port: 18081

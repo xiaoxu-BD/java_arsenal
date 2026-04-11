@@ -28,18 +28,24 @@ spring:
 #      password: root
 #      driver-class-name: com.mysql.cj.jdbc.Driver
   data:
+#    redis:
+#      host: 192.168.200.131
+#      port: 6379
+#      username: root
+#      password: NFTurbo666
+#      database: 9
     redis:
-      host: 192.168.200.131
-      port: 6379
+      host: localhost
+      port: 32768
       username: root
-      password: NFTurbo666
-      database: 9
+#      password: NFTurbo666
+#      database: 9
 
   application:
     name: web-boot
-  mvc:
-    favicon:
-      enabled: false
+#  mvc:
+#    favicon:
+#      enabled: false
 dubbo:
   protocol:
     name: dubbo
@@ -122,10 +128,16 @@ mybatis:
 #  驼峰映射
   configuration:
     map-underscore-to-camel-case: true
-
+#    开启sql日志审查
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   level:
    root: info
+#   日志级别
+   org.xiaoxu.web_boot.mapper: info
+
+
+
 
 #   分布式文件服务
 #rustfs:

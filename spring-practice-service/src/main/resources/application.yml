@@ -16,14 +16,14 @@ spring:
 #  type-handlers-package: org.xiaoxu.handler
 #  configuration:
 #    map-underscore-to-camel-case: true
-
-xxl:
-  job:
-    admin:
-      address: http://192.168.200.131:8082/xxl-job-admin/
-    executor:
-      appName: xxl-job-executor-demo
-      port: 9999
-      logPath: /data/applogs/xxl-job/jobhandler
-      logRetentionDays: 30
-    accessToken: default_token
+#测试先不管 xxl——job
+#xxl:
+#  job:
+#    admin:
+#      address: http://192.168.200.131:8082/xxl-job-admin/
+#    executor:
+#      appName: xxl-job-executor-demo
+#      port: 9999
+#      logPath: /data/applogs/xxl-job/jobhandler
+#      logRetentionDays: 30
+#    accessToken: default_token

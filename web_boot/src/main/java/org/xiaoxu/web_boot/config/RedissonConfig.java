@@ -16,16 +16,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedissonConfig{
 
+
     @Bean
-    public RedissonClient redisson(){
+    public RedissonClient redissonInLocal(){
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://192.168.200.131:6379")
-                .setPassword("NFTurbo666")
-               .setDatabase(9);
+        config.useSingleServer().setAddress("redis://localhost:32768");
 
-         config.setThreads(16);
-         config.setNettyThreads(32);
+        config.setThreads(16);
+        config.setNettyThreads(32);
 
-         return Redisson.create(config);
+        return Redisson.create(config);
     }
+//    @Bean
+//    public RedissonClient redisson(){
+//        Config config = new Config();
+//        config.useSingleServer().setAddress("redis://192.168.200.131:6379")
+//                .setPassword("NFTurbo666")
+//               .setDatabase(9);
+//
+//         config.setThreads(16);
+//         config.setNettyThreads(32);
+//
+//         return Redisson.create(config);
+//    }
+
+
 }
