@@ -21,6 +21,7 @@
         <module>base-service</module>
         <module>rpc-api</module>
         <module>job-service</module>
+        <module>file-service</module>
     </modules>
 
     <properties>

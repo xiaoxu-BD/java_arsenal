@@ -23,10 +23,7 @@ public class SystemUserDTO extends BaseEntity {
     private String password;
     private String nickname;
     private Long deptId;
-    private String postIds;
     private String email;
-    private String mobile;
     private Long sex;
-    private String avatar;
 
 }

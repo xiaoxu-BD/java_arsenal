@@ -1,10 +1,15 @@
 package org.xiaoxu.io;
 
 import cn.hutool.core.util.IdUtil;
+import com.google.common.base.Strings;
 import junit.framework.TestCase;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
+import org.junit.Assert;
+import org.junit.Test;
 import org.xiaoxu.entity.Student;
 
 import java.io.*;
@@ -24,23 +29,49 @@ import java.util.stream.Collectors;
  *
  */
 @Slf4j
-public class FileTest  extends TestCase {
+public class FileTest {
 
-
+    @Test
     public void testIO(){
-        File file = new File("E:\\dev-gradual\\毕业源代码\\附件");
+        File file = new File("E:\\dev-gradual");
 
 //        log.info("{}",file.exists());
         String[] list = file.list();
-        assert list != null;
+        Assert.assertNotNull(list);
         for (String fileName : list) {
             if (fileName.endsWith(".doc")|| fileName.endsWith(".docx")){
+                log.info("{}",fileName);
+            }
+            if (fileName.endsWith(".txt")){
                 log.info("{}",fileName);
             }
         }
     }
 
+    @Test
+    public void testFileStream(){
+//        try {
+//            InputStream fis = new FileInputStream("E:\\dev-gradual\\secret.txt");
+//            int data;
+//            while ((data = fis.read()) != -1) {
+//                log.info("data:{}",(char)data);
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
+        //通常使用: BufferedInputStream
+        try {
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("E:\\dev-gradual\\secret.txt"));
+            String strings = new String(bufferedInputStream.readAllBytes());
+            String resultWithOutBlankSpace = strings.trim();
+            log.info("result:{}",resultWithOutBlankSpace);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void testIO2() {
         File file = new File("E:\\dev-gradual\\毕业源代码\\附件");
         Set<String> collect = Arrays.stream(Objects.requireNonNull(file.list((dir, name) -> name.endsWith(".docx")))).collect(Collectors.toSet());
@@ -57,19 +88,21 @@ public class FileTest  extends TestCase {
          * 输出流 😀output 内存中东西到外部资源
          * 字符流: Reader Writer 一字符为单位读取数据:　专门处理处理文本文件，不能用于处理图片，音频，视频文件
          */
+        @Test
         public void testInput() throws IOException {
-            File file = new File("E:\\dev-gradual\\毕业源代码\\node.txt");
+            File file = new File("E:\\dev-gradual\\secret.txt");
             FileReader fileReader = new FileReader(file);
 
             int data;
             while ((data = fileReader.read()) != -1) {
-          System.out.print((char) data);
-//                log.info("data:{}",(char)data);
+//          System.out.print((char) data);
+                log.info("data:{}",(char)data);
             }
 
             fileReader.close();
 
             }
+            @Test
             public void testOutput() throws IOException {
             File file = new File("E:\\dev-gradual\\毕业源代码\\node.txt");
                 FileWriter fileWriter = new FileWriter(file);
@@ -105,7 +138,7 @@ public class FileTest  extends TestCase {
                 String extension = FilenameUtils.getExtension("node.txt");
                 log.info(" 后缀名为： {}",extension);
             }
-
+    @Test
     public void testCommonsIO2() throws IOException {
         File file = new File("output.txt");
         String content = "你好，世界";

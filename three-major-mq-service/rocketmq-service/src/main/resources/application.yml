@@ -1,0 +1,20 @@
+rocketmq:
+  name-server: 192.168.200.131:9876
+  producer:
+    group: demo-producer-group
+spring:
+  mail:
+    host: smtp.163.com
+    username: tingqq7z@163.com # 你的163账号
+    password: TLPFLhkN8gBXgfNs     # 刚才获取的16位授权码
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  application:
+    name: rocketmq-service
+
+server:
+  port: 18082
