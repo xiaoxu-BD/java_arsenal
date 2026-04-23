@@ -30,7 +30,7 @@ public class RedissonConfig{
 //    @Bean
 //    public RedissonClient redisson(){
 //        Config config = new Config();
-//        config.useSingleServer().setAddress("redis://192.168.200.131:6379")
+//        config.useSingleServer().setAddress("redis://192.168.200.128:6379")
 //                .setPassword("NFTurbo666")
 //               .setDatabase(9);
 //

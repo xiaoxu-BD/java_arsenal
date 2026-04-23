@@ -1,7 +1,7 @@
 spring:
   data:
     redis:
-      host: 192.168.200.131
+      host: 192.168.200.128
       port: 6379
       password: NFTurbo666
       ssl:
@@ -18,7 +18,7 @@ spring:
           password: NFTurbo666
           subscriptionsPerConnection: 5
           clientName: null
-          address: "redis://192.168.200.131:6379"
+          address: "redis://192.168.200.128:6379"
           subscriptionConnectionMinimumIdleSize: 1
           subscriptionConnectionPoolSize: 50
           connectionMinimumIdleSize: 24

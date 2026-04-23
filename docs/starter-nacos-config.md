@@ -79,7 +79,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: ${NACOS_ADDR:192.168.200.131:8848}
+        server-addr: ${NACOS_ADDR:192.168.200.128:8848}
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_GROUP:DEFAULT_GROUP}
         file-extension: yaml
@@ -108,7 +108,7 @@ spring:
 ```yaml
 xiaoxu:
   cache:
-    address: redis://192.168.200.131:6379
+    address: redis://192.168.200.128:6379
     password: NFTurbo666
     database: 0
     timeout: 3000
@@ -119,12 +119,12 @@ xiaoxu:
 xiaoxu:
   datasource:
     master:
-      url: jdbc:mysql://192.168.200.131:3306/permission_system
+      url: jdbc:mysql://192.168.200.128:3306/permission_system
       username: root
       password: NFTurbo666
       driver-class-name: com.mysql.cj.jdbc.Driver
     slave:
-      url: jdbc:mysql://192.168.200.131:3307/permission_system
+      url: jdbc:mysql://192.168.200.128:3307/permission_system
       username: reader
       password: reader123
 ```
