@@ -15,15 +15,16 @@ import java.util.Date;
 public class DataObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.setFieldValByNameIfNull("gmtCreate", new Date(), metaObject);
-        this.setFieldValByNameIfNull("gmtModified", new Date(), metaObject);
+        System.out.println("1111");
+        this.setFieldValByNameIfNull("createTime", new Date(), metaObject);
+        this.setFieldValByNameIfNull("modifyTime", new Date(), metaObject);
         this.setFieldValByName("deleted", 0, metaObject);
-        this.setFieldValByName("lockVersion", 0, metaObject);
+//        this.setFieldValByName("lockVersion", 0, metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName("gmtModified", new Date(), metaObject);
+        this.setFieldValByName("modifyTime", new Date(), metaObject);
     }
 
 

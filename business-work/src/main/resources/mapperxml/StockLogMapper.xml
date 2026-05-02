@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.mapper.StockLogMapper">
+  <resultMap id="BaseResultMap" type="org.xiaoxu.domain.StockLog">
+    <!--@mbg.generated-->
+    <!--@Table t_stock_log-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="before_remain" jdbcType="INTEGER" property="beforeRemain" />
+    <result column="after_remain" jdbcType="INTEGER" property="afterRemain" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, product_id, order_no, quantity, `type`, before_remain, after_remain, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_stock_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_stock_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.domain.StockLog" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_stock_log (product_id, order_no, quantity, 
+      `type`, before_remain, after_remain, 
+      create_time)
+    values (#{productId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, 
+      #{type,jdbcType=TINYINT}, #{beforeRemain,jdbcType=INTEGER}, #{afterRemain,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.domain.StockLog" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_stock_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="quantity != null">
+        quantity,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="beforeRemain != null">
+        before_remain,
+      </if>
+      <if test="afterRemain != null">
+        after_remain,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productId != null">
+        #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="beforeRemain != null">
+        #{beforeRemain,jdbcType=INTEGER},
+      </if>
+      <if test="afterRemain != null">
+        #{afterRemain,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.xiaoxu.domain.StockLog">
+    <!--@mbg.generated-->
+    update t_stock_log
+    <set>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="beforeRemain != null">
+        before_remain = #{beforeRemain,jdbcType=INTEGER},
+      </if>
+      <if test="afterRemain != null">
+        after_remain = #{afterRemain,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.xiaoxu.domain.StockLog">
+    <!--@mbg.generated-->
+    update t_stock_log
+    set product_id = #{productId,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=TINYINT},
+      before_remain = #{beforeRemain,jdbcType=INTEGER},
+      after_remain = #{afterRemain,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

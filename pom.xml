@@ -23,6 +23,7 @@
         <module>sharding-jdbc-mysql</module>
         <module>co_insurance</module>
         <module>idea-remotedebug</module>
+        <module>business-work</module>
     </modules>
 
 

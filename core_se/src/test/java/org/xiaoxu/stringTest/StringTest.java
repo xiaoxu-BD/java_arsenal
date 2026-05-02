@@ -1,12 +1,15 @@
 package org.xiaoxu.stringTest;
 
+import cn.hutool.core.lang.Assert;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
 import junit.framework.TestCase;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +25,9 @@ public class StringTest extends TestCase {
 
     private static final Logger log = LoggerFactory.getLogger(StringTest.class);
 
+
+//    StandardCharsets 标准的字符变量编码
+
     public void testString(){
         String s = "abcd";
         String s3 = "f";
@@ -32,10 +38,10 @@ public class StringTest extends TestCase {
     public void testEncode() throws UnsupportedEncodingException {
         String s = "你好";
         // 字面量 到 字节 称为 编码
-        byte[] bytes = s.getBytes("UTF-8");
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         log.info("{}",bytes);
         //字节到 字面量 解码
-        String result = new String(bytes,"UTF-8");
+        String result = new String(bytes, StandardCharsets.UTF_8);
         log.info("{}",result);
 
     }
@@ -59,6 +65,23 @@ public class StringTest extends TestCase {
          Object parse = JSON.parse(json);
          String prettyJson = JSON.toJSONString(parse, JSONWriter.Feature.PrettyFormat);
          System.out.println(prettyJson);
+     }
+
+
+
+
+     public void testStringEqualsIgnoreCase(){
+        String str = "8ui0";
+        String str2 = "8Ui0";
+         boolean result = StringUtils.equalsIgnoreCase(str, str2);
+         Assert.isTrue(result,()-> new RuntimeException("is not true"));
+     }
+
+
+
+     public void testFloor(){
+         System.out.println(Math.floor(10.9));
+         System.out.println(Math.floor(10.1));
      }
     }
 
