@@ -8,8 +8,8 @@ dubbo:
   registry:
     address: nacos://192.168.200.128:8848
     parameters:
-      namespace: 2ce8cce8-7fa1-457a-a3d0-c5b7fa07faaa
-      group: studyDubbo
+      namespace: only_s
+      group: bySelf
   application:
     name: ${spring.application.name}
     qos-enable: true

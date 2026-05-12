@@ -16,6 +16,33 @@ spring:
 
 #
 
+  rabbitmq:
+    host: 192.168.200.128
+    port: 5672
+    username: admin
+    password: 123456
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+  data:
+    redis:
+      host: 192.168.200.128
+      port: 6379
+      password: NFTurbo666
+      database: 9
+  mail:
+    host: smtp.163.com
+    username: tingqq7z@163.com
+    password: QCciCnaKHLGiMePg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 mybatis-plus:
   mapper-locations: classpath:mapperxml/*.xml
 #  #  驼峰映射
