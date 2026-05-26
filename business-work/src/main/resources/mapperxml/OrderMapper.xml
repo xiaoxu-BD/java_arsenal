@@ -11,10 +11,12 @@
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <!-- XML 方式注册 TypeHandler：通过 typeHandler 属性指定全限定类名 -->
+    <result column="status" property="status" typeHandler="org.xiaoxu.handler.OrderStatusTypeHandler"/>
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, product_id, user_Id, order_no, product_name, create_time, modify_time
+    id, product_id, user_Id, order_no, product_name, create_time, modify_time, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -28,15 +30,6 @@
     delete from t_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.domain.Order" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into t_order (product_id, user_Id, order_no, 
-      product_name, create_time, modify_time
-      )
-    values (#{productId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, 
-      #{productName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.xiaoxu.domain.Order" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into t_order
@@ -59,6 +52,9 @@
       <if test="modifyTime != null">
         modify_time,
       </if>
+      <if test="status != null">
+        status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="productId != null">
@@ -78,6 +74,9 @@
       </if>
       <if test="modifyTime != null">
         #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status, typeHandler=org.xiaoxu.handler.OrderStatusTypeHandler},
       </if>
     </trim>
   </insert>
@@ -103,18 +102,10 @@
       <if test="modifyTime != null">
         modify_time = #{modifyTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="status != null">
+        status = #{status, typeHandler=org.xiaoxu.handler.OrderStatusTypeHandler},
+      </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="org.xiaoxu.domain.Order">
-    <!--@mbg.generated-->
-    update t_order
-    set product_id = #{productId,jdbcType=BIGINT},
-      user_Id = #{userId,jdbcType=BIGINT},
-      order_no = #{orderNo,jdbcType=VARCHAR},
-      product_name = #{productName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

@@ -1,13 +1,19 @@
 package org.xiaoxu.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.xiaoxu.enums.OrderStatusEnum;
+import org.xiaoxu.handler.OrderStatusTypeHandler;
 
 import java.util.Date;
 
-@TableName("t_order")
+// autoResultMap = true 是关键！
+// 不加的话，MyBatis-Plus 内置方法（selectById, insert 等）会忽略 @TableField 中的 typeHandler 配置
+// 因为 MyBatis-Plus 默认用简单的 ResultMap，不会为 typeHandler 生成自定义映射
+@TableName(value = "t_order", autoResultMap = true)
 public class Order {
     @NotNull(message = "不能为null")
     private Long id;
@@ -33,6 +39,19 @@ public class Order {
     private Date createTime;
 
     private Date modifyTime;
+
+    /**
+     * 订单状态（枚举类型）
+     *
+     * typeHandler 指定 MyBatis 用哪个 TypeHandler 来做 Java枚举 ↔ 数据库Integer 的转换：
+     * - 写入时：调用 TypeHandler.setNonNullParameter()，将枚举的 code 存入数据库
+     * - 读取时：调用 TypeHandler.getNullableResult()，将数据库的 Integer 转为枚举对象
+     *
+     * 这个注解只在 autoResultMap = true 时才生效（针对 MyBatis-Plus 内置方法）
+     * 对于自定义 XML 查询，需要在 resultMap 中单独声明 typeHandler
+     */
+    @TableField(typeHandler = OrderStatusTypeHandler.class)
+    private OrderStatusEnum status;
 
     public Long getId() {
         return id;
@@ -88,5 +107,13 @@ public class Order {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public OrderStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatusEnum status) {
+        this.status = status;
     }
 }

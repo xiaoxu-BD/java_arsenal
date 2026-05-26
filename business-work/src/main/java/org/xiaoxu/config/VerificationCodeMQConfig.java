@@ -20,6 +20,7 @@ public class VerificationCodeMQConfig {
     public static final String DEAD_QUEUE = "verify.code.dead.queue";
     public static final String DEAD_ROUTING_KEY = "verify.code.dead";
 
+//    声明交换机类型
     @Bean
     public DirectExchange verifyCodeExchange() {
         return new DirectExchange(EXCHANGE, true, false);

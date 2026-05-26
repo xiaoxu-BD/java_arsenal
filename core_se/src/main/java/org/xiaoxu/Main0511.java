@@ -10,9 +10,23 @@ public class Main0511 {
 
         String name = "11";
 
-        Map<String, String> allMap = getAllMap(name);
+     /*   Map<String, String> allMap = getAllMap(name);
 
-        System.out.println(allMap.get("getName"));
+        System.out.println(allMap.get("getName"));*/
+        char ch  = '泉';
+        System.out.println(ch);
+
+
+
+        try
+        {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        }catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+//        NoSuchMethodException
+
 
     }
 

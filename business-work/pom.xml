@@ -61,11 +61,36 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
     </dependencies>
 
 
     <build>
     <plugins>
+        <!--引入mybatis Generator 生成mybatis-->
+        <plugin>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-maven-plugin</artifactId>
+            <version>1.4.2</version>
+            <configuration>
+                <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
+                <overwrite>true</overwrite>
+                <verbose>true</verbose>
+            </configuration>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.33</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>

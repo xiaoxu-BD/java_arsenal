@@ -15,7 +15,6 @@ import java.util.Date;
 public class DataObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        System.out.println("1111");
         this.setFieldValByNameIfNull("createTime", new Date(), metaObject);
         this.setFieldValByNameIfNull("modifyTime", new Date(), metaObject);
         this.setFieldValByName("deleted", 0, metaObject);

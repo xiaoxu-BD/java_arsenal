@@ -19,7 +19,6 @@
         <module>spring-practice-service</module>
         <module>spring-ai-aly</module>
         <module>exam</module>
-        <module>exam/e-commerces</module>
         <module>sharding-jdbc-mysql</module>
         <module>co_insurance</module>
         <module>idea-remotedebug</module>
@@ -204,13 +203,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-            <executions>
+<!--            <executions>
                 <execution>
                     <goals>
-                        <goal>repackage</goal> <!-- 告诉 Maven 在 package 时重新打包 -->
+                        <goal>repackage</goal> &lt;!&ndash; 告诉 Maven 在 package 时重新打包 &ndash;&gt;
                     </goals>
                 </execution>
-            </executions>
+            </executions>-->
             </plugin>
 
             <plugin>

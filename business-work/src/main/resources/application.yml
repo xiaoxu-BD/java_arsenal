@@ -47,6 +47,7 @@ mybatis-plus:
   mapper-locations: classpath:mapperxml/*.xml
 #  #  驼峰映射
   configuration:
+#    如果关闭映射，就不能查询到到了吧
     map-underscore-to-camel-case: true
     #    开启sql日志审查
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
