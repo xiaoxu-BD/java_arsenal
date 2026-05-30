@@ -4,6 +4,6 @@
 
 
     <select id="getRoleIdsByUserId" resultType="java.lang.Long">
-    select role_id from system_user_role where user_id = #{userId}
+    select role_id from system_user_role where user_id = #{userId} and deleted = '0'
     </select>
 </mapper>

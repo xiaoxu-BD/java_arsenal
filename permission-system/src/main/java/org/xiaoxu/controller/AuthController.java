@@ -1,31 +1,26 @@
 package org.xiaoxu.controller;
 
-import cn.hutool.core.lang.Assert;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.auth.LoginRequest;
-import org.xiaoxu.common.utils.JwtTokenProvider;
+import org.xiaoxu.auth.LoginUser;
+import org.xiaoxu.common.utils.TokenProvider;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.mapper.*;
 
-import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 /**
  * @className: AuthController
@@ -50,11 +45,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private TokenProvider tokenProvider;
 
 
     @Autowired
@@ -85,18 +76,16 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
-            String username = loginRequest.getUsername();
+            LoginUser loginUser = (LoginUser) authentication.getPrincipal();
             List<String> permissions = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .toList();
-            String token = jwtTokenProvider.createToken(username, permissions);
+            String token = tokenProvider.createToken(loginUser);
 
-            // 4. 缓存用户信息（Redis）
-            String cacheKey = "login:token:" + token;
-            // Instead of storing the authentication object directly, store user details
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            redisTemplate.opsForValue().set(cacheKey, userDetails.getUsername(), 1, TimeUnit.HOURS);
-            return Result.success(token);
+            Map<String, Object> loginData = new HashMap<>();
+            loginData.put("token", token);
+            loginData.put("permissions", permissions);
+            return Result.success(loginData);
         } catch (BadCredentialsException e) {
             return Result.error(401, "用户名或密码错误");
         } catch (UsernameNotFoundException e) {
@@ -108,5 +97,31 @@ public class AuthController {
     }
 
 
+    @GetMapping("/getUserInfo")
+    public Result<?> getUserInfo(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Result.error(401, "未登录");
+        }
+        Object userId = request.getAttribute("userId");
+        String username = (String) authentication.getPrincipal();
+        List<String> permissions = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", username);
+        data.put("userId", userId);
+        data.put("permissions", permissions);
+        return Result.success(data);
+    }
+
+    @PostMapping("/logout")
+    public Result<?> logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            tokenProvider.removeToken(token.substring(7));
+        }
+        return Result.success();
+    }
 
 }

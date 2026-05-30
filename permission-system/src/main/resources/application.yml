@@ -5,15 +5,17 @@ spring:
 
   datasource:
     username: root
-    url: jdbc:mysql:///2026mysql_ds
-    password: xiaoxu
+    url: jdbc:mysql://192.168.200.128/2026mysql_ds
+    password: NFTurbo666
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
   data:
     redis:
-      host: 127.0.0.1
-      port: 32768
+      host: 192.168.200.128
+      port: 6379
+      password: NFTurbo666
+      database: 6
 #      password:
 server:
   port: 13690

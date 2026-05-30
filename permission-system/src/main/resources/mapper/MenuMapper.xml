@@ -4,9 +4,10 @@
 
 
     <select id="getPermissionCodeByMenuIds" resultType="java.lang.String">
-        SELECT permission_code
+        SELECT permission
         FROM system_menu
-        WHERE id IN
+        WHERE deleted = '0'
+        AND id IN
         <foreach item="menuIds" index="menuId" collection="list"
                  open="(" separator="," close=")">
             #{menuId}
@@ -15,9 +16,9 @@
     <select id="getPermissionCodeByUserId" resultType="java.lang.String">
         SELECT DISTINCT sm.permission
         FROM system_menu sm
-                 JOIN system_role_menu srm ON sm.id = srm.menu_id
-                 JOIN system_user_role ur ON srm.role_id = ur.role_id
+                 JOIN system_role_menu srm ON sm.id = srm.menu_id AND srm.deleted = '0'
+                 JOIN system_user_role ur ON srm.role_id = ur.role_id AND ur.deleted = '0'
         WHERE ur.user_id = #{userId}
-
+          AND sm.deleted = '0'
     </select>
 </mapper>

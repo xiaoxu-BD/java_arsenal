@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Read(//mnt/e/programs/**)",
+      "Bash(javac core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)",
+      "Bash(java -cp /tmp/iter_out org.xiaoxu.se.foundation.IterableAndIterator)",
+      "Bash(javac -encoding UTF-8 core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)"
+    ]
+  }
+}

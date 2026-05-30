@@ -6,7 +6,8 @@
     <select id="getMenuIdsByRoleId" resultType="java.lang.Long">
         SELECT menu_id
         from system_role_menu
-        where role_id  in
+        where deleted = '0'
+        and role_id in
         <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
             #{roleId}
         </foreach>

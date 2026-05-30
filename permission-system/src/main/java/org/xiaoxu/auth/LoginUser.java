@@ -1,5 +1,7 @@
 package org.xiaoxu.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,18 +14,20 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginUser implements UserDetails {
     private Long userId;
     private String username;
     private String password;
     private Set<String> permissions;
-    
-    // 构造方法、getter/setter...
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return permissions.stream()
+                .filter(p -> p != null && !p.isBlank())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
