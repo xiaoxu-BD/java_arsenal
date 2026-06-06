@@ -48,10 +48,10 @@
             <version>1.0</version>
         </dependency>
 <!--4.11测试先注释xxl——job-->
-<!--        <dependency>-->
-<!--            <groupId>org.xiaoxu</groupId>-->
-<!--            <artifactId>job-service</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.xiaoxu</groupId>
+            <artifactId>job-service</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

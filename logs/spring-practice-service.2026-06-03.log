@@ -1,0 +1,129 @@
+2026-06-03 07:58:13.801 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-03 07:58:13.856 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 24500 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-03 07:58:13.856 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-03 07:58:15.282 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-03 07:58:15.293 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-03 07:58:15.296 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-03 07:58:15.296 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-03 07:58:15.390 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-03 07:58:15.390 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1474 ms
+2026-06-03 07:58:16.285 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-03 07:58:16.310 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-03 07:58:16.319 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 3.229 seconds (process running for 4.797)
+2026-06-03 07:58:53.511 [http-nio-25255-exec-1] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03 07:58:53.511 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-03 07:58:53.513 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-06-03 07:58:53.520 [http-nio-25255-exec-1] [3bf8b62e] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /test
+2026-06-03 07:58:53.540 [http-nio-25255-exec-1] [3bf8b62e] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.test
+2026-06-03 07:58:53.816 [http-nio-25255-exec-1] [3bf8b62e] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-03 07:58:54.290 [http-nio-25255-exec-1] [3bf8b62e] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@42818188
+2026-06-03 07:58:54.292 [http-nio-25255-exec-1] [3bf8b62e] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-03 07:58:54.355 [http-nio-25255-exec-1] [3bf8b62e] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.test, 场景:真的在测试, 耗时:176ms
+2026-06-03 07:58:54.380 [http-nio-25255-exec-1] [3bf8b62e] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 07:58:54.381 [http-nio-25255-exec-1] [3bf8b62e] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=841ms
+2026-06-03 07:58:54.382 [http-nio-25255-exec-1] [3bf8b62e] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=862ms
+2026-06-03 07:58:54.864 [http-nio-25255-exec-3] [af89e8d0] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /favicon.ico
+2026-06-03 07:58:54.874 [http-nio-25255-exec-3] [af89e8d0] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=5ms
+2026-06-03 07:58:54.874 [http-nio-25255-exec-3] [af89e8d0] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=10ms
+2026-06-03 07:58:54.881 [http-nio-25255-exec-3] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: BasicErrorController.error
+2026-06-03 07:58:54.939 [http-nio-25255-exec-3] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 07:58:54.939 [http-nio-25255-exec-3] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=58ms
+2026-06-03 08:04:08.599 [http-nio-25255-exec-2] [aad757eb] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /test
+2026-06-03 08:04:08.599 [http-nio-25255-exec-2] [aad757eb] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.test
+2026-06-03 08:04:08.605 [http-nio-25255-exec-2] [aad757eb] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.test, 场景:真的在测试, 耗时:0ms
+2026-06-03 08:04:08.606 [http-nio-25255-exec-2] [aad757eb] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 08:04:08.606 [http-nio-25255-exec-2] [aad757eb] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=7ms
+2026-06-03 08:04:08.606 [http-nio-25255-exec-2] [aad757eb] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=7ms
+2026-06-03 08:05:19.598 [http-nio-25255-exec-4] [b346b0a5] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /test
+2026-06-03 08:05:19.599 [http-nio-25255-exec-4] [b346b0a5] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.test
+2026-06-03 08:05:19.609 [http-nio-25255-exec-4] [b346b0a5] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.test, 场景:真的在测试, 耗时:0ms
+2026-06-03 08:05:19.609 [http-nio-25255-exec-4] [b346b0a5] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 08:05:19.609 [http-nio-25255-exec-4] [b346b0a5] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=11ms
+2026-06-03 08:05:19.609 [http-nio-25255-exec-4] [b346b0a5] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=11ms
+2026-06-03 08:06:19.565 [http-nio-25255-exec-5] [ee18902b] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /test
+2026-06-03 08:06:19.565 [http-nio-25255-exec-5] [ee18902b] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.test
+2026-06-03 08:06:19.574 [http-nio-25255-exec-5] [ee18902b] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.test, 场景:真的在测试, 耗时:0ms
+2026-06-03 08:06:19.575 [http-nio-25255-exec-5] [ee18902b] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 08:06:19.575 [http-nio-25255-exec-5] [ee18902b] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=10ms
+2026-06-03 08:06:19.575 [http-nio-25255-exec-5] [ee18902b] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=10ms
+2026-06-03 08:09:00.850 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-03 08:09:00.860 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-06-03 20:57:47.789 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-03 20:57:47.863 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 17524 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-03 20:57:47.865 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-03 20:57:49.292 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-03 20:57:49.303 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-03 20:57:49.305 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-03 20:57:49.305 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-03 20:57:49.397 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-03 20:57:49.397 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1470 ms
+2026-06-03 20:57:50.262 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-03 20:57:50.286 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-03 20:57:50.294 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 3.344 seconds (process running for 4.715)
+2026-06-03 20:58:55.535 [http-nio-25255-exec-1] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03 20:58:55.535 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-03 20:58:55.537 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-06-03 20:58:55.545 [http-nio-25255-exec-1] [087d36f1] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /thread/unsafe
+2026-06-03 20:58:55.567 [http-nio-25255-exec-1] [087d36f1] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.testUnsafe
+2026-06-03 20:58:55.641 [http-nio-25255-exec-1] [087d36f1] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 20:58:55.642 [http-nio-25255-exec-1] [087d36f1] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=75ms
+2026-06-03 20:58:55.642 [http-nio-25255-exec-1] [087d36f1] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=97ms
+2026-06-03 21:00:15.816 [http-nio-25255-exec-5] [258fca84] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /thread/safe
+2026-06-03 21:00:15.817 [http-nio-25255-exec-5] [258fca84] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.testSafe
+2026-06-03 21:00:15.821 [http-nio-25255-exec-5] [258fca84] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 21:00:15.821 [http-nio-25255-exec-5] [258fca84] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=4ms
+2026-06-03 21:00:15.821 [http-nio-25255-exec-5] [258fca84] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=4ms
+2026-06-03 21:18:23.974 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-03 21:18:24.031 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 43296 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-03 21:18:24.033 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-03 21:18:25.436 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-03 21:18:25.448 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-03 21:18:25.450 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-03 21:18:25.451 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-03 21:18:25.538 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-03 21:18:25.538 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1441 ms
+2026-06-03 21:18:26.466 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-03 21:18:26.493 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-03 21:18:26.503 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 3.213 seconds (process running for 4.317)
+2026-06-03 21:20:15.815 [http-nio-25255-exec-1] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03 21:20:15.815 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-03 21:20:15.816 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-06-03 21:20:15.822 [http-nio-25255-exec-1] [380ea589] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /factory-bean/
+2026-06-03 21:20:15.865 [http-nio-25255-exec-1] [380ea589] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=9ms
+2026-06-03 21:20:15.865 [http-nio-25255-exec-1] [380ea589] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=41ms
+2026-06-03 21:20:15.875 [http-nio-25255-exec-1] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: BasicErrorController.error
+2026-06-03 21:20:15.948 [http-nio-25255-exec-1] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 21:20:15.948 [http-nio-25255-exec-1] [] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=73ms
+2026-06-03 21:20:30.298 [http-nio-25255-exec-3] [56b6c0d7] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | GET /factory-bean
+2026-06-03 21:20:30.298 [http-nio-25255-exec-3] [56b6c0d7] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.testFactoryBean
+2026-06-03 21:20:30.301 [http-nio-25255-exec-3] [56b6c0d7] INFO  o.x.factory.HttpClientFactoryBean - FactoryBean.getObject() 被调用，正在创建HttpClient...
+2026-06-03 21:20:30.522 [http-nio-25255-exec-3] [56b6c0d7] INFO  o.x.factory.HttpClientFactoryBean - HttpClient 创建完成: jdk.internal.net.http.HttpClientImpl@73262bb5(1)
+2026-06-03 21:20:30.528 [http-nio-25255-exec-3] [56b6c0d7] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 21:20:30.528 [http-nio-25255-exec-3] [56b6c0d7] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=230ms
+2026-06-03 21:20:30.528 [http-nio-25255-exec-3] [56b6c0d7] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=230ms
+2026-06-03 21:34:23.501 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-03 21:34:23.555 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 37344 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-03 21:34:23.556 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-03 21:34:24.817 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-03 21:34:24.828 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-03 21:34:24.829 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-03 21:34:24.831 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-03 21:34:24.916 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-03 21:34:24.916 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1299 ms
+2026-06-03 21:34:25.714 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-03 21:34:25.739 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-03 21:34:25.748 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 2.899 seconds (process running for 4.067)
+2026-06-03 21:34:32.863 [http-nio-25255-exec-1] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03 21:34:32.863 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-03 21:34:32.864 [http-nio-25255-exec-1] [] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-06-03 21:34:32.871 [http-nio-25255-exec-1] [bd550471] INFO  org.xiaoxu.filter.RequestLogFilter - 请求进入 | POST /auth/login
+2026-06-03 21:34:32.893 [http-nio-25255-exec-1] [bd550471] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】前置 | 目标方法: VerifiedController.auth
+2026-06-03 21:34:33.332 [http-nio-25255-exec-1] [bd550471] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-03 21:34:33.754 [http-nio-25255-exec-1] [bd550471] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2fa76550
+2026-06-03 21:34:33.773 [http-nio-25255-exec-1] [bd550471] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-03 21:34:33.838 [http-nio-25255-exec-1] [bd550471] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.auth, 场景:no condition test RequestBody, 耗时:250ms
+2026-06-03 21:34:33.892 [http-nio-25255-exec-1] [bd550471] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】中置 | Controller已执行，视图渲染前
+2026-06-03 21:34:33.893 [http-nio-25255-exec-1] [bd550471] INFO  o.x.interceptor.TimeCostInterceptor - 【2-Interceptor】后置 | 视图渲染完成 | 耗时=1000ms
+2026-06-03 21:34:33.893 [http-nio-25255-exec-1] [bd550471] INFO  org.xiaoxu.filter.RequestLogFilter - 请求结束 | 耗时=1021ms
+2026-06-03 21:36:46.236 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-03 21:36:46.248 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

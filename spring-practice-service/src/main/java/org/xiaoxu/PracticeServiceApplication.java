@@ -1,5 +1,6 @@
 package org.xiaoxu;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,34 +16,12 @@ import org.xiaoxu.component.TaskService2;
  */
 @SpringBootApplication
 @EnableScheduling
-public class PracticeServiceApplication implements CommandLineRunner
-{
-
-//    @Autowired
-//    private MyService myService;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+@MapperScan("org.xiaoxu.mapper")
+public class PracticeServiceApplication {
 
 
-    @Autowired
-    private TaskService2 taskService;
-
-    public static void main( String[] args )
-    {
+    public static void main(String[] args) {
         SpringApplication.run(PracticeServiceApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-
-        System.out.println("test proxy");
-
-        System.out.println("type is 类型" + taskService.getClass().getName());
-        taskService.executeTask();;
-
-        System.out.println("is over");
-
-
-    }
 }

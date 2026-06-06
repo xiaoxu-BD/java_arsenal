@@ -1,0 +1,95 @@
+2026-06-06 09:51:22.679 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-06 09:51:22.733 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 24880 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-06 09:51:22.734 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-06 09:51:24.734 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-06 09:51:24.757 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-06 09:51:24.760 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-06 09:51:24.761 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-06 09:51:24.899 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-06 09:51:24.899 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1881 ms
+2026-06-06 09:51:26.193 [main] [] INFO  c.x.job.core.executor.XxlJobExecutor - >>>>>>>>>>> xxl-job register jobhandler success, name:demoHandler, jobHandler:com.xxl.job.core.handler.impl.MethodJobHandler@44485db[class org.xiaoxu.controller.VerifiedController$$SpringCGLIB$$0#demoHandler]
+2026-06-06 09:51:26.193 [main] [] INFO  o.x.factory.HttpClientFactoryBean - FactoryBean.getObject() 被调用，正在创建HttpClient...
+2026-06-06 09:51:26.363 [main] [] INFO  o.x.factory.HttpClientFactoryBean - HttpClient 创建完成: jdk.internal.net.http.HttpClientImpl@12421766(1)
+2026-06-06 09:51:26.420 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-06 09:51:26.441 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-06 09:51:26.454 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 4.457 seconds (process running for 6.118)
+2026-06-06 09:51:26.878 [Thread-4] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 9999
+2026-06-06 09:53:25.107 [Thread-4] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server stop.
+2026-06-06 09:53:25.115 [xxl-job, executor ExecutorRegistryThread] [] INFO  c.x.j.c.t.ExecutorRegistryThread - >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='xxl-job-executor-demo', registryValue='http://192.168.1.2:9999/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+2026-06-06 09:53:25.116 [xxl-job, executor ExecutorRegistryThread] [] INFO  c.x.j.c.t.ExecutorRegistryThread - >>>>>>>>>>> xxl-job, executor registry thread destroy.
+2026-06-06 09:53:25.116 [SpringApplicationShutdownHook] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server destroy success.
+2026-06-06 09:53:25.116 [xxl-job, executor JobLogFileCleanThread] [] INFO  c.x.j.c.thread.JobLogFileCleanThread - >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+2026-06-06 09:53:25.116 [xxl-job, executor TriggerCallbackThread] [] INFO  c.x.j.c.thread.TriggerCallbackThread - >>>>>>>>>>> xxl-job, executor callback thread destroy.
+2026-06-06 09:53:25.116 [Thread-3] [] INFO  c.x.j.c.thread.TriggerCallbackThread - >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+2026-06-06 09:53:29.286 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-06 09:53:29.346 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Starting PracticeServiceApplication using Java 17.0.12 with PID 33144 (E:\programs\java_arsenal\spring-practice-service\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-06 09:53:29.346 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-06 09:53:30.880 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 25255 (http)
+2026-06-06 09:53:30.890 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-25255"]
+2026-06-06 09:53:30.899 [main] [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-06 09:53:30.899 [main] [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-06 09:53:30.989 [main] [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-06 09:53:30.991 [main] [] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1298 ms
+2026-06-06 09:53:32.059 [main] [] INFO  c.x.job.core.executor.XxlJobExecutor - >>>>>>>>>>> xxl-job register jobhandler success, name:demoHandler, jobHandler:com.xxl.job.core.handler.impl.MethodJobHandler@1f6f0fe2[class org.xiaoxu.controller.VerifiedController$$SpringCGLIB$$0#demoHandler]
+2026-06-06 09:53:32.059 [main] [] INFO  o.x.factory.HttpClientFactoryBean - FactoryBean.getObject() 被调用，正在创建HttpClient...
+2026-06-06 09:53:32.231 [main] [] INFO  o.x.factory.HttpClientFactoryBean - HttpClient 创建完成: jdk.internal.net.http.HttpClientImpl@2e44cb34(1)
+2026-06-06 09:53:32.292 [main] [] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-25255"]
+2026-06-06 09:53:32.312 [main] [] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 25255 (http) with context path ''
+2026-06-06 09:53:32.324 [main] [] INFO  o.xiaoxu.PracticeServiceApplication - Started PracticeServiceApplication in 3.785 seconds (process running for 4.963)
+2026-06-06 09:53:32.717 [Thread-4] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server start success, nettype = class com.xxl.job.core.server.EmbedServer, port = 9999
+2026-06-06 09:53:56.983 [xxl-job, EmbedServer bizThreadPool-1830932367] [] INFO  c.x.job.core.executor.XxlJobExecutor - >>>>>>>>>>> xxl-job regist JobThread success, jobId:1, handler:com.xxl.job.core.handler.impl.MethodJobHandler@1f6f0fe2[class org.xiaoxu.controller.VerifiedController$$SpringCGLIB$$0#demoHandler]
+2026-06-06 09:53:56.997 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:53:57.264 [xxl-job, JobThread-1-1780710836983] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-06 09:53:57.602 [xxl-job, JobThread-1-1780710836983] [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@550864d6
+2026-06-06 09:53:57.605 [xxl-job, JobThread-1-1780710836983] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-06 09:53:57.656 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:169ms
+2026-06-06 09:54:36.999 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:37.023 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:37.996 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:38.002 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:39.012 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:39.019 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:39.995 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:40.001 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:41.013 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:41.021 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:42.012 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:42.019 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:43.012 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:43.023 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:2ms
+2026-06-06 09:54:44.011 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:44.019 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:44.994 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:45.001 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:45.993 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:46.000 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:46.992 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:47.002 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:3ms
+2026-06-06 09:54:48.011 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:48.020 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:54:48.995 [xxl-job, JobThread-1-1780710836983] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:54:49.003 [xxl-job, JobThread-1-1780710836983] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:1ms
+2026-06-06 09:56:22.255 [xxl-job, JobThread-1-1780710836983] [] INFO  com.xxl.job.core.thread.JobThread - >>>>>>>>>>> xxl-job JobThread stoped, hashCode:Thread[xxl-job, JobThread-1-1780710836983,10,main]
+2026-06-06 09:56:59.996 [xxl-job, EmbedServer bizThreadPool-762769620] [] INFO  c.x.job.core.executor.XxlJobExecutor - >>>>>>>>>>> xxl-job regist JobThread success, jobId:1, handler:com.xxl.job.core.handler.impl.MethodJobHandler@1f6f0fe2[class org.xiaoxu.controller.VerifiedController$$SpringCGLIB$$0#demoHandler]
+2026-06-06 09:56:59.998 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:57:00.027 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 09:57:59.998 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:58:00.007 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:1ms
+2026-06-06 09:59:00.017 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 09:59:00.023 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 10:00:00.003 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 10:00:00.013 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 10:01:00.003 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 10:01:00.011 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 10:02:00.008 [xxl-job, JobThread-1-1780711019996] [] INFO  o.x.controller.VerifiedController - xxl-job is ready 
+2026-06-06 10:02:00.020 [xxl-job, JobThread-1-1780711019996] [] INFO  org.xiaoxu.aop.OpLogAspect - [操作日志]方法:VerifiedController.demoHandler, 场景:xxl-job, 耗时:0ms
+2026-06-06 10:03:33.275 [xxl-job, JobThread-1-1780711019996] [] INFO  com.xxl.job.core.thread.JobThread - >>>>>>>>>>> xxl-job JobThread stoped, hashCode:Thread[xxl-job, JobThread-1-1780711019996,10,main]
+2026-06-06 10:11:48.302 [Thread-4] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server stop.
+2026-06-06 10:11:48.309 [xxl-job, executor ExecutorRegistryThread] [] INFO  c.x.j.c.t.ExecutorRegistryThread - >>>>>>>>>>> xxl-job registry-remove success, registryParam:RegistryParam{registryGroup='EXECUTOR', registryKey='xxl-job-executor', registryValue='http://192.168.1.2:9999/'}, registryResult:ReturnT [code=200, msg=null, content=null]
+2026-06-06 10:11:48.309 [xxl-job, executor ExecutorRegistryThread] [] INFO  c.x.j.c.t.ExecutorRegistryThread - >>>>>>>>>>> xxl-job, executor registry thread destroy.
+2026-06-06 10:11:48.309 [SpringApplicationShutdownHook] [] INFO  com.xxl.job.core.server.EmbedServer - >>>>>>>>>>> xxl-job remoting server destroy success.
+2026-06-06 10:11:48.309 [xxl-job, executor JobLogFileCleanThread] [] INFO  c.x.j.c.thread.JobLogFileCleanThread - >>>>>>>>>>> xxl-job, executor JobLogFileCleanThread thread destroy.
+2026-06-06 10:11:48.309 [xxl-job, executor TriggerCallbackThread] [] INFO  c.x.j.c.thread.TriggerCallbackThread - >>>>>>>>>>> xxl-job, executor callback thread destroy.
+2026-06-06 10:11:48.309 [Thread-3] [] INFO  c.x.j.c.thread.TriggerCallbackThread - >>>>>>>>>>> xxl-job, executor retry callback thread destroy.
+2026-06-06 10:11:48.312 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-06 10:11:48.325 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

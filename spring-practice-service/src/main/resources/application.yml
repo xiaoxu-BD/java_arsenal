@@ -6,9 +6,9 @@ spring:
   application:
     name: spring-practice-service
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/mysql2026
+    url: jdbc:mysql://192.168.200.128:3306/spring_mysql
     username: root
-    password: xiaoxu
+    password: NFTurbo666
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
@@ -16,14 +16,14 @@ spring:
 #  type-handlers-package: org.xiaoxu.handler
 #  configuration:
 #    map-underscore-to-camel-case: true
-#测试先不管 xxl——job
-#xxl:
-#  job:
-#    admin:
-#      address: http://192.168.200.128:8082/xxl-job-admin/
-#    executor:
-#      appName: xxl-job-executor-demo
-#      port: 9999
-#      logPath: /data/applogs/xxl-job/jobhandler
-#      logRetentionDays: 30
-#    accessToken: default_token
+
+xxl:
+  job:
+    admin:
+      address: http://192.168.200.128:8082/xxl-job-admin/
+    executor:
+      appName:  xxl-job-executor
+      port: 9999
+      logPath: /data/applogs/xxl-job/jobhandler
+      logRetentionDays: 30
+    accessToken: default_token
