@@ -6,10 +6,15 @@ spring:
   application:
     name: spring-practice-service
   datasource:
-    url: jdbc:mysql://192.168.200.128:3306/spring_mysql
+    url: jdbc:mysql://192.168.200.128:3306/practical_review
     username: root
     password: NFTurbo666
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      database: 9
+      host: 192.168.200.128
+      password: NFTurbo666
 
 
 #mybatis-plus:

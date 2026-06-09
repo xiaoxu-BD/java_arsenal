@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MyScheduledTasks {
-   private static final Logger LOGGER =   LoggerFactory.getLogger(MyScheduledTasks.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyScheduledTasks.class);
 
     // 1. 固定频率（每5秒执行一次，不管上一次是否执行完）
 //    @Scheduled(fixedRate = 5000)
@@ -29,4 +29,5 @@ public class MyScheduledTasks {
         LOGGER.info("fixedDelay 执行了...");
     }
 
+    // 3. 持久化签到记录已迁移到 XXL-Job handler，见 SignJobHandler.persistSignIns
 }

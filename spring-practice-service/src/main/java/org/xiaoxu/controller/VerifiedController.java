@@ -113,7 +113,7 @@ public class VerifiedController {
     @XxlJob("demoHandler")
     @OpLog(scene = "xxl-job")
     public void demoHandler() {
-        log.info("xxl-job is ready ");
+        log.info("xxl job is ready");
     }
     @OpLog(scene = "no condition test RequestBody")
     @PostMapping("/auth/login")
