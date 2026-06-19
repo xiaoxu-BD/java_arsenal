@@ -5,7 +5,10 @@
       "Read(//mnt/e/programs/**)",
       "Bash(javac core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)",
       "Bash(java -cp /tmp/iter_out org.xiaoxu.se.foundation.IterableAndIterator)",
-      "Bash(javac -encoding UTF-8 core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)"
+      "Bash(javac -encoding UTF-8 core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)",
+      "Bash(javac -d /tmp/tree_out core_se/src/main/java/org/xiaoxu/tree/TreeNode.java core_se/src/main/java/org/xiaoxu/tree/TreeTest.java)",
+      "Bash(java -cp /tmp/tree_out org.xiaoxu.tree.TreeTest)",
+      "Bash(javac -encoding UTF-8 -d /tmp/tree_out core_se/src/main/java/org/xiaoxu/tree/TreeNode.java core_se/src/main/java/org/xiaoxu/tree/TreeTest.java)"
     ]
   }
 }

@@ -203,13 +203,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-<!--            <executions>
-                <execution>
-                    <goals>
-                        <goal>repackage</goal> &lt;!&ndash; 告诉 Maven 在 package 时重新打包 &ndash;&gt;
-                    </goals>
-                </execution>
-            </executions>-->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

@@ -10,6 +10,7 @@ import org.xiaoxu.mapper.UserRoleMapper;
 import org.xiaoxu.pojo.SystemMenu;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,30 +43,30 @@ public class MenuService {
             return Collections.emptyList();
         }
 
-        // 3. 补充父级菜单ID（保证树结构完整）
+        // 3. 一次性查出所有菜单，建 id → menu 的索引（只查一次数据库）
+        List<SystemMenu> allMenus = menuMapper.selectList(
+                new LambdaQueryWrapper<SystemMenu>().eq(SystemMenu::getDeleted, "0")
+        );
+        Map<Long, SystemMenu> menuMap = allMenus.stream()
+                .collect(Collectors.toMap(SystemMenu::getId, m -> m));
+
+        // 4. 收集直接菜单 + 补齐所有父级菜单ID（纯内存操作，不再查数据库）
         Set<Long> allIds = new HashSet<>(menuIds);
-        List<SystemMenu> directMenus = menuMapper.selectBatchIds(menuIds);
-        for (SystemMenu m : directMenus) {
-            // 递归往上找所有父级
-            Long pid = m.getParentId();
+        for (Long menuId : menuIds) {
+            Long pid = menuMap.get(menuId) != null ? menuMap.get(menuId).getParentId() : null;
             while (pid != null && pid > 0 && !allIds.contains(pid)) {
                 allIds.add(pid);
-                SystemMenu parent = menuMapper.selectById(pid);
-                if (parent != null) {
-                    pid = parent.getParentId();
-                } else {
-                    break;
-                }
+                SystemMenu parent = menuMap.get(pid);
+                pid = parent != null ? parent.getParentId() : null;
             }
         }
 
-        // 4. 查出所有需要的菜单，构建树
-        List<SystemMenu> allMenus = menuMapper.selectBatchIds(allIds);
-        allMenus.removeIf(Objects::isNull);
-        allMenus.sort(Comparator.comparing(
-                m -> Optional.ofNullable(m.getSort()).orElse(0L)
-        ));
-        return buildTree(allMenus, 0L);
+        // 5. 过滤出需要的菜单，构建树
+        List<SystemMenu> visibleMenus = allMenus.stream()
+                .filter(m -> allIds.contains(m.getId()))
+                .sorted(Comparator.comparing(m -> Optional.ofNullable(m.getSort()).orElse(0L)))
+                .collect(Collectors.toList());
+        return buildTree(visibleMenus);
     }
 
     /**
@@ -77,7 +78,7 @@ public class MenuService {
                         .eq(SystemMenu::getDeleted, "0")
                         .orderByAsc(SystemMenu::getSort)
         );
-        return buildTree(allMenus, 0L);
+        return buildTree(allMenus);
     }
 
     public List<SystemMenu> getMenuList() {
@@ -108,14 +109,12 @@ public class MenuService {
     }
 
     /**
-     * 递归构建菜单树
+     * 构建菜单树（一次遍历，无递归）
      */
-    private List<Map<String, Object>> buildTree(List<SystemMenu> menus, Long parentId) {
-        List<Map<String, Object>> tree = new ArrayList<>();
+    private List<Map<String, Object>> buildTree(List<SystemMenu> menus) {
+        // 1. 把每个菜单转成 Map 节点，并用 id 做索引
+        Map<Long, Map<String, Object>> nodeMap = new LinkedHashMap<>();
         for (SystemMenu menu : menus) {
-            if (!Objects.equals(menu.getParentId(), parentId)) {
-                continue;
-            }
             Map<String, Object> node = new LinkedHashMap<>();
             node.put("id", menu.getId());
             node.put("name", menu.getName());
@@ -127,13 +126,44 @@ public class MenuService {
             node.put("sort", menu.getSort());
             node.put("visible", menu.getVisible());
             node.put("parentId", menu.getParentId());
-
-            List<Map<String, Object>> children = buildTree(menus, menu.getId());
-            if (!children.isEmpty()) {
-                node.put("children", children);
-            }
-            tree.add(node);
+            node.put("children", new ArrayList<Map<String, Object>>());
+            nodeMap.put(menu.getId(), node);
         }
-        return tree;
+
+        // 2. 一次遍历：找父节点，挂上去
+        List<Map<String, Object>> roots = new ArrayList<>();
+        for (Map<String, Object> node : nodeMap.values()) {
+            Long parentId = (Long) node.get("parentId");
+            if (parentId == null || parentId == 0) {
+                // 根节点
+                roots.add(node);
+            } else {
+                // 找到父节点，把自己挂到父节点的 children 里
+                Map<String, Object> parent = nodeMap.get(parentId);
+                if (parent != null) {
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> children =
+                            (List<Map<String, Object>>) parent.get("children");
+                    children.add(node);
+                }
+            }
+        }
+
+        // 3. 清理空的 children（叶子节点不需要 children: []）
+        cleanEmptyChildren(roots);
+        return roots;
+    }
+
+    private void cleanEmptyChildren(List<Map<String, Object>> nodes) {
+        for (Map<String, Object> node : nodes) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> children =
+                    (List<Map<String, Object>>) node.get("children");
+            if (children != null && children.isEmpty()) {
+                node.remove("children");
+            } else if (children != null) {
+                cleanEmptyChildren(children);
+            }
+        }
     }
 }

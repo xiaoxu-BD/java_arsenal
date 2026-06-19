@@ -53,7 +53,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/", "/error", "/favicon.ico", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/hello").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/error", "/favicon.ico", "/css/**", "/js/**", "/images/**")
+                        .permitAll()
                         // 跨域预检也放行（必须！）
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
@@ -97,13 +99,18 @@ public class SecurityConfig {
     /**
      * 流程: filter(构造哪种authentication) -> Manager -> provider -> userDetailsService & passwordEncoder
      * 注册你要使用的那个策略 daoAuthenticationProvider 决定是否认证成功
-     * @return
+     * <p>
+     * setHideUserNotFoundExceptions(false)：让 {@link UserDetailsService#loadUserByUsername}
+     * 抛出的 {@link org.springframework.security.core.userdetails.UsernameNotFoundException}
+     * 原样透传，方便 GlobalExceptionHandler 区分"用户不存在"和"密码错误"。
+     * 注意：开放后存在用户名枚举风险（攻击者能区分两种错误），生产环境建议改回 true。
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
+        provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
 

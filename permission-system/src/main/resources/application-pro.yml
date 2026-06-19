@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    username: root
+    url: jdbc:mysql://192.168.200.128/2026mysql_ds
+    password: NFTurbo666
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: 192.168.200.128
+      port: 6379
+      password: NFTurbo666
+      database: 6
+
+server:
+  port: 13690
+
+
+
+
+# 本地日志写到项目下，方便查看
+logging:
+  file:
+    path: ./logs/permission-service

@@ -38,7 +38,7 @@ public class TokenProvider {
     }
 
     /**
-     * 从 Redis 获取 LoginUser
+     * 从 Redis 获取 LoginUser（纯读取，不续签）
      */
     public LoginUser getLoginUser(String token) {
         String cacheKey = TOKEN_PREFIX + token;
@@ -47,6 +47,16 @@ public class TokenProvider {
             return loginUser;
         }
         return null;
+    }
+
+    /**
+     * 续签 token（延长过期时间）
+     */
+    public void renewToken(String token, Long userId) {
+        String cacheKey = TOKEN_PREFIX + token;
+        String userCacheKey = USER_TOKEN_PREFIX + userId;
+        redisTemplate.expire(cacheKey, TOKEN_EXPIRE_HOURS, TimeUnit.HOURS);
+        redisTemplate.expire(userCacheKey, TOKEN_EXPIRE_HOURS, TimeUnit.HOURS);
     }
 
     /**

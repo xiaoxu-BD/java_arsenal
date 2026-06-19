@@ -1,0 +1,415 @@
+2026-06-19 09:13:56 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-19 09:13:56 [main] INFO  org.xiaoxu.PermissionApplication - Starting PermissionApplication using Java 17.0.12 with PID 27304 (E:\programs\java_arsenal\permission-system\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-19 09:13:56 [main] INFO  org.xiaoxu.PermissionApplication - The following 1 profile is active: "pro"
+2026-06-19 09:13:59 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-06-19 09:13:59 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-06-19 09:13:59 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 0 Redis repository interfaces.
+2026-06-19 09:13:59 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.JetCacheProxyConfiguration' of type [com.alicp.jetcache.anno.config.JetCacheProxyConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 09:13:59 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.CommonConfiguration' of type [com.alicp.jetcache.anno.config.CommonConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 09:14:00 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 13690 (http)
+2026-06-19 09:14:00 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-13690"]
+2026-06-19 09:14:00 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-19 09:14:00 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-19 09:14:00 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-19 09:14:00 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3999 ms
+2026-06-19 09:14:01 [main] INFO  org.redisson.Version - Redisson 3.24.3
+2026-06-19 09:14:01 [redisson-netty-2-5] INFO  o.r.connection.pool.MasterPubSubConnectionPool - 1 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 09:14:01 [redisson-netty-2-19] INFO  org.redisson.connection.pool.MasterConnectionPool - 24 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 09:14:03 [main] INFO  o.xiaoxu.workflow.approval.ApprovalHandlerRegistry - 审批回调注册完成，已注册业务: [fulfillment-approval, leave-request]
+2026-06-19 09:14:03 [main] INFO  o.f.spring.boot.cmmn.CmmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:14:03 [main] INFO  o.f.spring.boot.dmn.DmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:14:04 [main] INFO  o.f.s.b.e.EventRegistryAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:14:04 [main] INFO  o.f.spring.boot.app.AppEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Found 5 Engine Configurators in total:
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:14:04 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:14:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-19 09:14:04 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7672dd7a
+2026-06-19 09:14:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-19 09:14:05 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:14:06 [main] INFO  org.flowable.engine.impl.ProcessEngineImpl - ProcessEngine default created
+2026-06-19 09:14:06 [main] INFO  o.flowable.engine.impl.cmd.ValidateV5EntitiesCmd - Total of v5 deployments found: 0
+2026-06-19 09:14:06 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:14:07 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 09:14:07 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 09:14:07 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:14:07 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:14:07 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:14:07 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:14:07 [main] INFO  o.f.eventregistry.impl.EventRegistryEngineImpl - EventRegistryEngine default created
+2026-06-19 09:14:07 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:14:07 [main] INFO  org.flowable.idm.engine.impl.IdmEngineImpl - IdmEngine default created
+2026-06-19 09:14:07 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:14:07 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 09:14:07 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 09:14:07 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Previously run:               9
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:14:07 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Total change sets:            9
+2026-06-19 09:14:07 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:14:07 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:14:07 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:14:07 [main] INFO  org.flowable.dmn.engine.impl.DmnEngineImpl - DmnEngine default created
+2026-06-19 09:14:07 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:14:08 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 09:14:08 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 09:14:08 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Previously run:              16
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Filtered out:                 1
+2026-06-19 09:14:08 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Total change sets:           17
+2026-06-19 09:14:08 [main] INFO  liquibase.util - FILTERED CHANGE SETS SUMMARY
+2026-06-19 09:14:08 [main] INFO  liquibase.util - DBMS mismatch:                1
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:14:08 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:14:08 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:14:08 [main] INFO  org.flowable.cmmn.engine.impl.CmmnEngineImpl - CmmnEngine default created
+2026-06-19 09:14:08 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 09:14:08 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 09:14:08 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:14:08 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 09:14:08 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:14:08 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:14:09 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:14:09 [main] INFO  org.flowable.app.engine.impl.AppEngineImpl - AppEngine default created
+2026-06-19 09:14:09 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-06-19 09:14:09 [main] INFO  o.s.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2dc601d1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@545e05f0, org.springframework.security.web.context.SecurityContextHolderFilter@4555e3a, org.springframework.security.web.header.HeaderWriterFilter@76793278, org.springframework.web.filter.CorsFilter@62e586a6, org.springframework.security.web.authentication.logout.LogoutFilter@3ad2cb65, org.xiaoxu.auth.TokenAuthenticationFilter@5c78f456, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@39c4e849, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@f47d46d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@61260741, org.springframework.security.web.session.SessionManagementFilter@591ebb5c, org.springframework.security.web.access.ExceptionTranslationFilter@a6b14ab, org.springframework.security.web.access.intercept.AuthorizationFilter@20a2adef]
+2026-06-19 09:14:10 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 09:14:10 [Thread-4] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine cmmn
+2026-06-19 09:14:10 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 09:14:10 [Thread-3] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 09:14:10 [Thread-2] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 09:14:10 [main] INFO  o.f.s.configurator.DefaultAutoDeploymentStrategy - Deploying resources [file [E:\programs\java_arsenal\permission-system\target\classes\processes\fulfillment-approval.bpmn20.xml], file [E:\programs\java_arsenal\permission-system\target\classes\processes\leave-request.bpmn20.xml]] for engine org.flowable.engine.impl.ProcessEngineImpl@24a57e4e deployment name hint SpringBootAutoDeployment
+2026-06-19 09:14:10 [Thread-6] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 09:14:10 [Thread-5] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 09:14:10 [Thread-7] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine bpmn
+2026-06-19 09:14:10 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-13690"]
+2026-06-19 09:14:10 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 13690 (http) with context path ''
+2026-06-19 09:14:10 [main] INFO  org.xiaoxu.PermissionApplication - Started PermissionApplication in 15.051 seconds (process running for 16.365)
+2026-06-19 09:14:10 [RMI TCP Connection(5)-192.168.1.2] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-19 09:14:10 [RMI TCP Connection(5)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-19 09:14:10 [RMI TCP Connection(5)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-06-19 09:15:00 [http-nio-13690-exec-7] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 认证内部业务异常: 用户名不存在
+2026-06-19 09:15:25 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:15:25 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109]
+2026-06-19 09:32:16 [http-nio-13690-exec-8] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:32:16 [http-nio-13690-exec-8] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 09:32:52 [http-nio-13690-exec-1] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:32:52 [http-nio-13690-exec-1] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 09:32:54 [http-nio-13690-exec-6] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:32:58 [http-nio-13690-exec-7] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:32:59 [http-nio-13690-exec-8] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:32:59 [http-nio-13690-exec-2] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:32:59 [http-nio-13690-exec-3] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:33:00 [http-nio-13690-exec-9] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:33:00 [http-nio-13690-exec-10] WARN  o.xiaoxu.common.excepiton.GlobalExceptionHandler - 请求的资源不存在 : api/workflow/admin/all 
+2026-06-19 09:33:16 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 09:33:16 [flowable-cmmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine cmmn
+2026-06-19 09:33:16 [flowable-cmmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 09:33:16 [flowable-cmmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 09:33:16 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 09:33:16 [flowable-bpmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 09:33:16 [flowable-bpmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 09:33:16 [flowable-bpmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine bpmn
+2026-06-19 09:33:16 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-19 09:33:16 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-06-19 09:33:23 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-19 09:33:23 [main] INFO  org.xiaoxu.PermissionApplication - Starting PermissionApplication using Java 17.0.12 with PID 14948 (E:\programs\java_arsenal\permission-system\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-19 09:33:23 [main] INFO  org.xiaoxu.PermissionApplication - The following 1 profile is active: "pro"
+2026-06-19 09:33:25 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-06-19 09:33:25 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-06-19 09:33:25 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 34 ms. Found 0 Redis repository interfaces.
+2026-06-19 09:33:26 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.JetCacheProxyConfiguration' of type [com.alicp.jetcache.anno.config.JetCacheProxyConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 09:33:26 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.CommonConfiguration' of type [com.alicp.jetcache.anno.config.CommonConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 09:33:26 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 13690 (http)
+2026-06-19 09:33:26 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-13690"]
+2026-06-19 09:33:26 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-19 09:33:26 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-19 09:33:26 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-19 09:33:26 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3010 ms
+2026-06-19 09:33:27 [main] INFO  org.redisson.Version - Redisson 3.24.3
+2026-06-19 09:33:27 [redisson-netty-2-5] INFO  o.r.connection.pool.MasterPubSubConnectionPool - 1 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 09:33:27 [redisson-netty-2-19] INFO  org.redisson.connection.pool.MasterConnectionPool - 24 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 09:33:28 [main] INFO  o.xiaoxu.workflow.approval.ApprovalHandlerRegistry - 审批回调注册完成，已注册业务: [fulfillment-approval, leave-request]
+2026-06-19 09:33:29 [main] INFO  o.f.spring.boot.cmmn.CmmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:33:29 [main] INFO  o.f.spring.boot.dmn.DmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:33:29 [main] INFO  o.f.s.b.e.EventRegistryAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:33:29 [main] INFO  o.f.spring.boot.app.AppEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Found 5 Engine Configurators in total:
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:33:29 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:33:30 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-19 09:33:30 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6fc84468
+2026-06-19 09:33:30 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-19 09:33:31 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 09:33:32 [main] INFO  org.flowable.engine.impl.ProcessEngineImpl - ProcessEngine default created
+2026-06-19 09:33:32 [main] INFO  o.flowable.engine.impl.cmd.ValidateV5EntitiesCmd - Total of v5 deployments found: 0
+2026-06-19 09:33:32 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 09:33:33 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 09:33:33 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 09:33:33 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:33:33 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:33:33 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:33:33 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:33:33 [main] INFO  o.f.eventregistry.impl.EventRegistryEngineImpl - EventRegistryEngine default created
+2026-06-19 09:33:33 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 09:33:33 [main] INFO  org.flowable.idm.engine.impl.IdmEngineImpl - IdmEngine default created
+2026-06-19 09:33:33 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 09:33:33 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 09:33:33 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 09:33:33 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Previously run:               9
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:33:33 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Total change sets:            9
+2026-06-19 09:33:33 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:33:33 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:33:33 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:33:33 [main] INFO  org.flowable.dmn.engine.impl.DmnEngineImpl - DmnEngine default created
+2026-06-19 09:33:33 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 09:33:34 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 09:33:34 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 09:33:34 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Previously run:              16
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Filtered out:                 1
+2026-06-19 09:33:34 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Total change sets:           17
+2026-06-19 09:33:34 [main] INFO  liquibase.util - FILTERED CHANGE SETS SUMMARY
+2026-06-19 09:33:34 [main] INFO  liquibase.util - DBMS mismatch:                1
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:33:34 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:33:34 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:33:34 [main] INFO  org.flowable.cmmn.engine.impl.CmmnEngineImpl - CmmnEngine default created
+2026-06-19 09:33:34 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 09:33:34 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 09:33:34 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 09:33:34 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 09:33:34 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 09:33:34 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 09:33:34 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 09:33:34 [main] INFO  org.flowable.app.engine.impl.AppEngineImpl - AppEngine default created
+2026-06-19 09:33:34 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-06-19 09:33:34 [main] INFO  o.s.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@152a5364, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@21038107, org.springframework.security.web.context.SecurityContextHolderFilter@a1a0af6, org.springframework.security.web.header.HeaderWriterFilter@591b8063, org.springframework.web.filter.CorsFilter@10508ba6, org.springframework.security.web.authentication.logout.LogoutFilter@673d8f66, org.xiaoxu.auth.TokenAuthenticationFilter@50d4775b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3ad2cb65, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@18c90c59, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@47d91535, org.springframework.security.web.session.SessionManagementFilter@28268909, org.springframework.security.web.access.ExceptionTranslationFilter@68c0565, org.springframework.security.web.access.intercept.AuthorizationFilter@85ddc3e]
+2026-06-19 09:33:35 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 09:33:35 [Thread-4] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine cmmn
+2026-06-19 09:33:35 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 09:33:35 [Thread-2] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 09:33:35 [Thread-3] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 09:33:35 [main] INFO  o.f.s.configurator.DefaultAutoDeploymentStrategy - Deploying resources [file [E:\programs\java_arsenal\permission-system\target\classes\processes\fulfillment-approval.bpmn20.xml], file [E:\programs\java_arsenal\permission-system\target\classes\processes\leave-request.bpmn20.xml]] for engine org.flowable.engine.impl.ProcessEngineImpl@138173b deployment name hint SpringBootAutoDeployment
+2026-06-19 09:33:35 [Thread-7] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine bpmn
+2026-06-19 09:33:35 [Thread-5] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 09:33:35 [Thread-6] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 09:33:35 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-13690"]
+2026-06-19 09:33:35 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 13690 (http) with context path ''
+2026-06-19 09:33:35 [main] INFO  org.xiaoxu.PermissionApplication - Started PermissionApplication in 12.883 seconds (process running for 14.635)
+2026-06-19 09:33:36 [RMI TCP Connection(2)-192.168.1.2] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-19 09:33:36 [RMI TCP Connection(2)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-19 09:33:36 [RMI TCP Connection(2)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-06-19 09:33:40 [http-nio-13690-exec-4] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:33:41 [http-nio-13690-exec-4] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 09:33:41 [http-nio-13690-exec-3] ERROR o.xiaoxu.common.excepiton.GlobalExceptionHandler - 权限不足：Access Denied
+2026-06-19 09:33:43 [http-nio-13690-exec-6] ERROR o.xiaoxu.common.excepiton.GlobalExceptionHandler - 权限不足：Access Denied
+2026-06-19 09:33:44 [http-nio-13690-exec-7] ERROR o.xiaoxu.common.excepiton.GlobalExceptionHandler - 权限不足：Access Denied
+2026-06-19 09:33:44 [http-nio-13690-exec-8] ERROR o.xiaoxu.common.excepiton.GlobalExceptionHandler - 权限不足：Access Denied
+2026-06-19 09:33:44 [http-nio-13690-exec-9] ERROR o.xiaoxu.common.excepiton.GlobalExceptionHandler - 权限不足：Access Denied
+2026-06-19 09:34:00 [http-nio-13690-exec-2] WARN  org.xiaoxu.auth.TokenAuthenticationFilter - Token 已失效: Redis 中不存在该 token
+2026-06-19 09:34:02 [http-nio-13690-exec-10] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:34:02 [http-nio-13690-exec-10] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 09:38:36 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:38:36 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 09:45:09 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 09:45:09 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:11:32 [http-nio-13690-exec-5] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:11:33 [http-nio-13690-exec-5] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:14:08 [http-nio-13690-exec-3] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:14:08 [http-nio-13690-exec-3] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:22:10 [http-nio-13690-exec-9] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:22:10 [http-nio-13690-exec-9] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:29:41 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 10:29:41 [flowable-cmmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine cmmn
+2026-06-19 10:29:41 [flowable-cmmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 10:29:41 [flowable-cmmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 10:29:42 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 10:29:42 [flowable-bpmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 10:29:42 [flowable-bpmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine bpmn
+2026-06-19 10:29:42 [flowable-bpmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 10:29:42 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-19 10:29:42 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-06-19 10:29:51 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2026-06-19 10:29:51 [main] INFO  org.xiaoxu.PermissionApplication - Starting PermissionApplication using Java 17.0.12 with PID 23288 (E:\programs\java_arsenal\permission-system\target\classes started by tingq in E:\programs\java_arsenal)
+2026-06-19 10:29:51 [main] INFO  org.xiaoxu.PermissionApplication - The following 1 profile is active: "pro"
+2026-06-19 10:29:52 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-06-19 10:29:52 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-06-19 10:29:52 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 39 ms. Found 0 Redis repository interfaces.
+2026-06-19 10:29:53 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.JetCacheProxyConfiguration' of type [com.alicp.jetcache.anno.config.JetCacheProxyConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 10:29:53 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'com.alicp.jetcache.anno.config.CommonConfiguration' of type [com.alicp.jetcache.anno.config.CommonConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [meterRegistryPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-06-19 10:29:53 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 13690 (http)
+2026-06-19 10:29:53 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-13690"]
+2026-06-19 10:29:53 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-19 10:29:53 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-06-19 10:29:53 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-19 10:29:53 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2870 ms
+2026-06-19 10:29:54 [main] INFO  org.redisson.Version - Redisson 3.24.3
+2026-06-19 10:29:54 [redisson-netty-2-6] INFO  o.r.connection.pool.MasterPubSubConnectionPool - 1 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 10:29:54 [redisson-netty-2-19] INFO  org.redisson.connection.pool.MasterConnectionPool - 24 connections initialized for 192.168.200.128/192.168.200.128:6379
+2026-06-19 10:29:55 [main] INFO  o.xiaoxu.workflow.approval.ApprovalHandlerRegistry - 审批回调注册完成，已注册业务: [fulfillment-approval, leave-request]
+2026-06-19 10:29:56 [main] INFO  o.f.spring.boot.cmmn.CmmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 10:29:56 [main] INFO  o.f.spring.boot.dmn.DmnEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 10:29:56 [main] INFO  o.f.s.b.e.EventRegistryAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 10:29:56 [main] INFO  o.f.spring.boot.app.AppEngineAutoConfiguration - No deployment resources were found for autodeployment
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Found 5 Engine Configurators in total:
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 10:29:56 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing beforeInit() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 10:29:56 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-19 10:29:57 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@443d94ae
+2026-06-19 10:29:57 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-19 10:29:58 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.engine.spring.configurator.SpringProcessEngineConfigurator (priority:50000)
+2026-06-19 10:29:58 [main] INFO  org.flowable.engine.impl.ProcessEngineImpl - ProcessEngine default created
+2026-06-19 10:29:58 [main] INFO  o.flowable.engine.impl.cmd.ValidateV5EntitiesCmd - Total of v5 deployments found: 0
+2026-06-19 10:29:58 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator (priority:100000)
+2026-06-19 10:29:59 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 10:29:59 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.FLW_EV_DATABASECHANGELOG
+2026-06-19 10:29:59 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 10:29:59 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 10:29:59 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 10:29:59 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 10:29:59 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 10:29:59 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 10:29:59 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 10:29:59 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 10:29:59 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 10:29:59 [main] INFO  o.f.eventregistry.impl.EventRegistryEngineImpl - EventRegistryEngine default created
+2026-06-19 10:29:59 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.idm.spring.configurator.SpringIdmEngineConfigurator (priority:150000)
+2026-06-19 10:29:59 [main] INFO  org.flowable.idm.engine.impl.IdmEngineImpl - IdmEngine default created
+2026-06-19 10:29:59 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.dmn.spring.configurator.SpringDmnEngineConfigurator (priority:200000)
+2026-06-19 10:30:00 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 10:30:00 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_DMN_DATABASECHANGELOG
+2026-06-19 10:30:00 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 10:30:00 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 10:30:00 [main] INFO  liquibase.util - Previously run:               9
+2026-06-19 10:30:00 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 10:30:00 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 10:30:00 [main] INFO  liquibase.util - Total change sets:            9
+2026-06-19 10:30:00 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 10:30:00 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 10:30:00 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 10:30:00 [main] INFO  org.flowable.dmn.engine.impl.DmnEngineImpl - DmnEngine default created
+2026-06-19 10:30:00 [main] INFO  o.flowable.app.spring.SpringAppEngineConfiguration - Executing configure() of class org.flowable.cmmn.spring.configurator.SpringCmmnEngineConfigurator (priority:500000)
+2026-06-19 10:30:01 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 10:30:01 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_CMMN_DATABASECHANGELOG
+2026-06-19 10:30:01 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Previously run:              16
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Filtered out:                 1
+2026-06-19 10:30:01 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Total change sets:           17
+2026-06-19 10:30:01 [main] INFO  liquibase.util - FILTERED CHANGE SETS SUMMARY
+2026-06-19 10:30:01 [main] INFO  liquibase.util - DBMS mismatch:                1
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 10:30:01 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 10:30:01 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 10:30:01 [main] INFO  org.flowable.cmmn.engine.impl.CmmnEngineImpl - CmmnEngine default created
+2026-06-19 10:30:01 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 10:30:01 [main] INFO  liquibase.changelog - Reading from `2026mysql_ds`.ACT_APP_DATABASECHANGELOG
+2026-06-19 10:30:01 [main] INFO  liquibase.util - UPDATE SUMMARY
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Run:                          0
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Previously run:               3
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Filtered out:                 0
+2026-06-19 10:30:01 [main] INFO  liquibase.util - -------------------------------
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Total change sets:            3
+2026-06-19 10:30:01 [main] INFO  liquibase.util - Update summary generated
+2026-06-19 10:30:01 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2026-06-19 10:30:01 [main] INFO  liquibase.command - Command execution complete
+2026-06-19 10:30:01 [main] INFO  org.flowable.app.engine.impl.AppEngineImpl - AppEngine default created
+2026-06-19 10:30:02 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2026-06-19 10:30:02 [main] INFO  o.s.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3421c1e9, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@26cd89e9, org.springframework.security.web.context.SecurityContextHolderFilter@8e4f57e, org.springframework.security.web.header.HeaderWriterFilter@2a2b0fc, org.springframework.web.filter.CorsFilter@69a3bf40, org.springframework.security.web.authentication.logout.LogoutFilter@7581fb03, org.xiaoxu.auth.TokenAuthenticationFilter@24668b5b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4c351f4c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6b0e01f9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@415deab5, org.springframework.security.web.session.SessionManagementFilter@741198fb, org.springframework.security.web.access.ExceptionTranslationFilter@13f47949, org.springframework.security.web.access.intercept.AuthorizationFilter@5e373815]
+2026-06-19 10:30:03 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 10:30:03 [Thread-4] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine cmmn
+2026-06-19 10:30:03 [main] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Starting up the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 10:30:03 [Thread-3] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 10:30:03 [Thread-2] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine cmmn
+2026-06-19 10:30:03 [main] INFO  o.f.s.configurator.DefaultAutoDeploymentStrategy - Deploying resources [file [E:\programs\java_arsenal\permission-system\target\classes\processes\fulfillment-approval.bpmn20.xml], file [E:\programs\java_arsenal\permission-system\target\classes\processes\leave-request.bpmn20.xml]] for engine org.flowable.engine.impl.ProcessEngineImpl@32300150 deployment name hint SpringBootAutoDeployment
+2026-06-19 10:30:03 [Thread-6] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 10:30:03 [Thread-5] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - starting to acquire async jobs due for engine bpmn
+2026-06-19 10:30:03 [Thread-7] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - starting to reset expired jobs for engine bpmn
+2026-06-19 10:30:03 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-13690"]
+2026-06-19 10:30:03 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 13690 (http) with context path ''
+2026-06-19 10:30:03 [main] INFO  org.xiaoxu.PermissionApplication - Started PermissionApplication in 12.779 seconds (process running for 14.451)
+2026-06-19 10:30:03 [RMI TCP Connection(6)-192.168.1.2] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-19 10:30:03 [RMI TCP Connection(6)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-19 10:30:03 [RMI TCP Connection(6)-192.168.1.2] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-06-19 10:31:14 [http-nio-13690-exec-3] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:31:14 [http-nio-13690-exec-3] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:31:15 [http-nio-13690-exec-6] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:31:15 [http-nio-13690-exec-6] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:36:21 [http-nio-13690-exec-5] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:36:21 [http-nio-13690-exec-5] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:43:17 [http-nio-13690-exec-8] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:43:17 [http-nio-13690-exec-8] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:43:20 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:43:20 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:44:18 [http-nio-13690-exec-10] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:44:18 [http-nio-13690-exec-10] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:44:20 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:44:20 [http-nio-13690-exec-2] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:44:38 [http-nio-13690-exec-6] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:44:38 [http-nio-13690-exec-6] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:44:41 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的角色IDs: [1]
+2026-06-19 10:44:41 [http-nio-13690-exec-7] INFO  org.xiaoxu.service.MenuService - 用户[1]的菜单IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+2026-06-19 10:49:53 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine cmmn
+2026-06-19 10:49:53 [flowable-cmmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 10:49:53 [flowable-cmmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine cmmn
+2026-06-19 10:49:53 [flowable-cmmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine cmmn
+2026-06-19 10:49:53 [SpringApplicationShutdownHook] INFO  o.f.j.s.impl.asyncexecutor.AbstractAsyncExecutor - Shutting down the async job executor [org.flowable.spring.job.service.SpringAsyncExecutor] for engine bpmn
+2026-06-19 10:49:53 [flowable-bpmn-acquire-async-jobs] INFO  o.f.j.s.i.a.AcquireAsyncJobsDueRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 10:49:53 [flowable-bpmn-reset-expired-jobs] INFO  o.f.j.s.i.asyncexecutor.ResetExpiredJobsRunnable - stopped resetting expired jobs for engine bpmn
+2026-06-19 10:49:53 [flowable-bpmn-acquire-timer-jobs] INFO  o.f.j.s.i.asyncexecutor.AcquireTimerJobsRunnable - stopped async job due acquisition for engine bpmn
+2026-06-19 10:49:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-06-19 10:49:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

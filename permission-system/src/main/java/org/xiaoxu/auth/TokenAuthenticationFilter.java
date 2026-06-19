@@ -29,7 +29,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String path = request.getRequestURI();
         String method = request.getMethod();
-        if ((path.equals("/login") || path.equals("/api/auth/login") || path.equals("/auth/login") || path.contains("/api/auth/login"))
+        if ((path.equals("/login") || path.equals("/auth/login") || path.contains("/api/auth/login"))
             && "POST".equalsIgnoreCase(method)) {
             filterChain.doFilter(request, response);
             return;
@@ -50,6 +50,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+            // 每次有效请求续签 token
+            tokenProvider.renewToken(token, loginUser.getUserId());
 
             List<SimpleGrantedAuthority> authorities = loginUser.getAuthorities().stream()
                     .map(auth -> new SimpleGrantedAuthority(auth.getAuthority()))

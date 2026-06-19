@@ -1,0 +1,25 @@
+# =====================================================================
+# 生产环境配置 —— 所有敏感项通过环境变量注入（见 deploy.sh 的 -e 参数）
+# 容器内日志写到固定绝对路径，deploy.sh 会挂载宿主机目录
+# =====================================================================
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT:3306}/${DB_NAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+#      password: ${REDIS_PASSWORD}
+      database: ${REDIS_DB:6}
+
+server:
+  port: ${SERVER_PORT:13690}
+
+# 日志路径（容器内绝对路径，宿主机通过 volume 映射）
+logging:
+  file:
+    path: /app/logs/permission-service

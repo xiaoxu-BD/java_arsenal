@@ -1,6 +1,5 @@
 package org.xiaoxu.service;
 
-import cn.hutool.core.lang.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,13 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.xiaoxu.auth.LoginUser;
 import org.xiaoxu.common.excepiton.user.AuthErrorCode;
-import org.xiaoxu.common.excepiton.user.UserException;
 import org.xiaoxu.mapper.*;
 import org.xiaoxu.pojo.dto.SystemUserDTO;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 
@@ -37,7 +32,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SystemUserDTO user = userMapper.getOne(username);
-        Assert.notNull(user,()-> new UserException(AuthErrorCode.USER_NAME_NOT_EXIST));
+        // 抛 Spring Security 标准的 UsernameNotFoundException，
+        // 配合 SecurityConfig 中 setHideUserNotFoundExceptions(false)，
+        // 让 GlobalExceptionHandler 的 UsernameNotFoundException handler 能直接接到。
+        if (user == null) {
+            throw new UsernameNotFoundException(
+                    AuthErrorCode.USER_NAME_NOT_EXIST.getMessage() + ": " + username);
+        }
 
         // 查询用户角色ID  通过角色id 去查询 菜单表
         /**

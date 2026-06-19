@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="http://www.xiaoxu.org/fulfillment">
+
+  <!-- ==================== 流程定义（引擎运行靠这部分） ==================== -->
+  <process id="fulfillment-approval" name="履约审批流程" isExecutable="true">
+
+    <!-- ===== 开始 ===== -->
+    <startEvent id="startEvent" name="开始"/>
+    <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="managerApproval"/>
+
+    <!-- ===== 第一级：经理审批 ===== -->
+    <userTask id="managerApproval" name="经理审批"
+              flowable:candidateGroups="ROLE_MANAGER"
+              flowable:formKey="fulfillment_approval_form"
+              flowable:formFieldValidation="false">
+      <documentation>部门经理审批履约单</documentation>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="managerApproval" targetRef="managerDecision"/>
+
+    <exclusiveGateway id="managerDecision" name="经理审批决策"/>
+    <sequenceFlow id="flow2_approved" name="经理通过" sourceRef="managerDecision" targetRef="directorApproval">
+      <conditionExpression xsi:type="tFormalExpression">${approved == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow2_rejected" name="经理驳回" sourceRef="managerDecision" targetRef="rejectedEnd">
+      <conditionExpression xsi:type="tFormalExpression">${approved == false}</conditionExpression>
+    </sequenceFlow>
+
+    <!-- ===== 第二级：总监审批 ===== -->
+    <userTask id="directorApproval" name="总监审批"
+              flowable:candidateGroups="ROLE_DIRECTOR"
+              flowable:formKey="fulfillment_approval_form"
+              flowable:formFieldValidation="false">
+      <documentation>总监审批履约单</documentation>
+    </userTask>
+    <sequenceFlow id="flow3" sourceRef="directorApproval" targetRef="directorDecision"/>
+
+    <exclusiveGateway id="directorDecision" name="总监审批决策"/>
+    <sequenceFlow id="flow3_approved" name="总监通过" sourceRef="directorDecision" targetRef="vpApproval">
+      <conditionExpression xsi:type="tFormalExpression">${approved == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow3_rejected" name="总监驳回" sourceRef="directorDecision" targetRef="rejectedEnd">
+      <conditionExpression xsi:type="tFormalExpression">${approved == false}</conditionExpression>
+    </sequenceFlow>
+
+    <!-- ===== 第三级：VP审批 ===== -->
+    <userTask id="vpApproval" name="VP审批"
+              flowable:candidateGroups="ROLE_VP"
+              flowable:formKey="fulfillment_approval_form"
+              flowable:formFieldValidation="false">
+      <documentation>VP审批履约单</documentation>
+    </userTask>
+    <sequenceFlow id="flow4" sourceRef="vpApproval" targetRef="vpDecision"/>
+
+    <exclusiveGateway id="vpDecision" name="VP审批决策"/>
+    <sequenceFlow id="flow4_approved" name="VP通过" sourceRef="vpDecision" targetRef="approvedEnd">
+      <conditionExpression xsi:type="tFormalExpression">${approved == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow4_rejected" name="VP驳回" sourceRef="vpDecision" targetRef="rejectedEnd">
+      <conditionExpression xsi:type="tFormalExpression">${approved == false}</conditionExpression>
+    </sequenceFlow>
+
+    <!-- ===== 结束 ===== -->
+    <endEvent id="approvedEnd" name="审批通过"/>
+    <endEvent id="rejectedEnd" name="审批驳回"/>
+
+  </process>
+
+  <!-- ==================== 图形布局信息（设计器画图靠这部分） ==================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_fulfillment">
+    <bpmndi:BPMNPlane id="BPMNPlane_fulfillment" bpmnElement="fulfillment-approval">
+
+      <!-- 节点位置 -->
+      <bpmndi:BPMNShape id="startShape" bpmnElement="startEvent">
+        <dc:Bounds x="15.0" y="250.0" width="30" height="30"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="managerShape" bpmnElement="managerApproval">
+        <dc:Bounds x="100.0" y="225.0" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="managerDecisionShape" bpmnElement="managerDecision">
+        <dc:Bounds x="280.0" y="240.0" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="directorShape" bpmnElement="directorApproval">
+        <dc:Bounds x="390.0" y="225.0" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="directorDecisionShape" bpmnElement="directorDecision">
+        <dc:Bounds x="570.0" y="240.0" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="vpShape" bpmnElement="vpApproval">
+        <dc:Bounds x="680.0" y="225.0" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="vpDecisionShape" bpmnElement="vpDecision">
+        <dc:Bounds x="860.0" y="240.0" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="approvedShape" bpmnElement="approvedEnd">
+        <dc:Bounds x="970.0" y="250.0" width="30" height="30"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="rejectedShape" bpmnElement="rejectedEnd">
+        <dc:Bounds x="575.0" y="400.0" width="30" height="30"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 连线 -->
+      <bpmndi:BPMNEdge id="flow1Edge" bpmnElement="flow1">
+        <di:waypoint x="45.0" y="265.0"/>
+        <di:waypoint x="100.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow2Edge" bpmnElement="flow2">
+        <di:waypoint x="220.0" y="265.0"/>
+        <di:waypoint x="280.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow2ApprovedEdge" bpmnElement="flow2_approved">
+        <di:waypoint x="330.0" y="265.0"/>
+        <di:waypoint x="390.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow2RejectedEdge" bpmnElement="flow2_rejected">
+        <di:waypoint x="305.0" y="290.0"/>
+        <di:waypoint x="305.0" y="415.0"/>
+        <di:waypoint x="575.0" y="415.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow3Edge" bpmnElement="flow3">
+        <di:waypoint x="510.0" y="265.0"/>
+        <di:waypoint x="570.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow3ApprovedEdge" bpmnElement="flow3_approved">
+        <di:waypoint x="620.0" y="265.0"/>
+        <di:waypoint x="680.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow3RejectedEdge" bpmnElement="flow3_rejected">
+        <di:waypoint x="595.0" y="290.0"/>
+        <di:waypoint x="595.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow4Edge" bpmnElement="flow4">
+        <di:waypoint x="800.0" y="265.0"/>
+        <di:waypoint x="860.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow4ApprovedEdge" bpmnElement="flow4_approved">
+        <di:waypoint x="910.0" y="265.0"/>
+        <di:waypoint x="970.0" y="265.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="flow4RejectedEdge" bpmnElement="flow4_rejected">
+        <di:waypoint x="885.0" y="290.0"/>
+        <di:waypoint x="885.0" y="415.0"/>
+        <di:waypoint x="605.0" y="415.0"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
