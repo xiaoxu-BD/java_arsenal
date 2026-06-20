@@ -22,4 +22,13 @@ public interface UserMapper extends BaseMapper<SystemUsers> {
         return   UserConvert.INSTANCE.mapToUser(systemUsers);
 
     }
+
+    /**
+     * 根据邮箱查询用户（排除已删除）
+     */
+    default SystemUsers findByEmail(String email) {
+        return this.selectOne(new LambdaQueryWrapper<SystemUsers>()
+                .eq(SystemUsers::getEmail, email)
+                .eq(SystemUsers::getDeleted, "0"));
+    }
 }

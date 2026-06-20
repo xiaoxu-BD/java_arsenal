@@ -1,18 +1,17 @@
 package org.xiaoxu.controller;
 
-import com.alibaba.excel.EasyExcel;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.xiaoxu.annotation.OperationLog;
 import org.springframework.web.bind.annotation.*;
+import org.xiaoxu.common.utils.ExcelExportUtil;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.file.RoleExcelVO;
 import org.xiaoxu.pojo.SystemRole;
 import org.xiaoxu.pojo.request.RoleMenuRequest;
 import org.xiaoxu.service.RoleService;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ public class RoleController {
         return Result.success(roleService.getRoleDetail(id));
     }
 
+    @OperationLog(module = "角色管理", operation = "新增角色")
     @PreAuthorize("hasAuthority('system:role:create')")
     @PostMapping("/create")
     public Result<?> createRole(@RequestBody SystemRole role) {
@@ -44,6 +44,7 @@ public class RoleController {
         return Result.success();
     }
 
+    @OperationLog(module = "角色管理", operation = "修改角色")
     @PreAuthorize("hasAuthority('system:role:update')")
     @PutMapping("/update")
     public Result<?> updateRole(@RequestBody SystemRole role) {
@@ -51,6 +52,7 @@ public class RoleController {
         return Result.success();
     }
 
+    @OperationLog(module = "角色管理", operation = "删除角色")
     @PreAuthorize("hasAuthority('system:role:delete')")
     @DeleteMapping("/delete")
     public Result<?> deleteRole(@RequestParam Long id) {
@@ -65,6 +67,7 @@ public class RoleController {
         return Result.success();
     }
 
+    @OperationLog(module = "角色管理", operation = "导出角色")
     @PreAuthorize("hasAuthority('system:role:query')")
     @GetMapping("/export")
     public void exportRoleList(HttpServletResponse response) throws Exception {
@@ -86,11 +89,7 @@ public class RoleController {
             return vo;
         }).collect(Collectors.toList());
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        String fileName = URLEncoder.encode("角色列表", StandardCharsets.UTF_8).replace("\\+", "%20");
-        response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), RoleExcelVO.class).sheet("角色列表").doWrite(voList);
+        ExcelExportUtil.write(response, "角色列表", "角色列表", RoleExcelVO.class, voList);
     }
 
 }

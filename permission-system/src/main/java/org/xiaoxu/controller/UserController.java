@@ -1,11 +1,14 @@
 package org.xiaoxu.controller;
 
-import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.xiaoxu.annotation.OperationLog;
+import org.xiaoxu.common.utils.ExcelExportUtil;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.common.utils.TokenProvider;
 import org.xiaoxu.file.UserExcelVO;
@@ -13,11 +16,11 @@ import org.xiaoxu.mapper.UserRoleMapper;
 import org.xiaoxu.pojo.SystemUserRole;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.pojo.request.UserRoleRequest;
+import org.xiaoxu.service.OssService;
 import org.xiaoxu.service.SysUserService;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,10 @@ public class UserController {
     @Resource
     private TokenProvider tokenProvider;
 
+    @Resource
+    private OssService ossService;
+
+    @OperationLog(module = "用户管理", operation = "新增用户")
     @PreAuthorize("hasAuthority('system:user:create')")
     @PostMapping("/create")
     public Result<?> createUser(@RequestBody SystemUsers user) {
@@ -41,6 +48,7 @@ public class UserController {
         return Result.success();
     }
 
+    @OperationLog(module = "用户管理", operation = "删除用户")
     @PreAuthorize("hasAuthority('system:user:delete')")
     @DeleteMapping("/delete")
     public Result<?> deleteUser(@RequestParam Long id) {
@@ -78,6 +86,7 @@ public class UserController {
         return Result.success();
     }
 
+    @OperationLog(module = "用户管理", operation = "导出用户")
     @PreAuthorize("hasAuthority('system:user:query')")
     @GetMapping("/export")
     public void exportUserList(HttpServletResponse response) throws Exception {
@@ -94,10 +103,77 @@ public class UserController {
             return vo;
         }).collect(Collectors.toList());
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        String fileName = URLEncoder.encode("用户列表", StandardCharsets.UTF_8).replace("\\+", "%20");
-        response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), UserExcelVO.class).sheet("用户列表").doWrite(voList);
+        ExcelExportUtil.write(response, "用户列表", "用户列表", UserExcelVO.class, voList);
+    }
+
+    /**
+     * 获取当前登录用户完整信息
+     */
+    @GetMapping("/profile")
+    public Result<?> getProfile(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        SystemUsers user = sysUserService.getUserById(userId);
+        if (user == null) {
+            return Result.error(404, "用户不存在");
+        }
+        user.setPassword(null); // 不返回密码
+        return Result.success(user);
+    }
+
+    /**
+     * 修改个人资料（昵称、邮箱、手机、性别）
+     */
+    @PutMapping("/profile")
+    public Result<?> updateProfile(@RequestBody SystemUsers update, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        update.setId(userId);
+        sysUserService.updateProfile(update);
+        return Result.success();
+    }
+
+    /**
+     * 修改自己的密码（需要旧密码）
+     */
+    @PutMapping("/changePassword")
+    public Result<?> changePassword(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        String oldPassword = body.get("oldPassword");
+        String newPassword = body.get("newPassword");
+        if (oldPassword == null || newPassword == null) {
+            return Result.error(400, "旧密码和新密码不能为空");
+        }
+        try {
+            sysUserService.changePassword(userId, oldPassword, newPassword);
+            return Result.success();
+        } catch (RuntimeException e) {
+            return Result.error(400, e.getMessage());
+        }
+    }
+
+    /**
+     * 管理员重置指定用户密码
+     */
+    @PreAuthorize("hasAuthority('system:user:update')")
+    @PutMapping("/resetPassword")
+    public Result<?> resetPassword(@RequestBody Map<String, Object> body) {
+        Long userId = Long.valueOf(body.get("userId").toString());
+        String newPassword = body.get("newPassword").toString();
+        try {
+            sysUserService.resetPassword(userId, newPassword);
+            return Result.success();
+        } catch (RuntimeException e) {
+            return Result.error(400, e.getMessage());
+        }
+    }
+
+    /**
+     * 上传头像
+     */
+    @PostMapping("/avatar")
+    public Result<?> uploadAvatar(@RequestParam MultipartFile file, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        String url = ossService.uploadFile(file, "avatar");
+        sysUserService.updateAvatar(userId, url);
+        return Result.success(url);
     }
 }

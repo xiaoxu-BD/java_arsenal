@@ -4,11 +4,13 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.xiaoxu.auth.emailauth.EmailAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -95,10 +97,47 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    @Lazy
+    private EmailAuthenticationProvider emailAuthenticationProvider;
 
     /**
      * 流程: filter(构造哪种authentication) -> Manager -> provider -> userDetailsService & passwordEncoder
      * 注册你要使用的那个策略 daoAuthenticationProvider 决定是否认证成功
+     *       ▼
+     *   AuthController.login()
+     *       │
+     *       │  new UsernamePasswordAuthenticationToken(username, password)
+     *       │  ↑ 未认证的凭证（authenticated=false, principal=字符串）
+     *       │
+     *       ▼
+     *   AuthenticationManager.authenticate(token)
+     *       │
+     *       │  遍历 providers，找到 DaoAuthenticationProvider
+     *       │
+     *       ▼
+     *   DaoAuthenticationProvider.authenticate()
+     *       │
+     *       ├─→ UserDetailsService.loadUserByUsername(username)
+     *       │       │
+     *       │       ├─ 查数据库 userMapper.getOne(username)
+     *       │       ├─ 查权限 menuMapper.getPermissionCodeByUserId()
+     *       │       └─ 返回 LoginUser（实现了 UserDetails）
+     *       │
+     *       ├─→ PasswordEncoder.matches(明文密码, 加密密码)
+     *       │       │
+     *       │       ├─ 匹配 → 继续
+     *       │       └─ 不匹配 → 抛 BadCredentialsException
+     *       │
+     *       └─→ 创建新的 UsernamePasswordAuthenticationToken（三参）
+     *               principal=LoginUser, credentials=null, authenticated=true
+     *       │
+     *       ▼
+     *   返回到 AuthController（authenticated=true 的 Authentication）
+     *       │
+     *       ├─ SecurityContextHolder 存入 authentication
+     *       ├─ 取出 LoginUser 和 permissions
+     *       └─ 生成 JWT token 返回给前端
      * <p>
      * setHideUserNotFoundExceptions(false)：让 {@link UserDetailsService#loadUserByUsername}
      * 抛出的 {@link org.springframework.security.core.userdetails.UsernameNotFoundException}
@@ -115,8 +154,16 @@ public class SecurityConfig {
     }
 
 
+    /**
+     * 用 AuthenticationManagerBuilder 显式注册 Provider，保证顺序：
+     * 1. EmailAuthenticationProvider（优先匹配 EmailAuthenticationToken）
+     * 2. DaoAuthenticationProvider（兜底匹配 UsernamePasswordAuthenticationToken）
+     */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        builder.authenticationProvider(emailAuthenticationProvider);  // 先
+        builder.authenticationProvider(authenticationProvider());      // 后
+        return builder.build();
     }
 }

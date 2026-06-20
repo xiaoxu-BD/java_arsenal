@@ -22,6 +22,7 @@ import org.xiaoxu.workflow.approval.ApprovalHandler;
 import org.xiaoxu.workflow.approval.ApprovalHandlerRegistry;
 import org.xiaoxu.workflow.identity.WorkflowIdentityService;
 import org.xiaoxu.workflow.service.FlowableService;
+import org.xiaoxu.service.AuditLogService;
 import org.xiaoxu.workflow.vo.ProcessDiagramVO;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class FlowableServiceImpl implements FlowableService {
     private final HistoryService historyService;
     private final ApprovalHandlerRegistry approvalHandlerRegistry;
     private final WorkflowIdentityService workflowIdentityService;
+    private final AuditLogService auditLogService;
 
     @Override
     public String deployProcess(String bpmnResourcePath) {
@@ -174,7 +176,16 @@ public class FlowableServiceImpl implements FlowableService {
         if (StringUtils.isNotBlank(comment)) {
             variables.put("comment", comment);
         }
+        // 记录任务名称（完成前查询，完成后任务可能被删除）
+        Task currentTask = taskService.createTaskQuery().taskId(taskId).singleResult();
+        String taskName = currentTask != null ? currentTask.getName() : taskId;
         completeTask(taskId, variables);
+
+        // 4.5) 记录审批日志
+        auditLogService.recordWorkflowLog(
+                processInstanceId, taskId, taskName,
+                processDefinitionKey, businessKey,
+                approved ? "APPROVE" : "REJECT", comment, username);
 
         // 5) 注册 afterCommit 回调：事务提交后再触发业务侧 onApproved/onRejected
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

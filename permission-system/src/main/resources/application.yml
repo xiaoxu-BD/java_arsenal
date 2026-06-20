@@ -3,8 +3,8 @@ spring:
     name: permission-service
 
   profiles:
-    # 默认激活 prod，本地调试用 -Dspring.profiles.active=dev 或 IDE 里指定
-    active: ${SPRING_PROFILES_ACTIVE:pro}
+    # 默认激活 local（本地开发），生产部署通过环境变量 SPRING_PROFILES_ACTIVE=pro 覆盖
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
   datasource:
     # 生产：环境变量注入；开发：application-dev.yml 直接写死
@@ -18,5 +18,18 @@ spring:
       host: ${REDIS_HOST:127.0.0.1}
       port: ${REDIS_PORT:6379}
       database: ${REDIS_DB:6}
+
+  mail:
+    host: ${MAIL_HOST:smtp.163.com}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
 server:
   port: ${SERVER_PORT:13690}

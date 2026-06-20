@@ -41,10 +41,11 @@ public class FulfillmentOrderController {
     }
 
     /**
-     * 分页查询履约单
+     * 分页查询履约单（只能查自己的）
      */
     @GetMapping
-    public Result<IPage<FulfillmentOrderVO>> list(FulfillmentOrderQueryDTO query) {
+    public Result<IPage<FulfillmentOrderVO>> list(FulfillmentOrderQueryDTO query, Authentication authentication) {
+        query.setApplicant(authentication.getName());
         return Result.success(fulfillmentOrderService.pageQuery(query));
     }
 

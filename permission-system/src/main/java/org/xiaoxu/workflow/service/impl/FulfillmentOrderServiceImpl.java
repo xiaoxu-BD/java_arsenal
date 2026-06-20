@@ -72,6 +72,9 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
     @Override
     public IPage<FulfillmentOrderVO> pageQuery(FulfillmentOrderQueryDTO query) {
         LambdaQueryWrapper<FulfillmentOrder> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(query.getApplicant())) {
+            wrapper.eq(FulfillmentOrder::getApplicant, query.getApplicant());
+        }
         if (StringUtils.hasText(query.getOrderNo())) {
             wrapper.like(FulfillmentOrder::getOrderNo, query.getOrderNo());
         }

@@ -64,7 +64,6 @@ public class MenuController {
     }
 
     private Long extractUserId(HttpServletRequest request) {
-        String authentication = request.getHeader("Authentication");
         Object userId = request.getAttribute("userId");
         return userId instanceof Long ? (Long) userId : null;
     }

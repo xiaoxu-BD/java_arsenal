@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    username: root
+    url: jdbc:mysql://192.168.200.128/2026mysql_ds
+    password: NFTurbo666
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: 192.168.200.128
+      port: 6379
+      password: NFTurbo666
+      database: 6
+
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: tingqq7z@163.com
+    password: QCciCnaKHLGiMePg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
+server:
+  port: 13690
+
+xxl:
+  job:
+    admin:
+      address: http://192.168.200.128:8082/xxl-job-admin
+    executor:
+      appName: permission-job-executor
+      port: 9998
+      logPath: /data/applogs/xxl-job/jobhandler
+      logRetentionDays: 30
+    accessToken: default_token
+
+oss:
+  endpoint: oss-cn-shanghai.aliyuncs.com
+  accessKeyId: LTAI5t7qLYjB6fUTzstewkP2
+  accessKeySecret: IvA8iA5mhJy5kCYbGoB2QmCU4YhnbK
+  bucketName: oss-inshanghai
+  urlPrefix: https://oss-inshanghai.oss-cn-shanghai.aliyuncs.com
+
+# 本地日志写到项目下，方便查看
+logging:
+  file:
+    path: ./logs/permission-service

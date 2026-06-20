@@ -1,6 +1,5 @@
 package org.xiaoxu.workflow.controller;
 
-import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,14 +7,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xiaoxu.common.utils.ExcelExportUtil;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.file.WorkflowItemExcelVO;
 import org.xiaoxu.workflow.dto.WorkflowAdminQueryDTO;
 import org.xiaoxu.workflow.service.WorkflowAdminService;
 import org.xiaoxu.workflow.vo.WorkflowItemVO;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,10 +78,6 @@ public class WorkflowAdminController {
             return vo;
         }).collect(Collectors.toList());
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        String fileName = URLEncoder.encode("全部任务列表", StandardCharsets.UTF_8).replace("\\+", "%20");
-        response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), WorkflowItemExcelVO.class).sheet("全部任务").doWrite(voList);
+        ExcelExportUtil.write(response, "全部任务列表", "全部任务", WorkflowItemExcelVO.class, voList);
     }
 }

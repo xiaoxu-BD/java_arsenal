@@ -7,6 +7,7 @@ public enum AuthErrorCode implements ErrorCode {
 
 
     USER_NAME_NOT_EXIST("1404","用户名不存在"),
+    EMAIL_AUTH_CODE_ERROR("1452","邮箱验证码错误")
     ;
 
 

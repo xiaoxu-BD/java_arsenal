@@ -44,7 +44,11 @@
     </userTask>
     <sequenceFlow id="flow4" sourceRef="hrFiling" targetRef="approvedEnd"/>
     <!-- ===== 结束 ===== -->
-    <endEvent id="approvedEnd" name="请假通过"/>
+    <endEvent id="approvedEnd" name="请假通过">
+      <extensionElements>
+        <flowable:executionListener class="org.xiaoxu.workflow.listener.ApprovalEmailListener" event="end"/>
+      </extensionElements>
+    </endEvent>
     <endEvent id="rejectedEnd" name="请假驳回"/>
   </process>
   <!-- ==================== 图形布局 ==================== -->

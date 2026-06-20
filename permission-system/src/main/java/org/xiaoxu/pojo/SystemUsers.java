@@ -24,5 +24,7 @@ public class SystemUsers extends BaseEntity {
   private String mobile;
   private Long sex;
   private String avatar;
+  /** 是否首次登录：1-是 0-否（邮箱注册用户默认 1，改密码后置 0） */
+  private String firstLogin;
 
 }

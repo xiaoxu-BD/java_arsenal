@@ -56,4 +56,7 @@ public class FulfillmentOrder {
     /** DataObjectHandler 占位字段：DB 列 deleted 有 DEFAULT '0'，由数据库填 */
     @TableField(exist = false)
     private Integer deleted;
+
+    /** 是否已发送邮件通知：0-否 1-是（DB DEFAULT '0'，由数据库填） */
+    private String notified;
 }

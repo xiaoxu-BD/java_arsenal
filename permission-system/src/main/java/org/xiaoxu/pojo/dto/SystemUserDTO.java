@@ -25,5 +25,6 @@ public class SystemUserDTO extends BaseEntity {
     private Long deptId;
     private String email;
     private Long sex;
+    private String avatar;
 
 }

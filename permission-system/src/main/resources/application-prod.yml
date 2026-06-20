@@ -23,3 +23,23 @@ server:
 logging:
   file:
     path: /app/logs/permission-service
+
+xxl:
+  job:
+    admin:
+      address: ${XXL_JOB_ADMIN_ADDRESS}
+    executor:
+      appName: ${XXL_JOB_APP_NAME:permission-job-executor}
+      ip: ${XXL_JOB_EXECUTOR_IP:}
+      port: ${XXL_JOB_EXECUTOR_PORT:9998}
+      logPath: /data/applogs/xxl-job/jobhandler
+      logRetentionDays: 30
+    accessToken: ${XXL_JOB_ACCESS_TOKEN:default_token}
+
+# 阿里云 OSS
+oss:
+  endpoint: ${OSS_ENDPOINT}
+  accessKeyId: ${OSS_ACCESS_KEY_ID:}
+  accessKeySecret: ${OSS_ACCESS_KEY_SECRET:}
+  bucketName: ${OSS_BUCKET_NAME:}
+  urlPrefix: ${OSS_URL_PREFIX:}
