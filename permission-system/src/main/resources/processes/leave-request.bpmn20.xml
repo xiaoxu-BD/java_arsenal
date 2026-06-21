@@ -49,7 +49,11 @@
         <flowable:executionListener class="org.xiaoxu.workflow.listener.ApprovalEmailListener" event="end"/>
       </extensionElements>
     </endEvent>
-    <endEvent id="rejectedEnd" name="请假驳回"/>
+    <endEvent id="rejectedEnd" name="请假驳回">
+      <extensionElements>
+        <flowable:executionListener class="org.xiaoxu.workflow.listener.RejectionEmailListener" event="end"/>
+      </extensionElements>
+    </endEvent>
   </process>
   <!-- ==================== 图形布局 ==================== -->
   <bpmndi:BPMNDiagram id="BPMNDiagram_leave">

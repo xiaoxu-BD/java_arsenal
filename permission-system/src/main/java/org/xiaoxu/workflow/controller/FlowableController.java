@@ -25,10 +25,13 @@ public class FlowableController {
 
     /**
      * 提交审批 - 将草稿状态的履约单提交审批，启动 Flowable 流程
+     * @param processKey 可选，指定流程定义 key；不传则使用默认 "fulfillment-approval"
      */
     @PostMapping("/submit/{orderId}")
-    public Result<?> submitApproval(@PathVariable Long orderId, Authentication authentication) {
-        return Result.success(fulfillmentOrderService.submitApproval(orderId, authentication.getName()));
+    public Result<?> submitApproval(@PathVariable Long orderId,
+                                    @RequestParam(required = false) String processKey,
+                                    Authentication authentication) {
+        return Result.success(fulfillmentOrderService.submitApproval(orderId, authentication.getName(), processKey));
     }
 
     /**
@@ -94,5 +97,17 @@ public class FlowableController {
     @GetMapping("/process-diagram/{processInstanceId}")
     public Result<?> processDiagram(@PathVariable String processInstanceId) {
         return Result.success(flowableService.getProcessDiagramInfo(processInstanceId));
+    }
+
+    /**
+     * 删除流程实例（管理员用，用于清理异常流程）
+     * @param processInstanceId 流程实例ID
+     * @param reason 删除原因
+     */
+    @DeleteMapping("/process/{processInstanceId}")
+    public Result<Void> deleteProcess(@PathVariable String processInstanceId,
+                                      @RequestParam(defaultValue = "管理员手动删除") String reason) {
+        flowableService.deleteProcessInstance(processInstanceId, reason);
+        return Result.success();
     }
 }

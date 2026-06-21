@@ -26,4 +26,12 @@ public interface FulfillmentOrderService extends IService<FulfillmentOrder> {
     FulfillmentOrderVO changeStatus(Long id, String status, String remark);
 
     FulfillmentOrderVO submitApproval(Long id, String applicant);
+
+    /**
+     * 提交审批（支持指定流程 key）
+     * @param id 履约单ID
+     * @param applicant 申请人
+     * @param processKey 流程定义 key，为 null 时使用默认值 "fulfillment-approval"
+     */
+    FulfillmentOrderVO submitApproval(Long id, String applicant, String processKey);
 }

@@ -21,7 +21,9 @@ import org.xiaoxu.workflow.vo.FulfillmentOrderVO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -170,6 +172,12 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
     @Override
     @Transactional
     public FulfillmentOrderVO submitApproval(Long id, String applicant) {
+        return submitApproval(id, applicant, null);
+    }
+
+    @Override
+    @Transactional
+    public FulfillmentOrderVO submitApproval(Long id, String applicant, String processKey) {
         FulfillmentOrder order = fulfillmentOrderMapper.selectById(id);
         if (order == null) {
             throw new RuntimeException("履约单不存在");
@@ -178,12 +186,22 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
             throw new RuntimeException("只有草稿状态的履约单才能提交审批");
         }
 
+        // 使用指定的流程 key，默认为 fulfillment-approval
+        String key = processKey != null ? processKey : "fulfillment-approval";
+
+        // 构建流程变量：把业务数据传入，供网关条件表达式使用
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("amount", order.getAmount());           // 金额，用于网关判断
+        variables.put("orderNo", order.getOrderNo());         // 订单号
+        variables.put("title", order.getTitle());             // 标题
+        variables.put("applicant", applicant);                // 申请人
+
         // 启动 Flowable 流程，businessKey 用 orderNo
         String processInstId = flowableService.startProcess(
-                "fulfillment-approval",
+                key,
                 order.getOrderNo(),
                 applicant,
-                null
+                variables
         );
 
         // 更新履约单状态

@@ -19,6 +19,8 @@ public class SystemUsers extends BaseEntity {
   private String nickname;
   private String remark;
   private Long deptId;
+  /** 直属上级用户ID */
+  private Long managerId;
   private String postIds;
   private String email;
   private String mobile;

@@ -16,11 +16,11 @@ import java.util.List;
 public interface FulfillmentOrderMapper extends BaseMapper<FulfillmentOrder> {
 
     /**
-     * 查询已通过但未发送邮件通知的履约单
+     * 查询已通过或已驳回但未发送邮件通知的履约单
      */
-    default List<FulfillmentOrder> selectUnnotifiedApproved() {
+    default List<FulfillmentOrder> selectUnnotified() {
         return selectList(new LambdaQueryWrapper<FulfillmentOrder>()
-                .eq(FulfillmentOrder::getStatus, ApprovalStatus.APPROVED.name())
+                .in(FulfillmentOrder::getStatus, ApprovalStatus.APPROVED.name(), ApprovalStatus.REJECTED.name())
                 .eq(FulfillmentOrder::getNotified, "0"));
     }
 

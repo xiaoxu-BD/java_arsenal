@@ -16,11 +16,11 @@ import java.util.List;
 public interface ApproveLeaveMapper extends BaseMapper<ApproveLeave> {
 
     /**
-     * 查询已通过但未发送邮件通知的请假单
+     * 查询已通过或已驳回但未发送邮件通知的请假单
      */
-    default List<ApproveLeave> selectUnnotifiedApproved() {
+    default List<ApproveLeave> selectUnnotified() {
         return selectList(new LambdaQueryWrapper<ApproveLeave>()
-                .eq(ApproveLeave::getStatus, ApprovalStatus.APPROVED.name())
+                .in(ApproveLeave::getStatus, ApprovalStatus.APPROVED.name(), ApprovalStatus.REJECTED.name())
                 .eq(ApproveLeave::getNotified, "0"));
     }
 

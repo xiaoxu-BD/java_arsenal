@@ -277,10 +277,15 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Override
     public String getProcessDefinitionKeyByTaskId(String taskId) {
+        /* 等价 SQL：
+  SELECT * FROM ACT_RU_TASK WHERE ID_ = #{taskId}
+*/
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         if (task == null) {
             throw new RuntimeException("任务不存在: " + taskId);
         }
+
+        //SELECT * FROM ACT_RE_PROCDEF WHERE ID_ = #{processDefinitionId}
         ProcessDefinition definition = repositoryService.createProcessDefinitionQuery()
                 .processDefinitionId(task.getProcessDefinitionId())
                 .singleResult();
@@ -370,6 +375,24 @@ public class FlowableServiceImpl implements FlowableService {
         }
 
         return vo;
+    }
+
+    @Override
+    public void deleteProcessInstance(String processInstanceId, String reason) {
+        // 检查流程实例是否存在
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
+
+        if (processInstance != null) {
+            // 删除运行中的流程实例（级联删除历史）
+            runtimeService.deleteProcessInstance(processInstanceId, reason);
+            log.info("删除流程实例成功, processInstanceId={}, reason={}", processInstanceId, reason);
+        } else {
+            // 流程已结束，只删除历史数据
+            historyService.deleteHistoricProcessInstance(processInstanceId);
+            log.info("删除历史流程实例成功, processInstanceId={}", processInstanceId);
+        }
     }
 
     /**

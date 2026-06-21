@@ -60,4 +60,11 @@ public interface FlowableService {
     boolean isProcessFinished(String processInstanceId);
 
     ProcessDiagramVO getProcessDiagramInfo(String processInstanceId);
+
+    /**
+     * 删除流程实例（级联删除历史）
+     * @param processInstanceId 流程实例ID
+     * @param reason 删除原因
+     */
+    void deleteProcessInstance(String processInstanceId, String reason);
 }
