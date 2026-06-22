@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/intelligent_fulfillment" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/permission-system/agents-dynamic-menu-enhancements" vcs="Git" />
   </component>
 </project>

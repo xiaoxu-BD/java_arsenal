@@ -220,9 +220,10 @@ public class AuthController {
      * 邮箱验证码登录（不存在则自动注册）
      */
     @PostMapping("/emailLogin")
-    public Result<?> emailLogin(@RequestBody EmailLoginRequest emailLoginRequest) {
+    public Result<?> emailLogin(@RequestBody EmailLoginRequest emailLoginRequest, HttpServletRequest request) {
         String email = emailLoginRequest.getEmail();
         String code = emailLoginRequest.getCode();
+        String ip = getClientIp(request);
 
         if (email == null || email.isBlank() || code == null || code.isBlank()) {
             return Result.error(400, "邮箱和验证码不能为空");
@@ -252,9 +253,14 @@ public class AuthController {
             data.put("token", token);
             data.put("permissions", permissions);
             data.put("firstLogin", "1".equals(user.getFirstLogin()));
+
+            // 记录邮箱登录成功日志
+            auditLogService.recordLoginLog(user.getUsername(), "EMAIL", ip, "", "", 0, "邮箱登录成功");
             return Result.success(data);
 
         } catch (Exception e) {
+            // 记录邮箱登录失败日志
+            auditLogService.recordLoginLog(email, "EMAIL", ip, "", "", 1, "邮箱登录失败: " + e.getMessage());
             return Result.error(400, e.getMessage());
         }
     }

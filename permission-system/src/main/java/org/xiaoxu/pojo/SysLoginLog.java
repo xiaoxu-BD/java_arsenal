@@ -15,9 +15,11 @@ public class SysLoginLog {
     private String username;
     private String loginType;
     private String ip;
-    private String browser;
-    private String os;
     private Integer status;
     private String message;
+    /**
+     * 写入类型：0-同步写入，1-MQ异步写入
+     */
+    private Integer writeType;
     private LocalDateTime loginTime;
 }

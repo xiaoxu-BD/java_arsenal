@@ -4,7 +4,7 @@ spring:
 
   profiles:
     # 默认激活 local（本地开发），生产部署通过环境变量 SPRING_PROFILES_ACTIVE=pro 覆盖
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    active: ${SPRING_PROFILES_ACTIVE:prod}
 
   datasource:
     # 生产：环境变量注入；开发：application-dev.yml 直接写死
@@ -30,6 +30,19 @@ spring:
           auth: true
           ssl:
             enable: true
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:127.0.0.1}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
 
 server:
   port: ${SERVER_PORT:13690}

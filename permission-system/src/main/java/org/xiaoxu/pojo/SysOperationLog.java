@@ -24,5 +24,9 @@ public class SysOperationLog {
     private Integer status;
     private String errorMsg;
     private Long costTime;
+    /**
+     * 写入类型：0-同步写入，1-MQ异步写入
+     */
+    private Integer writeType;
     private LocalDateTime createTime;
 }

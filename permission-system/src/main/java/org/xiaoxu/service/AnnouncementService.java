@@ -12,6 +12,7 @@ import org.xiaoxu.pojo.SysAnnouncementRead;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -86,6 +87,48 @@ public class AnnouncementService {
         read.setUserId(userId);
         read.setReadTime(LocalDateTime.now());
         readMapper.insert(read);
+    }
+
+    /**
+     * 获取最新的已发布公告（带已读标记，首页用）
+     * @param userId 用户ID
+     * @param limit 获取条数
+     * @return 公告列表，每条包含 isRead 字段（1=已读, 0=未读）
+     */
+    public List<Map<String, Object>> getLatestWithReadStatus(Long userId, int limit) {
+        // 1. 查最新的已发布公告
+        List<SysAnnouncement> list = announcementMapper.selectList(
+                new LambdaQueryWrapper<SysAnnouncement>()
+                        .eq(SysAnnouncement::getDeleted, "0")
+                        .eq(SysAnnouncement::getStatus, 1)
+                        .orderByDesc(SysAnnouncement::getPublishTime)
+                        .last("LIMIT " + limit));
+        if (list.isEmpty()) return List.of();
+
+        // 2. 查该用户已读的公告 ID
+        List<Long> readIds = readMapper.selectList(
+                new LambdaQueryWrapper<SysAnnouncementRead>()
+                        .eq(SysAnnouncementRead::getUserId, userId)
+                        .in(SysAnnouncementRead::getAnnouncementId,
+                                list.stream().map(SysAnnouncement::getId).collect(Collectors.toList())))
+                .stream()
+                .map(SysAnnouncementRead::getAnnouncementId)
+                .collect(Collectors.toSet())
+                .stream().toList();
+
+        // 3. 组装结果，添加 isRead 字段
+        return list.stream().map(a -> {
+            Map<String, Object> map = new java.util.LinkedHashMap<>();
+            map.put("id", a.getId());
+            map.put("title", a.getTitle());
+            map.put("type", a.getType());
+            map.put("content", a.getContent());
+            map.put("publisher", a.getPublisher());
+            map.put("publishTime", a.getPublishTime());
+            map.put("createTime", a.getCreateTime());
+            map.put("isRead", readIds.contains(a.getId()) ? 1 : 0);
+            return map;
+        }).collect(Collectors.toList());
     }
 
     /**

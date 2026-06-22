@@ -47,6 +47,17 @@ public class AnnouncementController {
     }
 
     /**
+     * 获取最新的已发布公告（带已读标记，首页用）
+     * @param limit 获取条数，默认 3
+     */
+    @GetMapping("/latest")
+    public Result<List<Map<String, Object>>> latest(HttpServletRequest request,
+                                                     @RequestParam(defaultValue = "3") int limit) {
+        Long userId = (Long) request.getAttribute("userId");
+        return Result.success(announcementService.getLatestWithReadStatus(userId, limit));
+    }
+
+    /**
      * 标记公告为已读
      */
     @PostMapping("/read")

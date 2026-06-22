@@ -23,7 +23,18 @@ spring:
           auth: true
           ssl:
             enable: true
-
+  rabbitmq:
+    host: 124.222.192.3
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
 server:
   port: 13690
 
@@ -44,6 +55,8 @@ oss:
   accessKeySecret: IvA8iA5mhJy5kCYbGoB2QmCU4YhnbK
   bucketName: oss-inshanghai
   urlPrefix: https://oss-inshanghai.oss-cn-shanghai.aliyuncs.com
+
+
 
 # 本地日志写到项目下，方便查看
 logging:
