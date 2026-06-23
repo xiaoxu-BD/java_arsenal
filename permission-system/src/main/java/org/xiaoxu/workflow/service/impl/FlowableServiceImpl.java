@@ -20,10 +20,18 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.xiaoxu.workflow.approval.ApprovalContext;
 import org.xiaoxu.workflow.approval.ApprovalHandler;
 import org.xiaoxu.workflow.approval.ApprovalHandlerRegistry;
+import org.xiaoxu.workflow.constant.ApprovalAction;
+import org.xiaoxu.workflow.constant.BusinessType;
+import org.xiaoxu.workflow.constant.ProcessDefinitionKey;
+import org.xiaoxu.workflow.entity.ApproveLeave;
+import org.xiaoxu.workflow.entity.FulfillmentOrder;
 import org.xiaoxu.workflow.identity.WorkflowIdentityService;
+import org.xiaoxu.workflow.mapper.ApproveLeaveMapper;
+import org.xiaoxu.workflow.mapper.FulfillmentOrderMapper;
 import org.xiaoxu.workflow.service.FlowableService;
 import org.xiaoxu.service.AuditLogService;
 import org.xiaoxu.workflow.vo.ProcessDiagramVO;
+import org.xiaoxu.workflow.vo.TaskVO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +60,8 @@ public class FlowableServiceImpl implements FlowableService {
     private final ApprovalHandlerRegistry approvalHandlerRegistry;
     private final WorkflowIdentityService workflowIdentityService;
     private final AuditLogService auditLogService;
+    private final ApproveLeaveMapper approveLeaveMapper;
+    private final FulfillmentOrderMapper fulfillmentOrderMapper;
 
     @Override
     public String deployProcess(String bpmnResourcePath) {
@@ -77,7 +87,7 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public List<Map<String, Object>> queryMyTasks(String assignee) {
+    public List<TaskVO> queryMyTasks(String assignee) {
         // 1) 已认领（assignee = 当前用户）
         List<Task> claimed = taskService.createTaskQuery()
                 .taskAssignee(assignee)
@@ -102,16 +112,16 @@ public class FlowableServiceImpl implements FlowableService {
         Map<String, Task> merged = new LinkedHashMap<>();
         Stream.concat(claimed.stream(), candidate.stream())
                 .forEach(t -> merged.putIfAbsent(t.getId(), t));
-        return convertTasks(new ArrayList<>(merged.values()));
+        return convertToTaskVO(new ArrayList<>(merged.values()));
     }
 
     @Override
-    public List<Map<String, Object>> queryCandidateTasks(String candidateGroup) {
+    public List<TaskVO> queryCandidateTasks(String candidateGroup) {
         List<Task> tasks = taskService.createTaskQuery()
                 .taskCandidateGroup(candidateGroup)
                 .orderByTaskCreateTime().desc()
                 .list();
-        return convertTasks(tasks);
+        return convertToTaskVO(tasks);
     }
 
     @Override
@@ -182,10 +192,11 @@ public class FlowableServiceImpl implements FlowableService {
         completeTask(taskId, variables);
 
         // 4.5) 记录审批日志
+        String action = approved ? ApprovalAction.APPROVE.name() : ApprovalAction.REJECT.name();
         auditLogService.recordWorkflowLog(
                 processInstanceId, taskId, taskName,
                 processDefinitionKey, businessKey,
-                approved ? "APPROVE" : "REJECT", comment, username);
+                action, comment, username);
 
         // 5) 注册 afterCommit 回调：事务提交后再触发业务侧 onApproved/onRejected
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -235,6 +246,23 @@ public class FlowableServiceImpl implements FlowableService {
                         Comment::getTaskId,
                         Collectors.mapping(Comment::getFullMessage, Collectors.toList())));
 
+        // 获取流程变量中的审批动作
+        Map<String, String> actionByTaskId = new HashMap<>();
+        try {
+            historyService.createHistoricVariableInstanceQuery()
+                    .processInstanceId(processInstanceId)
+                    .variableName("approved")
+                    .list()
+                    .forEach(var -> {
+                        if (var.getTaskId() != null) {
+                            Boolean approved = (Boolean) var.getValue();
+                            actionByTaskId.put(var.getTaskId(), Boolean.TRUE.equals(approved) ? "APPROVE" : "REJECT");
+                        }
+                    });
+        } catch (Exception e) {
+            log.warn("获取审批动作变量失败", e);
+        }
+
         return activities.stream().map(activity -> {
             Map<String, Object> map = new HashMap<>();
             map.put("activityId", activity.getActivityId());
@@ -244,6 +272,10 @@ public class FlowableServiceImpl implements FlowableService {
             map.put("endTime", activity.getEndTime());
             map.put("assignee", activity.getAssignee());
             map.put("durationInMillis", activity.getDurationInMillis());
+            // 审批动作
+            if (activity.getTaskId() != null) {
+                map.put("action", actionByTaskId.getOrDefault(activity.getTaskId(), null));
+            }
             // 把该任务节点下的审批意见列表附加到节点上
             if (activity.getTaskId() != null) {
                 map.put("comments", commentsByTaskId.getOrDefault(activity.getTaskId(), Collections.emptyList()));
@@ -396,14 +428,14 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     /**
-     * 将 Task 列表转换为 Map 列表，包含业务关联信息
+     * 将 Task 列表转换为 TaskVO 列表，携带业务摘要信息
      */
-    private List<Map<String, Object>> convertTasks(List<Task> tasks) {
+    private List<TaskVO> convertToTaskVO(List<Task> tasks) {
         if (tasks.isEmpty()) {
             return List.of();
         }
 
-        // 批量查询流程实例，避免逐条 N+1 查 businessKey / processDefinitionId
+        // 批量查询流程实例，避免逐条 N+1
         Set<String> processInstanceIds = tasks.stream()
                 .map(Task::getProcessInstanceId)
                 .collect(Collectors.toSet());
@@ -414,26 +446,59 @@ public class FlowableServiceImpl implements FlowableService {
                 .collect(Collectors.toMap(ProcessInstance::getProcessInstanceId, pi -> pi));
 
         return tasks.stream().map(task -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("taskId", task.getId());
-            map.put("taskName", task.getName());
-            map.put("processInstanceId", task.getProcessInstanceId());
-            map.put("assignee", task.getAssignee());
-            map.put("createTime", task.getCreateTime());
+            TaskVO vo = new TaskVO();
+            vo.setTaskId(task.getId());
+            vo.setTaskName(task.getName());
+            vo.setProcessInstanceId(task.getProcessInstanceId());
+            vo.setCreateTime(task.getCreateTime() != null ? task.getCreateTime().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null);
 
             ProcessInstance instance = instanceMap.get(task.getProcessInstanceId());
             if (instance != null) {
-                String processDefinitionKey = instance.getProcessDefinitionKey();
+                String pdKey = instance.getProcessDefinitionKey();
                 String businessKey = instance.getBusinessKey();
-                map.put("processDefinitionKey", processDefinitionKey);
-                map.put("businessKey", businessKey);
-                // 通过审批回调解析业务主键 id，供前端跳转详情页
-                Long businessId = approvalHandlerRegistry.getBusinessId(processDefinitionKey, businessKey);
+                vo.setProcessDefinitionKey(pdKey);
+                vo.setBusinessKey(businessKey);
+                vo.setBusinessTypeLabel(BusinessType.getLabelByKey(pdKey));
+
+                // 通过审批回调解析业务主键 id
+                Long businessId = approvalHandlerRegistry.getBusinessId(pdKey, businessKey);
                 if (businessId != null) {
-                    map.put("businessId", businessId);
+                    vo.setBusinessId(String.valueOf(businessId));
+                }
+
+                // 查询业务详情，填充摘要信息
+                fillBusinessSummary(vo, pdKey, businessId);
+            }
+            return vo;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据业务类型查询并填充摘要信息（申请人、标题、金额/天数）
+     */
+    private void fillBusinessSummary(TaskVO vo, String processDefinitionKey, Long businessId) {
+        if (businessId == null) {
+            return;
+        }
+        try {
+            if (ProcessDefinitionKey.FULFILLMENT_APPROVAL.equals(processDefinitionKey)) {
+                FulfillmentOrder order = fulfillmentOrderMapper.selectById(businessId);
+                if (order != null) {
+                    vo.setApplicant(order.getApplicant());
+                    vo.setTitle(order.getTitle());
+                    vo.setAmount(order.getAmount());
+                }
+            } else if (ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)) {
+                ApproveLeave leave = approveLeaveMapper.selectById(businessId);
+                if (leave != null) {
+                    vo.setApplicant(leave.getUserName());
+                    vo.setTitle(leave.getLeaveReason());
+                    vo.setDays(leave.getLeaveDay() != null ? leave.getLeaveDay().intValue() : null);
                 }
             }
-            return map;
-        }).collect(Collectors.toList());
+        } catch (Exception e) {
+            log.warn("查询业务摘要失败, businessId={}, key={}", businessId, processDefinitionKey, e);
+        }
     }
 }

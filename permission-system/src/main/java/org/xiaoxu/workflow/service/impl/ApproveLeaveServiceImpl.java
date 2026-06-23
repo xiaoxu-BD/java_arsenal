@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.mapper.UserMapper;
+import org.xiaoxu.workflow.constant.ApprovalStatus;
 import org.xiaoxu.workflow.dto.ApproveLeaveCreateDTO;
 import org.xiaoxu.workflow.entity.ApproveLeave;
 import org.xiaoxu.workflow.mapper.ApproveLeaveMapper;
@@ -42,7 +43,7 @@ public class ApproveLeaveServiceImpl extends ServiceImpl<ApproveLeaveMapper, App
         leave.setBeginTime(dto.getBeginTime());
         leave.setEndTime(dto.getEndTime());
         leave.setLeaveType(dto.getLeaveType());
-        leave.setStatus("DRAFT");
+        leave.setStatus(ApprovalStatus.DRAFT.name());
         leave.setIdentifier(UUID.randomUUID().toString().replace("-", ""));
         leave.setCreator(username);
 

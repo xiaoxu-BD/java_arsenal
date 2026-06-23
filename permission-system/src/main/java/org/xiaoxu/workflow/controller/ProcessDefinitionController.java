@@ -1,5 +1,6 @@
 package org.xiaoxu.workflow.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
@@ -7,6 +8,7 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.common.utils.Result;
+import org.xiaoxu.workflow.dto.DeployProcessRequest;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -50,13 +52,10 @@ public class ProcessDefinitionController {
      * 部署 BPMN XML
      */
     @PostMapping("/deploy")
-    public Result<?> deploy(@RequestBody Map<String, String> body) {
-        String xml = body.get("xml");
-        String name = body.get("name");
+    public Result<?> deploy(@RequestBody @Valid DeployProcessRequest request) {
+        String xml = request.getXml();
+        String name = request.getName();
 
-        if (xml == null || xml.isBlank()) {
-            return Result.error(400, "BPMN XML 不能为空");
-        }
         if (name == null || name.isBlank()) {
             name = "未命名流程";
         }

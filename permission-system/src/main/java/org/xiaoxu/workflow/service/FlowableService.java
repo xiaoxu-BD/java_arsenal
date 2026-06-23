@@ -1,6 +1,7 @@
 package org.xiaoxu.workflow.service;
 
 import org.xiaoxu.workflow.vo.ProcessDiagramVO;
+import org.xiaoxu.workflow.vo.TaskVO;
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,9 @@ public interface FlowableService {
 
     String startProcess(String processDefinitionKey, String businessKey, String initiator, Map<String, Object> variables);
 
-    List<Map<String, Object>> queryMyTasks(String assignee);
+    List<TaskVO> queryMyTasks(String assignee);
 
-    List<Map<String, Object>> queryCandidateTasks(String candidateGroup);
+    List<TaskVO> queryCandidateTasks(String candidateGroup);
 
     void claimTask(String taskId, String userId);
 

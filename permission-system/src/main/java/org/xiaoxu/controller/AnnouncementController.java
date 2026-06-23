@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.annotation.OperationLog;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.pojo.SysAnnouncement;
+import org.xiaoxu.pojo.request.MarkReadRequest;
 import org.xiaoxu.service.AnnouncementService;
 
 import java.util.List;
@@ -38,6 +39,15 @@ public class AnnouncementController {
     }
 
     /**
+     * 公告详情
+     */
+    @PreAuthorize("hasAuthority('system:announcement:query')")
+    @GetMapping("/detail/{id}")
+    public Result<SysAnnouncement> detail(@PathVariable Long id) {
+        return Result.success(announcementService.getById(id));
+    }
+
+    /**
      * 获取当前用户未读的公告（登录后弹窗展示）
      */
     @GetMapping("/unread")
@@ -52,7 +62,7 @@ public class AnnouncementController {
      */
     @GetMapping("/latest")
     public Result<List<Map<String, Object>>> latest(HttpServletRequest request,
-                                                     @RequestParam(defaultValue = "3") int limit) {
+                                                    @RequestParam(defaultValue = "3") int limit) {
         Long userId = (Long) request.getAttribute("userId");
         return Result.success(announcementService.getLatestWithReadStatus(userId, limit));
     }
@@ -61,20 +71,12 @@ public class AnnouncementController {
      * 标记公告为已读
      */
     @PostMapping("/read")
-    public Result<?> markRead(@RequestBody Map<String, Object> body, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        Object idObj = body.get("id");
-        if (idObj == null) {
-            // 批量已读
-            List<?> ids = (List<?>) body.get("ids");
-            if (ids != null) {
-                List<Long> announcementIds = ids.stream()
-                        .map(i -> Long.valueOf(i.toString()))
-                        .toList();
-                announcementService.markAllRead(announcementIds, userId);
-            }
-        } else {
-            announcementService.markRead(Long.valueOf(idObj.toString()), userId);
+    public Result<?> markRead(@RequestBody MarkReadRequest request, HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+        if (request.getId() != null) {
+            announcementService.markRead(request.getId(), userId);
+        } else if (request.getIds() != null && !request.getIds().isEmpty()) {
+            announcementService.markAllRead(request.getIds(), userId);
         }
         return Result.success();
     }

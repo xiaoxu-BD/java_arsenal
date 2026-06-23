@@ -20,6 +20,8 @@ import org.xiaoxu.common.utils.TokenProvider;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.pojo.request.EmailLoginRequest;
+import org.xiaoxu.pojo.request.ResetPasswordByEmailRequest;
+import org.xiaoxu.pojo.request.SendCodeRequest;
 import org.xiaoxu.service.AuditLogService;
 import org.xiaoxu.service.EmailService;
 import org.xiaoxu.service.SysUserService;
@@ -182,11 +184,8 @@ public class AuthController {
      * 发送邮箱验证码
      */
     @PostMapping("/sendCode")
-    public Result<?> sendCode(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        if (email == null || email.isBlank()) {
-            return Result.error(400, "邮箱不能为空");
-        }
+    public Result<?> sendCode(@RequestBody @Valid SendCodeRequest request) {
+        String email = request.getEmail();
         if (emailService == null) {
             return Result.error(500, "邮件服务未配置");
         }
@@ -269,15 +268,11 @@ public class AuthController {
      * 通过邮箱验证码设置密码（用于邮箱注册用户首次设密码）
      */
     @PostMapping("/resetPasswordByEmail")
-    public Result<?> resetPasswordByEmail(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String code = body.get("code");
-        String newPassword = body.get("newPassword");
+    public Result<?> resetPasswordByEmail(@RequestBody @Valid ResetPasswordByEmailRequest request) {
+        String email = request.getEmail();
+        String code = request.getCode();
+        String newPassword = request.getNewPassword();
 
-        if (email == null || email.isBlank() || code == null || code.isBlank()
-                || newPassword == null || newPassword.isBlank()) {
-            return Result.error(400, "邮箱、验证码和新密码不能为空");
-        }
         if (newPassword.length() < 6) {
             return Result.error(400, "密码长度不能少于 6 位");
         }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,8 @@ import org.xiaoxu.file.UserExcelVO;
 import org.xiaoxu.mapper.UserRoleMapper;
 import org.xiaoxu.pojo.SystemUserRole;
 import org.xiaoxu.pojo.SystemUsers;
+import org.xiaoxu.pojo.request.ChangePasswordRequest;
+import org.xiaoxu.pojo.request.ResetPasswordRequest;
 import org.xiaoxu.pojo.request.UserRoleRequest;
 import org.xiaoxu.service.OssService;
 import org.xiaoxu.service.SysUserService;
@@ -135,15 +138,10 @@ public class UserController {
      * 修改自己的密码（需要旧密码）
      */
     @PutMapping("/changePassword")
-    public Result<?> changePassword(@RequestBody Map<String, String> body, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        String oldPassword = body.get("oldPassword");
-        String newPassword = body.get("newPassword");
-        if (oldPassword == null || newPassword == null) {
-            return Result.error(400, "旧密码和新密码不能为空");
-        }
+    public Result<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
         try {
-            sysUserService.changePassword(userId, oldPassword, newPassword);
+            sysUserService.changePassword(userId, request.getOldPassword(), request.getNewPassword());
             return Result.success();
         } catch (RuntimeException e) {
             return Result.error(400, e.getMessage());
@@ -155,11 +153,9 @@ public class UserController {
      */
     @PreAuthorize("hasAuthority('system:user:update')")
     @PutMapping("/resetPassword")
-    public Result<?> resetPassword(@RequestBody Map<String, Object> body) {
-        Long userId = Long.valueOf(body.get("userId").toString());
-        String newPassword = body.get("newPassword").toString();
+    public Result<?> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
         try {
-            sysUserService.resetPassword(userId, newPassword);
+            sysUserService.resetPassword(request.getUserId(), request.getNewPassword());
             return Result.success();
         } catch (RuntimeException e) {
             return Result.error(400, e.getMessage());

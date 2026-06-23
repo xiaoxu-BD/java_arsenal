@@ -7,6 +7,7 @@ import org.flowable.engine.delegate.ExecutionListener;
 import org.xiaoxu.mapper.UserMapper;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.service.EmailService;
+import org.xiaoxu.workflow.constant.ProcessDefinitionKey;
 import org.xiaoxu.workflow.entity.ApproveLeave;
 import org.xiaoxu.workflow.entity.FulfillmentOrder;
 import org.xiaoxu.workflow.mapper.ApproveLeaveMapper;
@@ -37,7 +38,7 @@ public class RejectionEmailListener implements ExecutionListener {
         EmailService emailService = SpringContextHolder.getBean(EmailService.class);
         UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
 
-        if ("fulfillment-approval".equals(processDefinitionKey)) {
+        if (ProcessDefinitionKey.FULFILLMENT_APPROVAL.equals(processDefinitionKey)) {
             FulfillmentOrderMapper mapper = SpringContextHolder.getBean(FulfillmentOrderMapper.class);
             FulfillmentOrder order = mapper.selectOne(
                     new LambdaQueryWrapper<FulfillmentOrder>()
@@ -61,7 +62,7 @@ public class RejectionEmailListener implements ExecutionListener {
             order.setNotified("1");
             mapper.updateById(order);
 
-        } else if ("leave-request".equals(processDefinitionKey)) {
+        } else if (ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)) {
             ApproveLeaveMapper mapper = SpringContextHolder.getBean(ApproveLeaveMapper.class);
             String identifier = parseIdentifier(businessKey);
             if (identifier == null) {

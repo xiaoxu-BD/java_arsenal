@@ -178,4 +178,11 @@ public class AnnouncementService {
         update.setUpdateTime(LocalDateTime.now());
         announcementMapper.updateById(update);
     }
+
+    /**
+     * 根据 ID 获取公告详情
+     */
+    public SysAnnouncement getById(Long id) {
+        return announcementMapper.selectById(id);
+    }
 }

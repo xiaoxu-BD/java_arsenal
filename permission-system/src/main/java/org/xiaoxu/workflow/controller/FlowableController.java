@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.common.utils.Result;
+import org.xiaoxu.workflow.dto.ApproveRequest;
+import org.xiaoxu.workflow.dto.RejectRequest;
 import org.xiaoxu.workflow.service.FlowableService;
 import org.xiaoxu.workflow.service.FulfillmentOrderService;
+import org.xiaoxu.workflow.vo.TaskVO;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +41,7 @@ public class FlowableController {
      * 我的待办 - 已认领 ∪ 我所在 RBAC 角色为候选组的未认领任务
      */
     @GetMapping("/my")
-    public Result<List<Map<String, Object>>> myTasks(Authentication authentication) {
+    public Result<List<TaskVO>> myTasks(Authentication authentication) {
         return Result.success(flowableService.queryMyTasks(authentication.getName()));
     }
 
@@ -46,7 +49,7 @@ public class FlowableController {
      * 候选任务 - 查询候选组的待办任务（未认领）
      */
     @GetMapping("/candidate")
-    public Result<List<Map<String, Object>>> candidateTasks(@RequestParam String group) {
+    public Result<List<TaskVO>> candidateTasks(@RequestParam String group) {
         return Result.success(flowableService.queryCandidateTasks(group));
     }
 
@@ -64,10 +67,9 @@ public class FlowableController {
      */
     @PostMapping("/{taskId}/approve")
     public Result<Void> approve(@PathVariable String taskId,
-                                 @RequestBody(required = false) Map<String, String> body,
+                                 @RequestBody ApproveRequest request,
                                  Authentication authentication) {
-        String comment = body == null ? null : body.get("comment");
-        flowableService.completeAndCallback(taskId, authentication.getName(), true, comment);
+        flowableService.completeAndCallback(taskId, authentication.getName(), true, request.getComment());
         return Result.success();
     }
 
@@ -76,10 +78,9 @@ public class FlowableController {
      */
     @PostMapping("/{taskId}/reject")
     public Result<Void> reject(@PathVariable String taskId,
-                                @RequestBody(required = false) Map<String, String> body,
+                                @RequestBody RejectRequest request,
                                 Authentication authentication) {
-        String comment = body == null ? null : body.get("comment");
-        flowableService.completeAndCallback(taskId, authentication.getName(), false, comment);
+        flowableService.completeAndCallback(taskId, authentication.getName(), false, request.getComment());
         return Result.success();
     }
 

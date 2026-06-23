@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xiaoxu.common.utils.ExcelExportUtil;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.file.WorkflowItemExcelVO;
+import org.xiaoxu.workflow.constant.ApprovalStatus;
+import org.xiaoxu.workflow.constant.BusinessType;
 import org.xiaoxu.workflow.dto.WorkflowAdminQueryDTO;
 import org.xiaoxu.workflow.service.WorkflowAdminService;
 import org.xiaoxu.workflow.vo.WorkflowItemVO;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -54,24 +54,13 @@ public class WorkflowAdminController {
         IPage<WorkflowItemVO> page = workflowAdminService.queryAll(query);
         List<WorkflowItemVO> records = page.getRecords();
 
-        Map<String, String> typeMap = new LinkedHashMap<>();
-        typeMap.put("leave", "请假");
-        typeMap.put("fulfillment", "履约");
-
-        Map<String, String> statusMap = new LinkedHashMap<>();
-        statusMap.put("DRAFT", "草稿");
-        statusMap.put("PROCESSING", "审批中");
-        statusMap.put("APPROVED", "已通过");
-        statusMap.put("REJECTED", "已驳回");
-        statusMap.put("CANCELLED", "已撤回");
-
         List<WorkflowItemExcelVO> voList = records.stream().map(r -> {
             WorkflowItemExcelVO vo = new WorkflowItemExcelVO();
-            vo.setBusinessType(typeMap.getOrDefault(r.getBusinessType(), r.getBusinessType()));
+            vo.setBusinessType(BusinessType.getLabelByKey(r.getBusinessType()));
             vo.setBusinessKey(r.getBusinessKey());
             vo.setTitle(r.getTitle());
             vo.setApplicant(r.getApplicant());
-            vo.setStatus(statusMap.getOrDefault(r.getStatus(), r.getStatus()));
+            vo.setStatus(r.getStatus());
             vo.setAmount(r.getAmount());
             vo.setLeaveDay(r.getLeaveDay());
             vo.setCreateTime(r.getCreateTime());
