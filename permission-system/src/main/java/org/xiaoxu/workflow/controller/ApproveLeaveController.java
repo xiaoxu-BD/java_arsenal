@@ -55,8 +55,12 @@ public class ApproveLeaveController {
     public Result<ApproveLeaveVO> submitApproval(@PathVariable Long id,
                                                   @RequestParam String days,
                                                   @RequestParam String identifier,
+                                                  @RequestParam(required = false) String processKey,
                                                   Authentication authentication) {
-        return Result.success(flowableLeaveService.submitApproval(authentication.getName(), identifier, days));
+        String processDefinitionKey = (processKey != null && !processKey.isEmpty()) 
+            ? processKey : "leave-request";
+        return Result.success(flowableLeaveService.submitApproval(
+            authentication.getName(), identifier, days, processDefinitionKey));
     }
 
     /**

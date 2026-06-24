@@ -11,5 +11,5 @@ public interface FlowableLeaveService {
 
     String startProcess(String processDefinitionKey, String businessKey, String days, Map<String, Object> variables);
 
-    ApproveLeaveVO submitApproval(String userName, String identifier, String days);
+    ApproveLeaveVO submitApproval(String userName, String identifier, String days, String processDefinitionKey);
 }

@@ -99,11 +99,18 @@ public class AuthController {
 
             // 查询是否首次登录
             SystemUsers user = sysUserService.getUserById(loginUser.getUserId());
+            boolean isFirstLogin = user != null && "1".equals(user.getFirstLogin());
+
+            // 如果是首次登录，更新 firstLogin 为 0
+            if (isFirstLogin) {
+                user.setFirstLogin("0");
+                sysUserService.updateById(user);
+            }
 
             Map<String, Object> loginData = new HashMap<>();
             loginData.put("token", token);
             loginData.put("permissions", permissions);
-            loginData.put("firstLogin", user != null && "1".equals(user.getFirstLogin()));
+            loginData.put("firstLogin", isFirstLogin);
 
             auditLogService.recordLoginLog(username, "PASSWORD", ip, "", "", 0, "登录成功");
             return Result.success(loginData);
@@ -248,10 +255,18 @@ public class AuthController {
             loginUser.setPermissions(new java.util.HashSet<>(permissions));
             String token = tokenProvider.createToken(loginUser);
 
+            boolean isFirstLogin = "1".equals(user.getFirstLogin());
+
+            // 如果是首次登录，更新 firstLogin 为 0
+            if (isFirstLogin) {
+                user.setFirstLogin("0");
+                sysUserService.updateById(user);
+            }
+
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
             data.put("permissions", permissions);
-            data.put("firstLogin", "1".equals(user.getFirstLogin()));
+            data.put("firstLogin", isFirstLogin);
 
             // 记录邮箱登录成功日志
             auditLogService.recordLoginLog(user.getUsername(), "EMAIL", ip, "", "", 0, "邮箱登录成功");

@@ -1,5 +1,6 @@
 package org.xiaoxu.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.xiaoxu.mapper.UserMapper;
+import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.workflow.approval.ApprovalContext;
 import org.xiaoxu.workflow.approval.ApprovalHandler;
 import org.xiaoxu.workflow.approval.ApprovalHandlerRegistry;
@@ -60,6 +63,7 @@ public class FlowableServiceImpl implements FlowableService {
     private final ApprovalHandlerRegistry approvalHandlerRegistry;
     private final WorkflowIdentityService workflowIdentityService;
     private final AuditLogService auditLogService;
+    private final UserMapper userMapper;
     private final ApproveLeaveMapper approveLeaveMapper;
     private final FulfillmentOrderMapper fulfillmentOrderMapper;
 
@@ -263,6 +267,25 @@ public class FlowableServiceImpl implements FlowableService {
             log.warn("获取审批动作变量失败", e);
         }
 
+        // 收集所有审批人用户名，批量查询用户信息（头像、昵称）
+        Set<String> assigneeNames = activities.stream()
+                .map(HistoricActivityInstance::getAssignee)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toSet());
+
+        Map<String, SystemUsers> userMap = new HashMap<>();
+        if (!assigneeNames.isEmpty()) {
+            try {
+                List<SystemUsers> users = userMapper.selectList(new LambdaQueryWrapper<SystemUsers>().in(SystemUsers::getUsername,assigneeNames));
+                userMap = users.stream()
+                        .collect(Collectors.toMap(SystemUsers::getUsername, u -> u, (a, b) -> a));
+            } catch (Exception e) {
+                log.warn("批量查询用户信息失败", e);
+            }
+        }
+
+        final Map<String, SystemUsers> finalUserMap = userMap;
+
         return activities.stream().map(activity -> {
             Map<String, Object> map = new HashMap<>();
             map.put("activityId", activity.getActivityId());
@@ -272,6 +295,15 @@ public class FlowableServiceImpl implements FlowableService {
             map.put("endTime", activity.getEndTime());
             map.put("assignee", activity.getAssignee());
             map.put("durationInMillis", activity.getDurationInMillis());
+
+            // 用户头像和昵称
+            String assignee = activity.getAssignee();
+            if (StringUtils.isNotBlank(assignee) && finalUserMap.containsKey(assignee)) {
+                SystemUsers user = finalUserMap.get(assignee);
+                map.put("avatar", user.getAvatar());
+                map.put("nickname", user.getNickname());
+            }
+
             // 审批动作
             if (activity.getTaskId() != null) {
                 map.put("action", actionByTaskId.getOrDefault(activity.getTaskId(), null));

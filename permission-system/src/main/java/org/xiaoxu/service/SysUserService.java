@@ -165,4 +165,13 @@ public class SysUserService {
 
         return user;
     }
+
+
+
+    /**
+     * 根据用户对象更新（需要传入完整的用户对象）
+     */
+    public void updateById(SystemUsers user) {
+        userMapper.updateById(user);
+    }
 }
