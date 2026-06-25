@@ -23,7 +23,7 @@ public class LeaveApprovalHandler implements ApprovalHandler {
 
     @Override
     public String supportProcessDefinitionKey() {
-        return "leave-request";
+        return "leave-request-v2";
     }
 
     @Override

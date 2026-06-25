@@ -4,14 +4,19 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.xiaoxu.mapper.UserMapper;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.workflow.constant.ApprovalStatus;
 import org.xiaoxu.workflow.entity.ApproveLeave;
+import org.xiaoxu.workflow.entity.Department;
+import org.xiaoxu.workflow.event.DepartmentFlowEvent;
 import org.xiaoxu.workflow.service.ApproveLeaveService;
+import org.xiaoxu.workflow.service.DepartmentService;
 import org.xiaoxu.workflow.service.FlowableLeaveService;
 import org.xiaoxu.workflow.vo.ApproveLeaveVO;
 
@@ -30,6 +35,8 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
     private final RuntimeService runtimeService;
     private final ApproveLeaveService approveLeaveService;
     private final UserMapper userMapper;
+    private final DepartmentService departmentService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public String startProcess(String processDefinitionKey, String businessKey, String days, Map<String, Object> variables) {
@@ -76,30 +83,37 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         one.setProcessInstanceId(processId);
         one.setStatus(ApprovalStatus.PROCESSING.name());
         approveLeaveService.updateById(one);
+
+        // 发布部门流程事件（请假已提交）
+        String department = getUserDepartment(userName);
+        DepartmentFlowEvent event = new DepartmentFlowEvent(
+                this,
+                DepartmentFlowEvent.EventType.LEAVE_SUBMITTED,
+                "leave",
+                one.getId(),
+                userName,
+                department,
+                processId
+        );
+        eventPublisher.publishEvent(event);
+        log.info("部门流程事件已发布: eventType=LEAVE_SUBMITTED, department={}", department);
+
         return BeanUtil.copyProperties(one, ApproveLeaveVO.class);
     }
 
     /**
-     * 查找经理审批人（示例：查询用户的直接上级）
-     * 实际项目中应该查询组织架构表或审批配置表
+     * 查找经理审批人
      */
     private String findManagerApprover(String applicantUsername) {
-        // 方案1：查询组织架构表找直接上级
-        // return orgService.findDirectManager(applicantUsername);
-        
-        // 方案2：查询审批配置表
-        // return approvalConfigService.getApprover("leave-request", "manager", applicantUsername);
-        
-        // 方案3：简单实现 - 查询角色为 ROLE_MANAGER 的用户
         try {
             SystemUsers manager = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "manger_01") // 示例：固定返回 manager 用户
+                    .eq(SystemUsers::getUsername, "manger_01")
             );
-            return manager != null ? manager.getUsername() : "manager";
+            return manager != null ? manager.getUsername() : "manger_01";
         } catch (Exception e) {
             log.warn("查找经理审批人失败，使用默认值", e);
-            return "manager";
+            return "manger_01";
         }
     }
 
@@ -110,12 +124,12 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         try {
             SystemUsers director = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "director_01") // 示例：固定返回 director 用户
+                    .eq(SystemUsers::getUsername, "director_01")
             );
-            return director != null ? director.getUsername() : "director";
+            return director != null ? director.getUsername() : "director_01";
         } catch (Exception e) {
             log.warn("查找总监审批人失败，使用默认值", e);
-            return "director";
+            return "director_01";
         }
     }
 
@@ -126,12 +140,25 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         try {
             SystemUsers hr = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "hr_01") // 示例：固定返回 hr 用户
+                    .eq(SystemUsers::getUsername, "hr_01")
             );
-            return hr != null ? hr.getUsername() : "hr";
+            return hr != null ? hr.getUsername() : "hr_01";
         } catch (Exception e) {
             log.warn("查找HR审批人失败，使用默认值", e);
-            return "hr";
+            return "hr_01";
+        }
+    }
+
+    /**
+     * 获取用户部门
+     */
+    private String getUserDepartment(String username) {
+        try {
+            Department dept = departmentService.getPrimaryDepartment(username);
+            return dept != null ? dept.getDeptCode() : "UNKNOWN";
+        } catch (Exception e) {
+            log.warn("获取用户部门失败: username={}", username, e);
+            return "UNKNOWN";
         }
     }
 }

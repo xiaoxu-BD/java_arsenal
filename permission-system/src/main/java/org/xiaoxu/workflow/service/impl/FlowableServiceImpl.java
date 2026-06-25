@@ -14,15 +14,13 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
 import org.flowable.task.api.Task;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.xiaoxu.mapper.UserMapper;
 import org.xiaoxu.pojo.SystemUsers;
-import org.xiaoxu.workflow.approval.ApprovalContext;
-import org.xiaoxu.workflow.approval.ApprovalHandler;
 import org.xiaoxu.workflow.approval.ApprovalHandlerRegistry;
+import org.xiaoxu.workflow.event.ApprovalEvent;
 import org.xiaoxu.workflow.constant.ApprovalAction;
 import org.xiaoxu.workflow.constant.BusinessType;
 import org.xiaoxu.workflow.constant.ProcessDefinitionKey;
@@ -64,6 +62,7 @@ public class FlowableServiceImpl implements FlowableService {
     private final WorkflowIdentityService workflowIdentityService;
     private final AuditLogService auditLogService;
     private final UserMapper userMapper;
+    private final ApplicationEventPublisher eventPublisher;
     private final ApproveLeaveMapper approveLeaveMapper;
     private final FulfillmentOrderMapper fulfillmentOrderMapper;
 
@@ -202,36 +201,23 @@ public class FlowableServiceImpl implements FlowableService {
                 processDefinitionKey, businessKey,
                 action, comment, username);
 
-        // 5) 注册 afterCommit 回调：事务提交后再触发业务侧 onApproved/onRejected
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                try {
-                    ApprovalHandler handler = approvalHandlerRegistry.get(processDefinitionKey);
-                    if (handler == null) {
-                        return;
-                    }
-                    ApprovalContext ctx = ApprovalContext.builder()
-                            .businessKey(businessKey)
-                            .processInstanceId(processInstanceId)
-                            .comment(comment)
-                            .build();
-                    if (approved) {
-                        // 整个流程通过才回调（仅最后一级通过时触发）
-                        if (isProcessFinished(processInstanceId)) {
-                            handler.onApproved(ctx);
-                            log.info("审批通过回调完成, processInstanceId={}, key={}", processInstanceId, processDefinitionKey);
-                        }
-                    } else {
-                        // 驳回即流程结束，回调一定触发
-                        handler.onRejected(ctx);
-                        log.info("审批驳回回调完成, processInstanceId={}, key={}", processInstanceId, processDefinitionKey);
-                    }
-                } catch (Exception e) {
-                    log.error("审批回调异常, processInstanceId={}", processInstanceId, e);
-                }
-            }
-        });
+        // 5) 发布审批事件：事务提交后由 ApprovalEventListener 处理业务回调
+        ApprovalEvent.ActionType actionType = approved 
+                ? ApprovalEvent.ActionType.APPROVE 
+                : ApprovalEvent.ActionType.REJECT;
+        
+        ApprovalEvent approvalEvent = new ApprovalEvent(
+                this,
+                processInstanceId,
+                processDefinitionKey,
+                businessKey,
+                actionType,
+                comment,
+                username
+        );
+        
+        eventPublisher.publishEvent(approvalEvent);
+        log.info("审批事件已发布: processInstanceId={}, action={}", processInstanceId, actionType);
     }
 
     @Override
