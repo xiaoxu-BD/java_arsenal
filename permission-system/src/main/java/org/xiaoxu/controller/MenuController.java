@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.xiaoxu.common.constants.PermissionConstants;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.pojo.SystemMenu;
 import org.xiaoxu.service.MenuService;
@@ -30,33 +31,33 @@ public class MenuController {
     /**
      * 全部菜单树（菜单管理页面用，不过滤权限）
      */
-    @PreAuthorize("hasAuthority('system:menu:query')")
+    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_QUERY + ")")
     @GetMapping("/listAll")
     public Result<?> getMenuTree() {
         return Result.success(menuService.getMenuTree());
     }
 
-    @PreAuthorize("hasAuthority('system:menu:query')")
+    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_QUERY + ")")
     @GetMapping("/get")
     public Result<?> getMenuById(@RequestParam Long id) {
         return Result.success(menuService.getMenuById(id));
     }
 
-    @PreAuthorize("hasAuthority('system:menu:create')")
+    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_CREATE + ")")
     @PostMapping("/create")
     public Result<?> createMenu(@RequestBody SystemMenu menu) {
         menuService.createMenu(menu);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority('system:menu:update')")
+    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_UPDATE + ")")
     @PutMapping("/update")
     public Result<?> updateMenu(@RequestBody SystemMenu menu) {
         menuService.updateMenu(menu);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority('system:menu:delete')")
+    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_DELETE + ")")
     @DeleteMapping("/delete")
     public Result<?> deleteMenu(@RequestParam Long id) {
         menuService.deleteMenu(id);

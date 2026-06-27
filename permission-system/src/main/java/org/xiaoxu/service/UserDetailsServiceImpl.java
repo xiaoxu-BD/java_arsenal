@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.xiaoxu.auth.LoginUser;
-import org.xiaoxu.common.excepiton.user.AuthErrorCode;
+import org.xiaoxu.common.exception.user.AuthErrorCode;
 import org.xiaoxu.mapper.*;
 import org.xiaoxu.pojo.dto.SystemUserDTO;
 

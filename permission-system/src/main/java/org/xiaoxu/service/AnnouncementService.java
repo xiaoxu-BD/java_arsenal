@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.xiaoxu.common.constants.CommonConstants;
 import org.xiaoxu.mapper.SysAnnouncementMapper;
 import org.xiaoxu.mapper.SysAnnouncementReadMapper;
 import org.xiaoxu.pojo.SysAnnouncement;
@@ -32,7 +33,7 @@ public class AnnouncementService {
      */
     public IPage<SysAnnouncement> pageQuery(int current, int size, String title, Integer status) {
         LambdaQueryWrapper<SysAnnouncement> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysAnnouncement::getDeleted, "0");
+        wrapper.eq(SysAnnouncement::getDeleted, CommonConstants.NOT_DELETED);
         if (title != null && !title.isBlank()) {
             wrapper.like(SysAnnouncement::getTitle, title);
         }
@@ -50,8 +51,8 @@ public class AnnouncementService {
         // 1. 查所有已发布公告
         List<SysAnnouncement> published = announcementMapper.selectList(
                 new LambdaQueryWrapper<SysAnnouncement>()
-                        .eq(SysAnnouncement::getDeleted, "0")
-                        .eq(SysAnnouncement::getStatus, 1)
+                        .eq(SysAnnouncement::getDeleted, CommonConstants.NOT_DELETED)
+                        .eq(SysAnnouncement::getStatus, CommonConstants.ANNOUNCEMENT_PUBLISHED)
                         .orderByDesc(SysAnnouncement::getPublishTime));
         if (published.isEmpty()) return List.of();
 
@@ -99,8 +100,8 @@ public class AnnouncementService {
         // 1. 查最新的已发布公告
         List<SysAnnouncement> list = announcementMapper.selectList(
                 new LambdaQueryWrapper<SysAnnouncement>()
-                        .eq(SysAnnouncement::getDeleted, "0")
-                        .eq(SysAnnouncement::getStatus, 1)
+                        .eq(SysAnnouncement::getDeleted, CommonConstants.NOT_DELETED)
+                        .eq(SysAnnouncement::getStatus, CommonConstants.ANNOUNCEMENT_PUBLISHED)
                         .orderByDesc(SysAnnouncement::getPublishTime)
                         .last("LIMIT " + limit));
         if (list.isEmpty()) return List.of();
@@ -141,8 +142,8 @@ public class AnnouncementService {
     }
 
     public void create(SysAnnouncement announcement) {
-        announcement.setStatus(0);
-        announcement.setDeleted("0");
+        announcement.setStatus(CommonConstants.ANNOUNCEMENT_DRAFT);
+        announcement.setDeleted(CommonConstants.NOT_DELETED);
         announcement.setCreateTime(LocalDateTime.now());
         announcement.setUpdateTime(LocalDateTime.now());
         announcementMapper.insert(announcement);
@@ -156,7 +157,7 @@ public class AnnouncementService {
     public void publish(Long id, String publisher) {
         SysAnnouncement update = new SysAnnouncement();
         update.setId(id);
-        update.setStatus(1);
+        update.setStatus(CommonConstants.ANNOUNCEMENT_PUBLISHED);
         update.setPublisher(publisher);
         update.setPublishTime(LocalDateTime.now());
         update.setUpdateTime(LocalDateTime.now());
@@ -166,7 +167,7 @@ public class AnnouncementService {
     public void withdraw(Long id) {
         SysAnnouncement update = new SysAnnouncement();
         update.setId(id);
-        update.setStatus(2);
+        update.setStatus(CommonConstants.ANNOUNCEMENT_WITHDRAWN);
         update.setUpdateTime(LocalDateTime.now());
         announcementMapper.updateById(update);
     }
@@ -174,7 +175,7 @@ public class AnnouncementService {
     public void delete(Long id) {
         SysAnnouncement update = new SysAnnouncement();
         update.setId(id);
-        update.setDeleted("1");
+        update.setDeleted(CommonConstants.DELETED);
         update.setUpdateTime(LocalDateTime.now());
         announcementMapper.updateById(update);
     }

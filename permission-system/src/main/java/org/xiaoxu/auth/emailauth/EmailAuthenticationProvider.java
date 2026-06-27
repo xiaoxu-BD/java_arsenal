@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.xiaoxu.common.excepiton.BizException;
+import org.xiaoxu.common.exception.BizException;
 import org.xiaoxu.mapper.MenuMapper;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.service.SysUserService;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.xiaoxu.common.excepiton.user.AuthErrorCode.EMAIL_AUTH_CODE_ERROR;
+import static org.xiaoxu.common.exception.user.AuthErrorCode.EMAIL_AUTH_CODE_ERROR;
 
 /**
  * 邮箱验证码认证 Provider。

@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xiaoxu.annotation.OperationLog;
+import org.xiaoxu.common.constants.CommonConstants;
+import org.xiaoxu.common.constants.PermissionConstants;
 import org.xiaoxu.common.utils.ExcelExportUtil;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.common.utils.TokenProvider;
@@ -44,7 +46,7 @@ public class UserController {
     private OssService ossService;
 
     @OperationLog(module = "用户管理", operation = "新增用户")
-    @PreAuthorize("hasAuthority('system:user:create')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_CREATE + "')")
     @PostMapping("/create")
     public Result<?> createUser(@RequestBody SystemUsers user) {
         sysUserService.createUser(user);
@@ -52,21 +54,21 @@ public class UserController {
     }
 
     @OperationLog(module = "用户管理", operation = "删除用户")
-    @PreAuthorize("hasAuthority('system:user:delete')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_DELETE + "')")
     @DeleteMapping("/delete")
     public Result<?> deleteUser(@RequestParam Long id) {
         sysUserService.deleteUser(id);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority('system:user:query')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_QUERY + "')")
     @GetMapping("/getRoleIds")
     public Result<?> getRoleIdsByUserId(@RequestParam Long userId) {
         Set<Long> roleIds = userRoleMapper.getRoleIdsByUserId(userId);
         return Result.success(roleIds);
     }
 
-    @PreAuthorize("hasAuthority('system:user:update')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_UPDATE + "')")
     @PutMapping("/updateRole")
     public Result<?> updateUserRole(@RequestBody UserRoleRequest request) {
         // 先删旧关联
@@ -80,7 +82,7 @@ public class UserController {
                 SystemUserRole ur = new SystemUserRole();
                 ur.setUserId(request.getUserId());
                 ur.setRoleId(roleId);
-                ur.setDeleted("0");
+                ur.setDeleted(CommonConstants.NOT_DELETED);
                 userRoleMapper.insert(ur);
             }
         }
@@ -90,7 +92,7 @@ public class UserController {
     }
 
     @OperationLog(module = "用户管理", operation = "导出用户")
-    @PreAuthorize("hasAuthority('system:user:query')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_QUERY + "')")
     @GetMapping("/export")
     public void exportUserList(HttpServletResponse response) throws Exception {
         List<SystemUsers> users = sysUserService.getAll();
@@ -101,7 +103,7 @@ public class UserController {
             vo.setNickname(u.getNickname());
             vo.setEmail(u.getEmail());
             vo.setMobile(u.getMobile());
-            vo.setStatus(u.getStatus() == 0 ? "正常" : "禁用");
+            vo.setStatus(CommonConstants.USER_STATUS_ACTIVE.equals(u.getStatus()) ? "正常" : "禁用");
             vo.setCreateTime(u.getCreateTime());
             return vo;
         }).collect(Collectors.toList());
@@ -151,7 +153,7 @@ public class UserController {
     /**
      * 管理员重置指定用户密码
      */
-    @PreAuthorize("hasAuthority('system:user:update')")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.USER_UPDATE + "')")
     @PutMapping("/resetPassword")
     public Result<?> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
         try {

@@ -1,4 +1,4 @@
-package org.xiaoxu.common.excepiton;
+package org.xiaoxu.common.exception;
 
 public interface ErrorCode {
 

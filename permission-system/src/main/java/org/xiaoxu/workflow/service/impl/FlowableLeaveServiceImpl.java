@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.xiaoxu.mapper.UserMapper;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.workflow.constant.ApprovalStatus;
+import org.xiaoxu.workflow.constant.ProcessDefinitionKey;
+import org.xiaoxu.workflow.constant.ProcessVariables;
 import org.xiaoxu.workflow.entity.ApproveLeave;
 import org.xiaoxu.workflow.entity.Department;
 import org.xiaoxu.workflow.event.DepartmentFlowEvent;
@@ -32,6 +34,12 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FlowableLeaveServiceImpl implements FlowableLeaveService {
 
+    private static final double DEFAULT_LEAVE_DAYS = 0.0;
+    private static final String DEFAULT_MANAGER_APPROVER = "manger_01";
+    private static final String DEFAULT_DIRECTOR_APPROVER = "director_01";
+    private static final String DEFAULT_HR_APPROVER = "hr_01";
+    private static final String UNKNOWN_DEPARTMENT = "UNKNOWN";
+
     private final RuntimeService runtimeService;
     private final ApproveLeaveService approveLeaveService;
     private final UserMapper userMapper;
@@ -44,10 +52,16 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
             variables = new HashMap<>();
         }
         // 把 days 转换为 Double 类型，避免 Flowable 使用 Long.valueOf() 转换小数时报错
-        try {
-            variables.put("days", Double.parseDouble(days));
-        } catch (NumberFormatException e) {
-            variables.put("days", 0.0);
+        if (days != null && !days.isEmpty()) {
+            try {
+                variables.put(ProcessVariables.DAYS, Double.parseDouble(days));
+            } catch (NumberFormatException e) {
+                log.warn("days 格式错误，使用默认值 {}: days={}", DEFAULT_LEAVE_DAYS, days);
+                variables.put(ProcessVariables.DAYS, DEFAULT_LEAVE_DAYS);
+            }
+        } else {
+            log.warn("days 为空，使用默认值 {}", DEFAULT_LEAVE_DAYS);
+            variables.put(ProcessVariables.DAYS, DEFAULT_LEAVE_DAYS);
         }
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
@@ -68,13 +82,13 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         Map<String, Object> variables = new HashMap<>();
 
         // 如果是 v2 流程（流程变量指定审批人），需要计算审批人
-        if ("leave-request-v2".equals(processDefinitionKey)) {
+        if (ProcessDefinitionKey.LEAVE_REQUEST_V2.equals(processDefinitionKey)) {
             String managerApprover = findManagerApprover(userName);
             String directorApprover = findDirectorApprover(userName);
             String hrApprover = findHrApprover(userName);
-            variables.put("managerApprover", managerApprover);
-            variables.put("directorApprover", directorApprover);
-            variables.put("hrApprover", hrApprover);
+            variables.put(ProcessVariables.MANAGER_APPROVER, managerApprover);
+            variables.put(ProcessVariables.DIRECTOR_APPROVER, directorApprover);
+            variables.put(ProcessVariables.HR_APPROVER, hrApprover);
             log.info("使用V2流程，审批人变量：manager={}, director={}, hr={}", managerApprover, directorApprover, hrApprover);
         }
 
@@ -108,12 +122,12 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         try {
             SystemUsers manager = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "manger_01")
+                    .eq(SystemUsers::getUsername, DEFAULT_MANAGER_APPROVER)
             );
-            return manager != null ? manager.getUsername() : "manger_01";
+            return manager != null ? manager.getUsername() : DEFAULT_MANAGER_APPROVER;
         } catch (Exception e) {
             log.warn("查找经理审批人失败，使用默认值", e);
-            return "manger_01";
+            return DEFAULT_MANAGER_APPROVER;
         }
     }
 
@@ -124,12 +138,12 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         try {
             SystemUsers director = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "director_01")
+                    .eq(SystemUsers::getUsername, DEFAULT_DIRECTOR_APPROVER)
             );
-            return director != null ? director.getUsername() : "director_01";
+            return director != null ? director.getUsername() : DEFAULT_DIRECTOR_APPROVER;
         } catch (Exception e) {
             log.warn("查找总监审批人失败，使用默认值", e);
-            return "director_01";
+            return DEFAULT_DIRECTOR_APPROVER;
         }
     }
 
@@ -140,12 +154,12 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         try {
             SystemUsers hr = userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
-                    .eq(SystemUsers::getUsername, "hr_01")
+                    .eq(SystemUsers::getUsername, DEFAULT_HR_APPROVER)
             );
-            return hr != null ? hr.getUsername() : "hr_01";
+            return hr != null ? hr.getUsername() : DEFAULT_HR_APPROVER;
         } catch (Exception e) {
             log.warn("查找HR审批人失败，使用默认值", e);
-            return "hr_01";
+            return DEFAULT_HR_APPROVER;
         }
     }
 
@@ -155,10 +169,10 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
     private String getUserDepartment(String username) {
         try {
             Department dept = departmentService.getPrimaryDepartment(username);
-            return dept != null ? dept.getDeptCode() : "UNKNOWN";
+            return dept != null ? dept.getDeptCode() : UNKNOWN_DEPARTMENT;
         } catch (Exception e) {
             log.warn("获取用户部门失败: username={}", username, e);
-            return "UNKNOWN";
+            return UNKNOWN_DEPARTMENT;
         }
     }
 }

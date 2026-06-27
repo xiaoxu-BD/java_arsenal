@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.xiaoxu.common.constants.CommonConstants;
 import org.xiaoxu.mapper.UserMapper;
 import org.xiaoxu.mapper.UserRoleMapper;
 import org.xiaoxu.pojo.SystemUsers;
@@ -25,8 +26,6 @@ import java.util.UUID;
 @Service
 public class SysUserService {
 
-
-
     @Autowired
     private UserMapper userMapper;
 
@@ -39,7 +38,7 @@ public class SysUserService {
     public List<SystemUsers> getAll(){
         List<SystemUsers> systemUsers = userMapper.selectList(
                 new LambdaQueryWrapper<SystemUsers>()
-                        .eq(SystemUsers::getDeleted, "0")
+                        .eq(SystemUsers::getDeleted, CommonConstants.NOT_DELETED)
         );
         if (!CollectionUtils.isEmpty(systemUsers)){
             return systemUsers;
@@ -55,7 +54,7 @@ public class SysUserService {
     public void deleteUser(Long id) {
         SystemUsers user = new SystemUsers();
         user.setId(id);
-        user.setDeleted("1");
+        user.setDeleted(CommonConstants.DELETED);
         userMapper.updateById(user);
     }
 
@@ -66,7 +65,7 @@ public class SysUserService {
         return userMapper.selectOne(
                 new LambdaQueryWrapper<SystemUsers>()
                         .eq(SystemUsers::getId, id)
-                        .eq(SystemUsers::getDeleted, "0"));
+                        .eq(SystemUsers::getDeleted, CommonConstants.NOT_DELETED));
     }
 
     /**
@@ -91,7 +90,7 @@ public class SysUserService {
             throw new RuntimeException("用户不存在");
         }
         // 首次登录跳过旧密码校验
-        if (!"1".equals(user.getFirstLogin())) {
+        if (!CommonConstants.FIRST_LOGIN_YES.equals(user.getFirstLogin())) {
             if (oldPassword == null || !passwordEncoder.matches(oldPassword, user.getPassword())) {
                 throw new RuntimeException("旧密码不正确");
             }
@@ -100,7 +99,7 @@ public class SysUserService {
                 new LambdaUpdateWrapper<SystemUsers>()
                         .eq(SystemUsers::getId, userId)
                         .set(SystemUsers::getPassword, passwordEncoder.encode(newPassword))
-                        .set(SystemUsers::getFirstLogin, "0"));
+                        .set(SystemUsers::getFirstLogin, CommonConstants.FIRST_LOGIN_NO));
     }
 
     /**
@@ -115,7 +114,7 @@ public class SysUserService {
                 new LambdaUpdateWrapper<SystemUsers>()
                         .eq(SystemUsers::getId, userId)
                         .set(SystemUsers::getPassword, passwordEncoder.encode(newPassword))
-                        .set(SystemUsers::getFirstLogin, "0"));
+                        .set(SystemUsers::getFirstLogin, CommonConstants.FIRST_LOGIN_NO));
     }
 
     /**
@@ -151,22 +150,20 @@ public class SysUserService {
         user.setEmail(email);
         user.setNickname(username);
         user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString().substring(0, 8)));
-        user.setStatus(0L);
-        user.setDeleted("0");
-        user.setFirstLogin("1");
+        user.setStatus(CommonConstants.USER_STATUS_ACTIVE);
+        user.setDeleted(CommonConstants.NOT_DELETED);
+        user.setFirstLogin(CommonConstants.FIRST_LOGIN_YES);
         userMapper.insert(user);
 
-        // 分配默认普通用户角色 (id=2)
+        // 分配默认普通用户角色
         SystemUserRole userRole = new SystemUserRole();
         userRole.setUserId(user.getId());
-        userRole.setRoleId(2L);
-        userRole.setDeleted("0");
+        userRole.setRoleId(CommonConstants.DEFAULT_ROLE_ID);
+        userRole.setDeleted(CommonConstants.NOT_DELETED);
         userRoleMapper.insert(userRole);
 
         return user;
     }
-
-
 
     /**
      * 根据用户对象更新（需要传入完整的用户对象）

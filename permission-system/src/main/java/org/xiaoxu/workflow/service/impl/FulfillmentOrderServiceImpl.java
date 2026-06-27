@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.xiaoxu.workflow.constant.ApprovalStatus;
+import org.xiaoxu.workflow.constant.ProcessDefinitionKey;
+import org.xiaoxu.workflow.constant.ProcessVariables;
 import org.xiaoxu.workflow.dto.FulfillmentOrderCreateDTO;
 import org.xiaoxu.workflow.dto.FulfillmentOrderQueryDTO;
 import org.xiaoxu.workflow.dto.FulfillmentOrderUpdateDTO;
@@ -187,14 +189,14 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
         }
 
         // 使用指定的流程 key，默认为 fulfillment-approval
-        String key = processKey != null ? processKey : "fulfillment-approval";
+        String key = processKey != null ? processKey : ProcessDefinitionKey.FULFILLMENT_APPROVAL;
 
         // 构建流程变量：把业务数据传入，供网关条件表达式使用
         Map<String, Object> variables = new HashMap<>();
-        variables.put("amount", order.getAmount());           // 金额，用于网关判断
-        variables.put("orderNo", order.getOrderNo());         // 订单号
-        variables.put("title", order.getTitle());             // 标题
-        variables.put("applicant", applicant);                // 申请人
+        variables.put(ProcessVariables.AMOUNT, order.getAmount());
+        variables.put(ProcessVariables.ORDER_NO, order.getOrderNo());
+        variables.put(ProcessVariables.TITLE, order.getTitle());
+        variables.put(ProcessVariables.APPLICANT, applicant);
 
         // 启动 Flowable 流程，businessKey 用 orderNo
         String processInstId = flowableService.startProcess(
@@ -212,8 +214,11 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
         return fulfillmentOrderMapStruct.toVO(order);
     }
 
+    private static final String ORDER_NO_PREFIX = "FO";
+    private static final String ORDER_NO_DATE_FORMAT = "yyyyMMddHHmmss";
+
     private String generateOrderNo() {
-        return "FO" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        return ORDER_NO_PREFIX + LocalDateTime.now().format(DateTimeFormatter.ofPattern(ORDER_NO_DATE_FORMAT))
                 + String.format("%04d", (int) (Math.random() * 10000));
     }
 }

@@ -1,7 +1,7 @@
-package org.xiaoxu.common.excepiton.user;
+package org.xiaoxu.common.exception.user;
 
-import org.xiaoxu.common.excepiton.BizException;
-import org.xiaoxu.common.excepiton.ErrorCode;
+import org.xiaoxu.common.exception.BizException;
+import org.xiaoxu.common.exception.ErrorCode;
 
 /**
  * @className: UserException

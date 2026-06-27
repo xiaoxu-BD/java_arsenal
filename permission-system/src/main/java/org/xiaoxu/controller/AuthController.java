@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.xiaoxu.auth.LoginRequest;
 import org.xiaoxu.auth.LoginUser;
 import org.xiaoxu.auth.emailauth.EmailAuthenticationToken;
+import org.xiaoxu.common.constants.CommonConstants;
+import org.xiaoxu.common.constants.RedisKeyConstants;
 import org.xiaoxu.common.utils.TokenProvider;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.pojo.SystemUsers;
@@ -41,12 +43,10 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/auth/")
 public class AuthController {
 
-
     @GetMapping("/hello")
     public String sayHello() {
         return "hello world!";
     }
-
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -63,14 +63,15 @@ public class AuthController {
     @Resource
     private AuditLogService auditLogService;
 
-    private static final String LOGIN_FAIL_PREFIX = "login:fail:";
     private static final int MAX_FAIL_COUNT = 5;
     private static final long LOCK_MINUTES = 30;
+    private static final long CODE_RATE_LIMIT_TTL = 240;
+    private static final int MIN_PASSWORD_LENGTH = 6;
 
     @PostMapping("/login")
     public Result<?> login(@RequestBody @Valid LoginRequest loginRequest, HttpServletRequest request) {
         String username = loginRequest.getUsername();
-        String failKey = LOGIN_FAIL_PREFIX + username;
+        String failKey = RedisKeyConstants.LOGIN_FAIL_PREFIX + username;
         String ip = getClientIp(request);
 
         // 1. 检查是否被锁定
@@ -99,11 +100,11 @@ public class AuthController {
 
             // 查询是否首次登录
             SystemUsers user = sysUserService.getUserById(loginUser.getUserId());
-            boolean isFirstLogin = user != null && "1".equals(user.getFirstLogin());
+            boolean isFirstLogin = user != null && CommonConstants.FIRST_LOGIN_YES.equals(user.getFirstLogin());
 
             // 如果是首次登录，更新 firstLogin 为 0
             if (isFirstLogin) {
-                user.setFirstLogin("0");
+                user.setFirstLogin(CommonConstants.FIRST_LOGIN_NO);
                 sysUserService.updateById(user);
             }
 
@@ -112,7 +113,7 @@ public class AuthController {
             loginData.put("permissions", permissions);
             loginData.put("firstLogin", isFirstLogin);
 
-            auditLogService.recordLoginLog(username, "PASSWORD", ip, "", "", 0, "登录成功");
+            auditLogService.recordLoginLog(username, CommonConstants.LOGIN_TYPE_PASSWORD, ip, "", "", CommonConstants.LOG_STATUS_SUCCESS, "登录成功");
             return Result.success(loginData);
 
         } catch (BadCredentialsException e) {
@@ -126,16 +127,15 @@ public class AuthController {
             String msg;
             if (remaining > 0) {
                 msg = "用户名或密码错误，剩余" + remaining + "次尝试机会";
-                auditLogService.recordLoginLog(username, "PASSWORD", ip, "", "", 1, msg);
+                auditLogService.recordLoginLog(username, CommonConstants.LOGIN_TYPE_PASSWORD, ip, "", "", CommonConstants.LOG_STATUS_FAILURE, msg);
                 return Result.error(401, msg);
             } else {
                 msg = "登录失败次数过多，账号已锁定" + LOCK_MINUTES + "分钟";
-                auditLogService.recordLoginLog(username, "PASSWORD", ip, "", "", 1, msg);
+                auditLogService.recordLoginLog(username, CommonConstants.LOGIN_TYPE_PASSWORD, ip, "", "", CommonConstants.LOG_STATUS_FAILURE, msg);
                 return Result.error(429, msg);
             }
         }
     }
-
 
     @GetMapping("/getUserInfo")
     public Result<?> getUserInfo(HttpServletRequest request) {
@@ -168,21 +168,19 @@ public class AuthController {
 
     @PostMapping("/logout")
     public Result<?> logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
+        String token = request.getHeader(CommonConstants.HEADER_AUTHORIZATION);
+        if (token != null && token.startsWith(CommonConstants.BEARER_PREFIX)) {
             tokenProvider.removeToken(token.substring(7));
         }
         // 记录注销日志
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
-            auditLogService.recordLoginLog(auth.getName(), "LOGOUT", getClientIp(request), "", "", 0, "用户注销");
+            auditLogService.recordLoginLog(auth.getName(), CommonConstants.LOGIN_TYPE_LOGOUT, getClientIp(request), "", "", CommonConstants.LOG_STATUS_SUCCESS, "用户注销");
         }
         return Result.success();
     }
 
     // ==================== 邮箱验证码登录 ====================
-
-    private static final String LOGIN_CODE_PREFIX = "login:code:";
 
     @Autowired(required = false)
     private EmailService emailService;
@@ -198,9 +196,9 @@ public class AuthController {
         }
 
         // 60 秒防刷
-        String codeKey = LOGIN_CODE_PREFIX + email;
+        String codeKey = RedisKeyConstants.LOGIN_CODE_PREFIX + email;
         Long ttl = stringRedisTemplate.getExpire(codeKey, TimeUnit.SECONDS);
-        if (ttl != null && ttl > 240) {
+        if (ttl != null && ttl > CODE_RATE_LIMIT_TTL) {
             return Result.error(429, "验证码已发送，请" + ttl + "秒后重试");
         }
 
@@ -208,7 +206,7 @@ public class AuthController {
         String code = String.format("%06d", new Random().nextInt(1000000));
 
         // 存 Redis，5 分钟过期
-        stringRedisTemplate.opsForValue().set(codeKey, code, 5, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(codeKey, code, RedisKeyConstants.CODE_EXPIRE_MINUTES, TimeUnit.MINUTES);
 
         // 发邮件
         String html = emailService.buildEmailHtml(
@@ -218,7 +216,7 @@ public class AuthController {
         );
         emailService.sendHtmlEmail(email, "【BPMN系统】登录验证码", html);
 
-        log.info("验证码已发送, email={}, code={}", email, code);
+        log.info("验证码已发送, email={}", email);
         return Result.success("验证码已发送");
     }
 
@@ -255,11 +253,11 @@ public class AuthController {
             loginUser.setPermissions(new java.util.HashSet<>(permissions));
             String token = tokenProvider.createToken(loginUser);
 
-            boolean isFirstLogin = "1".equals(user.getFirstLogin());
+            boolean isFirstLogin = CommonConstants.FIRST_LOGIN_YES.equals(user.getFirstLogin());
 
             // 如果是首次登录，更新 firstLogin 为 0
             if (isFirstLogin) {
-                user.setFirstLogin("0");
+                user.setFirstLogin(CommonConstants.FIRST_LOGIN_NO);
                 sysUserService.updateById(user);
             }
 
@@ -269,12 +267,12 @@ public class AuthController {
             data.put("firstLogin", isFirstLogin);
 
             // 记录邮箱登录成功日志
-            auditLogService.recordLoginLog(user.getUsername(), "EMAIL", ip, "", "", 0, "邮箱登录成功");
+            auditLogService.recordLoginLog(user.getUsername(), CommonConstants.LOGIN_TYPE_EMAIL, ip, "", "", CommonConstants.LOG_STATUS_SUCCESS, "邮箱登录成功");
             return Result.success(data);
 
         } catch (Exception e) {
             // 记录邮箱登录失败日志
-            auditLogService.recordLoginLog(email, "EMAIL", ip, "", "", 1, "邮箱登录失败: " + e.getMessage());
+            auditLogService.recordLoginLog(email, CommonConstants.LOGIN_TYPE_EMAIL, ip, "", "", CommonConstants.LOG_STATUS_FAILURE, "邮箱登录失败: " + e.getMessage());
             return Result.error(400, e.getMessage());
         }
     }
@@ -288,12 +286,12 @@ public class AuthController {
         String code = request.getCode();
         String newPassword = request.getNewPassword();
 
-        if (newPassword.length() < 6) {
-            return Result.error(400, "密码长度不能少于 6 位");
+        if (newPassword.length() < MIN_PASSWORD_LENGTH) {
+            return Result.error(400, "密码长度不能少于 " + MIN_PASSWORD_LENGTH + " 位");
         }
 
         // 校验验证码
-        String codeKey = LOGIN_CODE_PREFIX + email;
+        String codeKey = RedisKeyConstants.LOGIN_CODE_PREFIX + email;
         String cachedCode = stringRedisTemplate.opsForValue().get(codeKey);
         if (cachedCode == null) {
             return Result.error(400, "验证码已过期，请重新获取");
@@ -316,11 +314,11 @@ public class AuthController {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
+        String ip = request.getHeader(CommonConstants.HEADER_X_FORWARDED_FOR);
+        if (ip == null || ip.isEmpty() || CommonConstants.UNKNOWN_IP.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(CommonConstants.HEADER_X_REAL_IP);
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || CommonConstants.UNKNOWN_IP.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         if (ip != null && ip.contains(",")) {

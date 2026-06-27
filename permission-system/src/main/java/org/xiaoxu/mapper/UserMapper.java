@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.xiaoxu.common.convert.UserConvert;
-import org.xiaoxu.common.excepiton.user.AuthErrorCode;
-import org.xiaoxu.common.excepiton.user.UserException;
+import org.xiaoxu.common.exception.user.AuthErrorCode;
+import org.xiaoxu.common.exception.user.UserException;
 import org.xiaoxu.pojo.SystemUsers;
 import org.xiaoxu.pojo.dto.SystemUserDTO;
 

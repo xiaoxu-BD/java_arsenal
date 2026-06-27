@@ -1,7 +1,7 @@
-package org.xiaoxu.common.excepiton.user;
+package org.xiaoxu.common.exception.user;
 
 import lombok.Getter;
-import org.xiaoxu.common.excepiton.ErrorCode;
+import org.xiaoxu.common.exception.ErrorCode;
 @Getter
 public enum AuthErrorCode implements ErrorCode {
 
