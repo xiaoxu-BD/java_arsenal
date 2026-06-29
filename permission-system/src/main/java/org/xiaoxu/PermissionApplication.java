@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *
  */
 @SpringBootApplication
-@MapperScan({"org.xiaoxu.mapper", "org.xiaoxu.workflow.mapper"})
+@MapperScan({"org.xiaoxu.mapper", "org.xiaoxu.workflow.mapper", "org.xiaoxu.pay.mapper"})
 public class PermissionApplication {
 
 

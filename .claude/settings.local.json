@@ -8,7 +8,11 @@
       "Bash(javac -encoding UTF-8 core_se/src/main/java/org/xiaoxu/se/foundation/IterableAndIterator.java -d /tmp/iter_out)",
       "Bash(javac -d /tmp/tree_out core_se/src/main/java/org/xiaoxu/tree/TreeNode.java core_se/src/main/java/org/xiaoxu/tree/TreeTest.java)",
       "Bash(java -cp /tmp/tree_out org.xiaoxu.tree.TreeTest)",
-      "Bash(javac -encoding UTF-8 -d /tmp/tree_out core_se/src/main/java/org/xiaoxu/tree/TreeNode.java core_se/src/main/java/org/xiaoxu/tree/TreeTest.java)"
+      "Bash(javac -encoding UTF-8 -d /tmp/tree_out core_se/src/main/java/org/xiaoxu/tree/TreeNode.java core_se/src/main/java/org/xiaoxu/tree/TreeTest.java)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:13690/api/pay/test/PAY20260627213557F49119FF)",
+      "Bash(curl -s http://localhost:13690/api/pay/test/PAY20260627213557F49119FF)",
+      "Bash(curl *)",
+      "Bash(python *)"
     ]
   }
 }

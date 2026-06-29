@@ -30,7 +30,7 @@ public class AnnouncementController {
     /**
      * 分页查询公告（管理员）
      */
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_QUERY + "')")
     @GetMapping("/list")
     public Result<IPage<SysAnnouncement>> list(
             @RequestParam(defaultValue = "" + CommonConstants.DEFAULT_PAGE_CURRENT) int current,
@@ -43,7 +43,7 @@ public class AnnouncementController {
     /**
      * 公告详情
      */
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_QUERY + "')")
     @GetMapping("/detail/{id}")
     public Result<SysAnnouncement> detail(@PathVariable Long id) {
         return Result.success(announcementService.getById(id));
@@ -84,7 +84,7 @@ public class AnnouncementController {
     }
 
     @OperationLog(module = "公告管理", operation = "新增公告")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_CREATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_CREATE + "')")
     @PostMapping("/create")
     public Result<?> create(@RequestBody SysAnnouncement announcement) {
         announcementService.create(announcement);
@@ -92,7 +92,7 @@ public class AnnouncementController {
     }
 
     @OperationLog(module = "公告管理", operation = "编辑公告")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_UPDATE + "')")
     @PutMapping("/update")
     public Result<?> update(@RequestBody SysAnnouncement announcement) {
         announcementService.update(announcement);
@@ -100,7 +100,7 @@ public class AnnouncementController {
     }
 
     @OperationLog(module = "公告管理", operation = "发布公告")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_UPDATE + "')")
     @PutMapping("/publish/{id}")
     public Result<?> publish(@PathVariable Long id) {
         String publisher = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -109,7 +109,7 @@ public class AnnouncementController {
     }
 
     @OperationLog(module = "公告管理", operation = "撤回公告")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_UPDATE + "')")
     @PutMapping("/withdraw/{id}")
     public Result<?> withdraw(@PathVariable Long id) {
         announcementService.withdraw(id);
@@ -117,7 +117,7 @@ public class AnnouncementController {
     }
 
     @OperationLog(module = "公告管理", operation = "删除公告")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ANNOUNCEMENT_DELETE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ANNOUNCEMENT_DELETE + "')")
     @DeleteMapping("/delete/{id}")
     public Result<?> delete(@PathVariable Long id) {
         announcementService.delete(id);

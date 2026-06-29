@@ -2,6 +2,11 @@ spring:
   application:
     name: permission-service
 
+  jackson:
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+
   profiles:
     # 默认激活 local（本地开发），生产部署通过环境变量 SPRING_PROFILES_ACTIVE=pro 覆盖
     active: ${SPRING_PROFILES_ACTIVE:local}
@@ -9,7 +14,7 @@ spring:
   datasource:
     # 生产：环境变量注入；开发：application-dev.yml 直接写死
     username: ${DB_USERNAME:root}
-    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:2026mysql_ds}
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:2026mysql_ds}?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -58,3 +63,15 @@ xxl:
 
 server:
   port: ${SERVER_PORT:13690}
+
+# 生产放开
+#alipay:
+#  appId: 9021000143698754
+#  privateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQClDCpDDHFCCvLdgdHTLDknuTuQLAH+QWHluNakvThg5h5riTFHd+WsKyjzj6bbXkIqxy4OfHAJkcO0T7Cm+n3l/ncTSwGP3j5k3eAJaWpRaEEfwbbeJvgJpnLyl06xf41aoNMe0gOpRgwRFB3llZM0hYLkCYXQjZ0wKwt+WwYzIn1JqSaN5+fxei4ZSbRNZEeyT82TduKfmQm9ZTPzrH42LcopzXpSwKIxoY/9W9lx9LrYwdhsV75RSYn0bUf+sR5PvLM9pHZQ0X3uP4LWu7sgj80sLceWvp6dGbZ/9k/oHVvY1GLhLmK8JayMlTDgW4J1+jiJao1iQkpGj35XQ9ydAgMBAAECggEAabthV5Kg+64H599CjAXIl6oSfkmy/S7liEThPKf7dhf1ZO5+o0or2B/OHDnqqp23xa/T0XPmUjsPJHPotw/Bl5Vssu9aENBPKE77NwxRD9W54p42iBpuy7/V45MK1qrf4y8kEJp5vfchw88fV/R6WSsurudq0i/mgvUQZ+HoFtj6C7SJLvKSLmndyg32AH8DbL6siXiiGBl/wIFg6lEmLSyXcDA1TGSQXQfdw4wEStS+SulSS6FfWCeFhS4U0na5CYvmS5ls0n0AfV3gbZSlzTNiaC6pMqexlNjomCMVQtGYgbA7GT7CLhnmA0R51CHj1BdY1UTsb9irtXUrnE9wAQKBgQDOr9+ZgJ7ttdsyGBLS/6I3yuk0rzSFAnC8Dr9qrM0H+jHxRPsWcYztNzd4H1kej9fa4nkI6ewBVCaLwIbOwg564douuYrVbwox4wfNvj2zZ+CLnPBw5b0/JZzPEg8gr2lxGKymg52wDSqdT+ASBIPx6oGuD+QJSABpPZleZQxLQwKBgQDMbQP1z6cE9Wa3AVZ9UCqfoxhk8IU41DVtIickt70FEuTLczbYMW89KeBebolQ/OMQKMZKgO9g7kP7lrUk8NuLO4NliyBPDZ78d+kWMlCkyIfxAE5nRM4Hrtas++FxuNsqPiaVrG6UXHfQnso2H5NSKrhEWVgRDJFSHp1WeUWKnwKBgAQCJyz78JkdmMWs79iFuqioV8N8zmDx/iu3gYDZHxTThlpugwwZYalME9hRi1Hraj1FfSFuH/SapDC7qCGkY9GARdH4KTggcisrgwA7e0jab+FlRsh5vCTYXuUpLX/txva5isej78/1QWlRnj/bNI/hg2hTyJFhgxiHaE0LWqSvAoGBAIphBTxBG3Ms1yHsYuqi+KdlVN8HPXcxlxTP+KVPR0GG/5+E10xTclR542qo8oUDGoVWxJusWd5Ii3ZkFyzxafv/BjwXiIBa3RNT7FFdL9/L6tHF/kzDc6AZxzIDsyEzHBClT6MjvRrq2SQ8SO+IQkZtqpyByi6ITlrDZIgjwWJLAoGBALcLfjY3T0td8fmof1BeO/oWSTsEymdmbBnq1Fyeb5+Odooo5PY0fYEMN1imtCYiSJ5iBlj8aZW0bXZcqz7NJe+OTJGt3YNsfSqCLD2twqzuD2f0I5Np1peQJaFpPNKgypHStfHBz50E3bnMUUlz9WcvJvBwcXXU2mxSzPB2CUzj
+#  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuhaomkZ+F21b3gcD83GMjiSoNi03tMbY9rnk6lgqMdPDsxZzZMNxuTJ0dtKi1eky3MIp1wCVttPAlkWRRQzfVuOFrOutQLkXia4ct9A4mMo3ZcKW3riaq+BJoxqDw4Eo7TIpTHAyjJV5NIKuFoTlMvEm7NnRo7jEmUqnCv7fJACM8J/vi8ceq2m7CyO4RcyOfqhVQ/76GlGErXeQNzMsT94TLegF5xDE4k7/nXzveruhXBBuu18BlsQtYsNnu+Olb74BNVMIwP6iS6DQ64MhTnudzpmqEwJaqHjnZqz1D9i35OH2dnriR5X6XS8Ief4HhHkgZqGPsUQTRVfsYVueDwIDAQAB
+#  notifyUrl: http://124.222.192.3:16399/api/pay/notify
+#  returnUrl: http://124.222.192.3:16399/pay/success
+#  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+#  signType: RSA2
+#  charset: UTF-8
+#  format: json

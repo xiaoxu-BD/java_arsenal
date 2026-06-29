@@ -63,7 +63,10 @@ public enum BizErrorCode implements ErrorCode {
 
     // ==================== MQ 相关 ====================
     MESSAGE_PROCESS_ERROR(10001, "消息处理失败"),
-    MESSAGE_ACK_ERROR(10002, "消息确认失败");
+    MESSAGE_ACK_ERROR(10002, "消息确认失败"),
+    SYSTEM_ERROR(50005,"系统错误")
+
+    ;
 
     private final int code;
     private final String message;

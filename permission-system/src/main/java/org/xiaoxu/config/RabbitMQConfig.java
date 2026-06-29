@@ -141,6 +141,13 @@ public class RabbitMQConfig {
                     returned.getExchange(), returned.getRoutingKey(), returned.getReplyText());
         });
 
+//
+//
+//spring:
+//  rabbitmq:
+//    publisher-confirm-type: correlated  # 开启 confirm 模式
+//    publisher-returns: true             # 开启 returns 模式
+
         rabbitTemplate.setMandatory(true);
         return rabbitTemplate;
     }

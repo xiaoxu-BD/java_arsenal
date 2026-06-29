@@ -55,6 +55,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/hello").permitAll()
+                        // 支付回调（支付宝服务端调用，无需认证）
+                        .requestMatchers(HttpMethod.POST, "/api/pay/notify").permitAll()
+                        // 支付测试接口
+                        .requestMatchers(HttpMethod.GET, "/api/pay/test/**").permitAll()
+                        // 支付成功回调页（支付宝跳转，无需认证）
+                        .requestMatchers(HttpMethod.GET, "/pay/success").permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/favicon.ico", "/css/**", "/js/**", "/images/**")
                         .permitAll()
                         // 跨域预检也放行（必须！）

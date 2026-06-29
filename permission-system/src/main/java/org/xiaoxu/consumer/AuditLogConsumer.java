@@ -18,6 +18,7 @@ import org.xiaoxu.pojo.SysOperationLog;
 import org.xiaoxu.pojo.SysWorkflowLog;
 
 import jakarta.annotation.Resource;
+import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -88,7 +89,9 @@ public class AuditLogConsumer {
     public void handleLoginLog(@Payload SysLoginLog loginLog,
                                @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
                                Channel channel) {
-        String messageId = "login:" + loginLog.getUsername() + ":" + loginLog.getLoginTime();
+        // 使用精确到秒的时间戳，与生产者保持一致
+        String messageId = "login:" + loginLog.getUsername() + ":" 
+                + loginLog.getLoginTime().toEpochSecond(ZoneOffset.ofHours(8));
 
         if (isMessageProcessed(messageId)) {
             log.info("登录日志已处理过，跳过: username={}", loginLog.getUsername());
@@ -114,8 +117,9 @@ public class AuditLogConsumer {
     public void handleOperationLog(@Payload SysOperationLog operationLog,
                                    @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
                                    Channel channel) {
-        String messageId = "op:" + operationLog.getModule() + ":" + operationLog.getMethod()
-                + ":" + operationLog.getCreateTime();
+        // 使用精确到秒的时间戳
+        String messageId = "op:" + operationLog.getModule() + ":" + operationLog.getMethod() 
+                + ":" + operationLog.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8));
 
         if (isMessageProcessed(messageId)) {
             log.info("操作日志已处理过，跳过: module={}, operation={}",
@@ -142,6 +146,7 @@ public class AuditLogConsumer {
     public void handleWorkflowLog(@Payload SysWorkflowLog workflowLog,
                                   @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag,
                                   Channel channel) {
+        // 使用 processInstanceId + taskId + action 作为唯一标识
         String messageId = "workflow:" + workflowLog.getProcessInstanceId() + ":"
                 + workflowLog.getTaskId() + ":" + workflowLog.getAction();
 

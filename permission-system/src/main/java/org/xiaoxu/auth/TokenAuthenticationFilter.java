@@ -63,6 +63,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("userId", loginUser.getUserId());
+            request.setAttribute("username", loginUser.getUsername());
 
             log.debug("Token 验证成功，用户: {}", loginUser.getUsername());
         } catch (Exception e) {

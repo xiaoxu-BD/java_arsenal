@@ -31,33 +31,33 @@ public class MenuController {
     /**
      * 全部菜单树（菜单管理页面用，不过滤权限）
      */
-    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.MENU_QUERY + "')")
     @GetMapping("/listAll")
     public Result<?> getMenuTree() {
         return Result.success(menuService.getMenuTree());
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.MENU_QUERY + "')")
     @GetMapping("/get")
     public Result<?> getMenuById(@RequestParam Long id) {
         return Result.success(menuService.getMenuById(id));
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_CREATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.MENU_CREATE + "')")
     @PostMapping("/create")
     public Result<?> createMenu(@RequestBody SystemMenu menu) {
         menuService.createMenu(menu);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.MENU_UPDATE + "')")
     @PutMapping("/update")
     public Result<?> updateMenu(@RequestBody SystemMenu menu) {
         menuService.updateMenu(menu);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.MENU_DELETE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.MENU_DELETE + "')")
     @DeleteMapping("/delete")
     public Result<?> deleteMenu(@RequestParam Long id) {
         menuService.deleteMenu(id);

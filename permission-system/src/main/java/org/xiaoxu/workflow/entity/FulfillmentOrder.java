@@ -34,6 +34,9 @@ public class FulfillmentOrder {
 
     private String applicant;
 
+    /** 申请人用户ID */
+    private Long userId;
+
     private String remark;
 
     /** 创建人（业务代码手动 set） */

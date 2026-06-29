@@ -163,6 +163,12 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
                 }
                 break;
             case APPROVED:
+                if (newStatus != ApprovalStatus.PAID && newStatus != ApprovalStatus.COMPLETED) {
+                    throw new RuntimeException("已通过状态只能变更为已付款或已完成");
+                }
+                break;
+            case PAID:
+            case COMPLETED:
             case REJECTED:
             case CANCELLED:
                 throw new RuntimeException("终态不可变更");

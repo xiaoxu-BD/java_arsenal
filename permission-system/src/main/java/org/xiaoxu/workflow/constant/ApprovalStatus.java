@@ -12,7 +12,9 @@ public enum ApprovalStatus {
     PROCESSING("审批中"),
     APPROVED("已通过"),
     REJECTED("已驳回"),
-    CANCELLED("已撤回");
+    CANCELLED("已撤回"),
+    PAID("已付款"),
+    COMPLETED("已完成");
 
     private final String description;
 

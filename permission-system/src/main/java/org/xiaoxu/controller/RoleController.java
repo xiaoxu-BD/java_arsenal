@@ -25,20 +25,20 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_QUERY + "')")
     @GetMapping("/list")
     public Result<?> getRoleList() {
         return Result.success(roleService.getRoleList());
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_QUERY + "')")
     @GetMapping("/get")
     public Result<?> getRoleDetail(@RequestParam Long id) {
         return Result.success(roleService.getRoleDetail(id));
     }
 
     @OperationLog(module = "角色管理", operation = "新增角色")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_CREATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_CREATE + "')")
     @PostMapping("/create")
     public Result<?> createRole(@RequestBody SystemRole role) {
         roleService.createRole(role);
@@ -46,7 +46,7 @@ public class RoleController {
     }
 
     @OperationLog(module = "角色管理", operation = "修改角色")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_UPDATE + "')")
     @PutMapping("/update")
     public Result<?> updateRole(@RequestBody SystemRole role) {
         roleService.updateRole(role);
@@ -54,14 +54,14 @@ public class RoleController {
     }
 
     @OperationLog(module = "角色管理", operation = "删除角色")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_DELETE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_DELETE + "')")
     @DeleteMapping("/delete")
     public Result<?> deleteRole(@RequestParam Long id) {
         roleService.deleteRole(id);
         return Result.success();
     }
 
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_UPDATE + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_UPDATE + "')")
     @PutMapping("/updateMenu")
     public Result<?> updateRoleMenu(@RequestBody RoleMenuRequest request) {
         roleService.updateRoleMenu(request.getRoleId(), request.getMenuIds());
@@ -69,7 +69,7 @@ public class RoleController {
     }
 
     @OperationLog(module = "角色管理", operation = "导出角色")
-    @PreAuthorize("hasAuthority(" + PermissionConstants.ROLE_QUERY + ")")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.ROLE_QUERY + "')")
     @GetMapping("/export")
     public void exportRoleList(HttpServletResponse response) throws Exception {
         List<SystemRole> roles = roleService.getRoleList();

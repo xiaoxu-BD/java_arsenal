@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.xiaoxu.mapper.UserMapper;
+import org.xiaoxu.pay.service.PayService;
 import org.xiaoxu.workflow.constant.ApprovalStatus;
 import org.xiaoxu.workflow.entity.FulfillmentOrder;
 import org.xiaoxu.workflow.mapper.FulfillmentOrderMapper;
+import org.xiaoxu.pojo.SystemUsers;
 
 /**
  * 履约单审批回调。流程定义 key 为 {@code fulfillment-approval}，
@@ -18,6 +21,8 @@ import org.xiaoxu.workflow.mapper.FulfillmentOrderMapper;
 public class FulfillmentApprovalHandler implements ApprovalHandler {
 
     private final FulfillmentOrderMapper fulfillmentOrderMapper;
+    private final UserMapper userMapper;
+    private final PayService payService;
 
     @Override
     public String supportProcessDefinitionKey() {
@@ -26,7 +31,37 @@ public class FulfillmentApprovalHandler implements ApprovalHandler {
 
     @Override
     public void onApproved(ApprovalContext context) {
-        updateOrderStatus(context.getBusinessKey(), ApprovalStatus.APPROVED);
+        String orderNo = context.getBusinessKey();
+        
+        // 1. 更新履约单状态为已通过
+        updateOrderStatus(orderNo, ApprovalStatus.APPROVED);
+        
+        // 2. 生成付款单
+        FulfillmentOrder order = fulfillmentOrderMapper.selectOne(
+                new LambdaQueryWrapper<FulfillmentOrder>()
+                        .eq(FulfillmentOrder::getOrderNo, orderNo));
+        
+        if (order != null) {
+            // 查询用户信息 此处Creator就是 所属人id
+            String creator = order.getCreator();
+            SystemUsers systemUsers = userMapper.selectOne(new LambdaQueryWrapper<SystemUsers>().eq(SystemUsers::getUsername, creator));
+
+            SystemUsers user = userMapper.selectById(systemUsers.getId());
+            String username = user != null ? user.getUsername() : "unknown";
+            
+            // 创建付款单
+            payService.createPayOrder(
+                    "fulfillment",
+                    order.getId(),
+                    context.getProcessInstanceId(),
+                    systemUsers.getId(),
+                    username,
+                    "履约单付款：" + order.getTitle(),
+                    order.getAmount()
+            );
+            
+            log.info("履约单审批通过，已生成付款单: orderNo={}", orderNo);
+        }
     }
 
     @Override
