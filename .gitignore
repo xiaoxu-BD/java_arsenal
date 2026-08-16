@@ -43,3 +43,5 @@ permission-system-miniapp/node_modules/
 permission-system-miniapp/
 logs/
 *.log
+*.tar
+*.7z

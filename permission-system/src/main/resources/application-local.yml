@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: root
-    url: jdbc:mysql://192.168.200.128/2026mysql_ds
+    url: jdbc:mysql://192.168.200.128/2026mysql_ds?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     password: NFTurbo666
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -24,10 +24,10 @@ spring:
           ssl:
             enable: true
   rabbitmq:
-    host: 124.222.192.3
+    host: 192.168.200.128
     port: 5672
     username: admin
-    password: admin123
+    password: 123456
     virtual-host: /
     publisher-confirm-type: correlated
     publisher-returns: true
@@ -56,6 +56,18 @@ oss:
   bucketName: oss-inshanghai
   urlPrefix: https://oss-inshanghai.oss-cn-shanghai.aliyuncs.com
 
+
+alipay:
+  appId: 9021000143698754
+  privateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCUCl6gFCymmavbU2immC/TGGk3Br7crFMpgBu2Skz/wBbF4FzrMemF3qmI80dB+6Gr7JAZSl4lI/iss4paGSoDVzT/WtDLYOq0moaGWfIwSQ5CS2k/Vo+uiCT8HbBxwPJGs1zV8cy8PVI8+wNOXRKdjCnh4aZcKgaGKPBka7eAxOyOcGaSoKllbYISGon4LHMYCuLmt8rEU8Y0ewxmTgqf8wOVzNKkbbefaRCQ2DFnvKguMC1ck1wtvqIA3g2blbyCHMXtmKSWCD7MXTOjYkiJ1hfmrbJTuEX1TaRl9UsOiC7ZCstSBTe1TgZMabu4bwvRrSTnD8y3LDuQ35OneCoPAgMBAAECggEAGj5kW/h3mekwICd/K9la0Q9Ix6p4d2JNM9Q0FXLCh6wj3VxS3JbykPrSDychgL79AB9lxDX8zpS75tHFOweu/Pyeto4A6az6rp2eL38OgiTRVEtOEx5jRkt4UwFoYCIWURZG5N6CrvQn+gt9oIy7WhaY7iQ0e64vjeUACK1X0InSXTHJD2USYJYixcf/FI/iwlZrzYPtPKZrffhD9VMt7XGAjNHZpOQglfnNWDujHzQOuorZgPf12nrPmx276M4u442VnEcWp1cwjVhKaJrU321D2ojtjMNktL/1rTQ4KeIgeajfRyxjX0l0Is0LqaSclcQsKvnoLS04XLZplXFqIQKBgQDnkfydEDHWlZasCrMjHIttBZEuGrfvsn6xZjvENJ7XudCtGgiI0cwrjuZ+qnaKpoB6+qPXflwdB7DgXSDmT0WUBcFb6UMKPOC1cGhaQT4a4OJEYZ8gAZP8TQW3wSAPylVn+9z1MuOeKVIyfyarUEjChcrQR/QU9VGE9fzp9mx4JwKBgQCjqH8bfzaB86gMXlYQP7vVPPn9VjUehwVVlE0Tze4O9/NnZinyVBF+zBsFflsOH5sl32J35MtCF3O7QEnYUEb/mFSwno/5fCYsOn00rPz3zSFo9sh/xj6FUwko8w8FR2i1xQsWxUfiW1tWuhDQiO5mrrck0ycbPg49orZ0XuDH2QKBgQDInEDytB/o3Qh9nHtaFJV46hS+kyj7v29gMcffDxL4oiH0hBQWq2Gr7o0h+HzfWqT9ZPrhabdU8t+5TxR8UPpe5KmA/VA1o02sAWh1oAW0dVOvl76plJRmQzeL3APxigB5J8lgpihoUTXDR0HxsYiG9C8iRuNd8LQhcpUa/n8ziwKBgQCTaVcsVlarkOQiV+qfcjjnJqhqZ3crSyUj45PVrdyrAO3uidhonQ6xLnl8ZkbwHsnpwB96rMvkeSlWVd7uB8kbuoM2H2zBpPDhT8Gta8/kCJH6cKdCaDeycYvDpcM21w5bA+QsG4DXQ8CvCqPQojZSqTbv5X3JDQlYvTIo+bjwaQKBgCzSwgB21xdkytPK/DqUfLb7hTf6QWg0Zia8j0sPQLmQsFoSy9meeVZg0R4v1pfH5T5B4Mroq7bfucheNyv0FZfZ3AnIAmS7Wey2udV9Swd3a8hQQnoNQTO0b8kwICkaeIKrec0r+sVsjpxUhgig6GS5LdcmgH1Yl2ffsTyDvqMb
+#  支付宝公钥
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuhaomkZ+F21b3gcD83GMjiSoNi03tMbY9rnk6lgqMdPDsxZzZMNxuTJ0dtKi1eky3MIp1wCVttPAlkWRRQzfVuOFrOutQLkXia4ct9A4mMo3ZcKW3riaq+BJoxqDw4Eo7TIpTHAyjJV5NIKuFoTlMvEm7NnRo7jEmUqnCv7fJACM8J/vi8ceq2m7CyO4RcyOfqhVQ/76GlGErXeQNzMsT94TLegF5xDE4k7/nXzveruhXBBuu18BlsQtYsNnu+Olb74BNVMIwP6iS6DQ64MhTnudzpmqEwJaqHjnZqz1D9i35OH2dnriR5X6XS8Ief4HhHkgZqGPsUQTRVfsYVueDwIDAQAB
+  notifyUrl: http://124.222.192.3:16399/api/pay/notify
+  returnUrl: http://localhost:13690/pay/success
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  signType: RSA2
+  charset: UTF-8
+  format: json
 
 
 # 本地日志写到项目下，方便查看

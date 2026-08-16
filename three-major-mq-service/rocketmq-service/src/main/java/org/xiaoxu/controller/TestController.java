@@ -23,6 +23,18 @@ public class TestController {
         return "ok";
     }
 
+    @GetMapping("/send/poison")
+    public String sendPoison() {
+        producer.sendPoison();
+        return "毒消息已发出：预期 ~10 秒后重试一次，再失败进死信；盯着应用日志和 %RETRY%/%DLQ% 两个 topic";
+    }
+
+    @GetMapping("/send/async")
+    public String sendAsync() {
+        producer.sendAsync("hello-async-" + System.currentTimeMillis());
+        return "ok（接口此刻已返回，broker 确认和消费在别的线程，注意日志顺序）";
+    }
+
 
     @PostMapping("/order/send")
     public String sendOrder(@RequestBody SendDTO sendDTO) {

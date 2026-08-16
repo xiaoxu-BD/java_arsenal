@@ -1,0 +1,75 @@
+server:
+  port: 18083
+
+spring:
+  application:
+    name: stream-three-mq
+  cloud:
+    function:
+      # 多个函数 bean 并存时必须显式声明，否则 SCS 无法确定默认绑定，一个消费者都不会启动
+      definition: order;mail;notifyProcess;notifyResult
+    stream:
+      # ===== binder 注册处：每种 MQ 一个 binder，差异被压进 environment =====
+      binders:
+        rocketmq:
+          type: rocketmq
+          environment:
+            spring:
+              cloud:
+                stream:
+                  rocketmq:
+                    binder:
+                      name-server: 192.168.200.128:9876
+        rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: 192.168.200.128
+                port: 5672
+                username: admin
+                password: 123456
+
+      # ===== 绑定：bean 名 + -in/-out-N 映射到目的地，binder 字段决定走哪家 MQ =====
+      bindings:
+        # 演示一：RocketMQ 收发（order bean 消费，StreamBridge 从 order-out-0 发送）
+        order-out-0:
+          destination: stream-order-topic
+          binder: rocketmq
+        order-in-0:
+          destination: stream-order-topic
+          group: stream-order-group
+          binder: rocketmq
+        # 演示二：RabbitMQ 收发（mail bean 消费；destination 即 exchange 名，
+        # binder 自动声明 topic exchange + stream-mail.mail-group 队列 + 绑定）
+        mail-out-0:
+          destination: stream-mail
+          binder: rabbit
+        mail-in-0:
+          destination: stream-mail
+          group: stream-mail-group
+          binder: rabbit
+        # 演示三：跨 binder Function——RocketMQ 进，函数加工，RabbitMQ 出
+        # 发送走独立的 notify-out-0（发到函数的输入绑定名会进程内短路、绕过 broker）
+        notify-out-0:
+          destination: stream-notify-topic
+          binder: rocketmq
+        notifyProcess-in-0:
+          destination: stream-notify-topic
+          group: stream-notify-group
+          binder: rocketmq
+        notifyProcess-out-0:
+          destination: stream-notify-result
+          binder: rabbit
+        # 结果侧消费者：有 group 才会自动声明队列，否则 exchange 收到消息直接丢弃
+        notifyResult-in-0:
+          destination: stream-notify-result
+          group: stream-notify-result-group
+          binder: rabbit
+
+      # 应用内重试（SCS 统一语义，区别于 broker 端重试）
+      # 默认 max-attempts=3；毒消息演示时可观察它与 RocketMQ broker 重试的叠加行为
+      # bindings:
+      #   order-in-0:
+      #     consumer:
+      #       max-attempts: 3

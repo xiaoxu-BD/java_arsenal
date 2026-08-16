@@ -34,7 +34,12 @@ public class FulfillmentOrder {
 
     private String applicant;
 
-    /** 申请人用户ID */
+    /**
+     * 申请人用户ID
+     * 临时止血：fulfillment_order 表目前无 user_id 列，先排除出 ORM 映射，
+     * 避免 selectPage 触发 Unknown column 'user_id'。后续补表列并写入后移除该注解。
+     */
+    @TableField(exist = false)
     private Long userId;
 
     private String remark;

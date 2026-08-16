@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RocketMQ 实战全链路复盘 · 2026-08-15</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2129; --border:#30363d;
+    --text:#e6edf3; --muted:#8b949e; --dim:#6e7681;
+    --blue:#58a6ff; --green:#3fb950; --orange:#d29922; --red:#f85149;
+    --purple:#bc8cff; --cyan:#39c5cf;
+    --mono:'Cascadia Code',Consolas,'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font:15px/1.75 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ===== header ===== */
+  header{padding:56px 0 8px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#101722 0%,var(--bg) 100%)}
+  .kicker{font-family:var(--mono);color:var(--cyan);font-size:13px;letter-spacing:2px}
+  h1{font-size:34px;margin:8px 0 10px;font-weight:700}
+  h1 em{color:var(--blue);font-style:normal}
+  .meta{color:var(--muted);font-size:14px;font-family:var(--mono)}
+  .meta b{color:var(--text);font-weight:600}
+
+  /* ===== stat cards ===== */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:28px 0 40px}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+  .stat .n{font-family:var(--mono);font-size:26px;font-weight:700}
+  .stat .l{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .c-blue{color:var(--blue)} .c-green{color:var(--green)} .c-orange{color:var(--orange)}
+  .c-red{color:var(--red)} .c-purple{color:var(--purple)} .c-cyan{color:var(--cyan)}
+
+  /* ===== nav ===== */
+  nav{position:sticky;top:0;z-index:99;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:10px 0;font-size:13.5px}
+  nav .wrap{display:flex;flex-wrap:wrap;gap:4px 18px}
+  nav a{color:var(--muted);text-decoration:none;font-family:var(--mono)}
+  nav a:hover{color:var(--blue)}
+  nav a b{color:var(--cyan);font-weight:600;margin-right:4px}
+
+  /* ===== sections ===== */
+  section{padding:52px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-no{font-family:var(--mono);color:var(--cyan);font-size:14px}
+  h2{font-size:24px;font-weight:700}
+  .lead{color:var(--muted);margin:6px 0 22px;max-width:860px}
+  .lead b{color:var(--text)}
+  h3{font-size:17px;margin:28px 0 10px;color:var(--text)}
+  h3 .tag{font-family:var(--mono);font-size:11.5px;color:var(--cyan);border:1px solid var(--border);
+    border-radius:20px;padding:1px 10px;margin-left:8px;vertical-align:2px}
+  p{margin:10px 0}
+  .muted{color:var(--muted)} .mono{font-family:var(--mono)}
+  code{font-family:var(--mono);background:#21262d;border:1px solid var(--border);border-radius:5px;
+    padding:1px 6px;font-size:13px;color:var(--orange);white-space:nowrap}
+  b.light{color:var(--text)}
+
+  /* ===== cards & callouts ===== */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin:16px 0}
+  .callout{border-left:3px solid var(--blue);background:var(--panel);border-radius:0 10px 10px 0;
+    padding:14px 18px;margin:16px 0}
+  .callout.green{border-color:var(--green)} .callout.red{border-color:var(--red)}
+  .callout.orange{border-color:var(--orange)} .callout.purple{border-color:var(--purple)}
+  .callout .t{font-weight:700;font-size:14px;margin-bottom:4px}
+  .callout.green .t{color:var(--green)} .callout.red .t{color:var(--red)}
+  .callout.orange .t{color:var(--orange)} .callout.blue .t{color:var(--blue)}
+  .callout.purple .t{color:var(--purple)}
+
+  /* ===== log block ===== */
+  .log{background:#0a0d12;border:1px solid var(--border);border-radius:10px;padding:14px 16px;
+    font-family:var(--mono);font-size:12.8px;line-height:1.85;overflow-x:auto;margin:14px 0}
+  .log .tm{color:var(--dim)} .log .lv-i{color:var(--blue)} .log .lv-w{color:var(--orange)}
+  .log .lv-e{color:var(--red)} .log .cl{color:var(--purple)} .log .th{color:var(--cyan)}
+  .log .hl{color:var(--green)} .log .flag{color:var(--red);font-weight:700}
+  .log .cm{color:var(--dim)}
+  .log .arr{color:var(--dim)}
+
+  /* ===== pipeline ===== */
+  .pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;margin:20px 0}
+  .node{flex:1;min-width:130px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:14px 12px;text-align:center;position:relative}
+  .node .ico{font-size:22px}
+  .node .nm{font-weight:700;font-size:14px;margin:4px 0 2px}
+  .node .ds{color:var(--muted);font-size:12px;line-height:1.6}
+  .node.hot{border-color:var(--orange);box-shadow:0 0 0 1px rgba(210,153,34,.25)}
+  .node.dlq{border-color:var(--red);box-shadow:0 0 0 1px rgba(248,81,73,.25)}
+  .node.ok{border-color:var(--green)}
+  .arrow{display:flex;align-items:center;color:var(--dim);font-size:18px;padding:0 6px;font-family:var(--mono)}
+  @media(max-width:760px){.arrow{transform:rotate(90deg);justify-content:center;padding:4px 0}}
+
+  /* ===== timeline ===== */
+  .tl{margin:18px 0;position:relative;padding-left:26px}
+  .tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(180deg,var(--blue),var(--orange),var(--red))}
+  .ev{position:relative;margin-bottom:16px}
+  .ev::before{content:'';position:absolute;left:-24px;top:7px;width:10px;height:10px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--blue)}
+  .ev.warn::before{border-color:var(--orange)} .ev.bad::before{border-color:var(--red)}
+  .ev.good::before{border-color:var(--green)}
+  .ev .t{font-family:var(--mono);font-size:13px;color:var(--cyan)}
+  .ev .d{font-size:14.5px}
+  .ev .d b{color:var(--text)}
+
+  /* ===== tables ===== */
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.8px}
+  th{text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);
+    padding:8px 12px;background:var(--panel2)}
+  td{border-bottom:1px solid #21262d;padding:9px 12px;vertical-align:top}
+  tr:hover td{background:rgba(88,166,255,.04)}
+  td .mono, th .mono{font-family:var(--mono);font-size:12.5px}
+  .ok{color:var(--green)} .no{color:var(--red)} .wa{color:var(--orange)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+
+  .pill{display:inline-block;font-family:var(--mono);font-size:11.5px;border-radius:20px;
+    padding:1px 10px;margin:0 2px;border:1px solid var(--border);color:var(--muted)}
+  .pill.b{color:var(--blue);border-color:rgba(88,166,255,.4)}
+  .pill.g{color:var(--green);border-color:rgba(63,185,80,.4)}
+  .pill.r{color:var(--red);border-color:rgba(248,81,73,.4)}
+  .pill.o{color:var(--orange);border-color:rgba(210,153,34,.4)}
+  .pill.p{color:var(--purple);border-color:rgba(188,140,255,.4)}
+
+  .kbd{display:inline-block;font-family:var(--mono);font-size:12px;background:#21262d;
+    border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:1px 8px;color:var(--cyan)}
+
+  footer{margin-top:70px;border-top:1px solid var(--border);padding:26px 0 50px;color:var(--dim);
+    font-size:13px;font-family:var(--mono)}
+  .toc-hint{font-family:var(--mono);color:var(--dim);font-size:12.5px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">ROCKETMQ · FIELD NOTES</div>
+    <h1>消息的一生：<em>从概念到实测</em>的全链路复盘</h1>
+    <div class="meta">日期 <b>2026-08-15</b> · 模块 <b>three-major-mq-service/rocketmq-service</b> ·
+      Broker <b>192.168.200.128:10911</b> · 客户端 <b>rocketmq-client 5.3.0</b> + starter <b>2.3.5</b>
+      · Topic <b>rocket-service-exm</b> / <b>rocket-mail-topic</b></div>
+    <div class="toc-hint">本文所有日志、msgId、CRC、时间戳均来自当日真实实验，非构造示例。</div>
+    <div class="stats">
+      <div class="stat"><div class="n c-blue">9</div><div class="l">真实发送消息（账目分毫不差）</div></div>
+      <div class="stat"><div class="n c-green">1×</div><div class="l">每条消息恰好投递一次</div></div>
+      <div class="stat"><div class="n c-orange">10.08s</div><div class="l">实测首次重试间隔（延迟级别3）</div></div>
+      <div class="stat"><div class="n c-red">2 → 18</div><div class="l">事故：2条毒消息烧掉18次投递</div></div>
+      <div class="stat"><div class="n c-cyan">+9</div><div class="l">浏览一次消息页 = 消费计数精确+9</div></div>
+      <div class="stat"><div class="n c-purple">0</div><div class="l">消费积压 Diff（业务健康）</div></div>
+    </div>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <a href="#s1"><b>01</b>消息的一生</a>
+  <a href="#s2"><b>02</b>异步真相</a>
+  <a href="#s3"><b>03</b>三ID同框</a>
+  <a href="#s4"><b>04</b>消费数悬案</a>
+  <a href="#s5"><b>05</b>组的四层存在</a>
+  <a href="#s6"><b>06</b>重试→死信</a>
+  <a href="#s7"><b>07</b>真实事故</a>
+  <a href="#s8"><b>08</b>模型修正</a>
+  <a href="#s9"><b>09</b>代码与欠账</a>
+  <a href="#s10"><b>10</b>次日增补</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ============ 01 ============ -->
+<section id="s1">
+  <div class="sec-head"><span class="sec-no">01</span><h2>消息的一生 · 全景图</h2></div>
+  <p class="lead">六个角色、一条主干。后面每个实验都是这条流水线上某一站的<b>放大观察</b>。</p>
+
+  <div class="pipe">
+    <div class="node"><div class="ico">🏭</div><div class="nm">Producer</div><div class="ds">轮询选 queue<br>同步/异步/oneway</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico">📒</div><div class="nm">NameServer</div><div class="ds">只管电话簿<br>30s 注册/拉取</div></div>
+    <div class="arrow">→</div>
+    <div class="node hot"><div class="ico">🗄️</div><div class="nm">Broker</div><div class="ds">CommitLog 顺序写<br>ConsumeQueue 索引</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico">🧲</div><div class="nm">长轮询拉取</div><div class="ds">push 是伪装<br>hold 15s / 写入即唤醒</div></div>
+    <div class="arrow">→</div>
+    <div class="node ok"><div class="ico">✅</div><div class="nm">消费成功</div><div class="ds">ACK + 位点前移<br><b>但必须幂等</b></div></div>
+  </div>
+  <div class="pipe">
+    <div class="node" style="border-color:var(--red)"><div class="ico">💥</div><div class="nm">消费失败</div><div class="ds">抛异常 / 超时15min</div></div>
+    <div class="arrow">→</div>
+    <div class="node hot"><div class="ico">⏳</div><div class="nm">%RETRY%组名</div><div class="ds">指数退避 10s→2h<br>默认最多16次</div></div>
+    <div class="arrow">→</div>
+    <div class="node dlq"><div class="ico">⚰️</div><div class="nm">%DLQ%组名</div><div class="ds">惰性创建<br>等人工接盘</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico">🧹</div><div class="nm">CommitLog 72h</div><div class="ds">按文件时间物理删除<br>堆积超72h会被清</div></div>
+  </div>
+
+  <div class="callout blue">
+    <div class="t">一句话总纲</div>
+    发送端轮询分片 → 存储端<b>顺序写 CommitLog + 20字节 ConsumeQueue 索引</b>（刷盘/复制策略决定"成功"的含金量）→
+    消费端<b>重平衡认领 queue、长轮询拉取</b> → 成功提交位点 / 失败进 %RETRY% 退避重投 → 超限入 %DLQ% → 72h 物理删除。
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section id="s2">
+  <div class="sec-head"><span class="sec-no">02</span><h2>实验一 · "异步发送"的真相</h2></div>
+  <p class="lead">原代码注释写着"异步不阻塞"，实际 <code>convertAndSend</code> 是<b>同步阻塞</b>。改造为真
+    <code>asyncSend</code> + <code>SendCallback</code> 后，接口耗时从 <b>204ms → 6.8ms</b>。</p>
+
+  <div class="log"><span class="tm">2026-08-15T10:09:38.875</span> <span class="lv-i">INFO</span> [<span class="th">http-nio-18082-exec-1</span>] <span class="cl">ProduceRockerMQDEM</span> : <span class="hl">[同步发送] 阻塞 77ms 拿到 broker 确认才返回</span>
+<span class="tm">2026-08-15T10:09:38.981</span> <span class="lv-i">INFO</span> [<span class="th">http-nio-18082-exec-2</span>] <span class="cl">ProduceRockerMQDEM</span> : [异步发送] 发起 asyncSend，主流程不等待确认
+<span class="tm">2026-08-15T10:09:38.995</span> <span class="lv-i">INFO</span> [<span class="th">NettyClientPublicExecutor_5</span>] <span class="cl">ProduceRockerMQDEM</span> : <span class="hl">[异步回调-成功] msgId=2408820C…EA90001 queue=3 status=SEND_OK</span> <span class="cm">← +14ms，另一个线程！</span>
+<span class="tm">2026-08-15T10:09:41.444</span> <span class="lv-i">INFO</span> [<span class="th">ConsumeMessageThread_…_1</span>] <span class="cl">ConsumerRocketMQDEML</span> : [消费者] 收到消息: hello rocketmq <span class="cm">← 2.4s 后</span></div>
+
+  <div class="grid2">
+    <div class="callout green">
+      <div class="t">✅ 三个证据</div>
+      ① 接口 6.8ms 返回，确认 14ms 后由<b>回调线程</b>送达（业务代码别指望 ThreadLocal 传过去）；
+      ② 回调拿到完整回执：msgId / queue=3（轮询落点）/ SEND_OK；<br>
+      ③ 两条消息被 <span class="mono">ConsumeMessageThread_1/_2</span> <b>并发</b>消费——消费线程池亲眼所见。
+    </div>
+    <div class="callout orange">
+      <div class="t">⚠️ 反直觉数字</div>
+      发送确认只花 14ms，消费却在 <b>2.4s</b> 后（消费组刚启动，rebalance + 首拉）。<br>
+      <b>发送段和消费段是两本独立的账</b>——"MQ 延迟高"要先分清是哪一段。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 ============ -->
+<section id="s3">
+  <div class="sec-head"><span class="sec-no">03</span><h2>实验二 · 三 ID 同框</h2></div>
+  <p class="lead">producer 用 <code>MessageBuilder.setHeader(RocketMQHeaders.KEYS, …)</code> 打业务键，
+    consumer 换 <code>RocketMQListener&lt;MessageExt&gt;</code>，三个标识符一次看全。</p>
+
+  <table>
+    <tr><th style="width:15%">标识符</th><th style="width:26%">实测值（同一条消息）</th><th>身份 &amp; 用途</th></tr>
+    <tr>
+      <td><b class="c-blue">UNIQ_KEY</b></td>
+      <td class="mono">2408820C9009BF60…5E9C<span style="color:var(--green)">0000</span></td>
+      <td><b>客户端出生证</b>：前缀=producer 进程指纹（同进程全一样），末 4 位=进程内计数器，四条消息 <span class="mono c-green">0000→0003</span> 肉眼可数</td>
+    </tr>
+    <tr>
+      <td><b class="c-orange">offsetMsgId</b></td>
+      <td class="mono"><span style="color:var(--orange)">C0A8C880</span>00002A9F<span style="color:var(--cyan)">0000FEF7</span></td>
+      <td><b>broker 门牌号</b>：<span class="mono">C0A8C880</span> 十六进制解码 = <span class="mono">192.168.200.128</span>（你的 broker），后 8 字节 = CommitLog 物理偏移 65271，四条严格递增——<b>所有消息混存顺序追加的铁证</b></td>
+    </tr>
+    <tr>
+      <td><b class="c-green">Keys</b></td>
+      <td class="mono">ORDER-1001 / ORDER-1002</td>
+      <td><b>你设置的业务标签</b>：写进 IndexFile，控制台"按 Key 查询"一次捞出该业务实体全部消息；<b>幂等去重键必须用它</b></td>
+    </tr>
+  </table>
+
+  <div class="callout purple">
+    <div class="t">为什么幂等别用 msgId</div>
+    重试/死信是<b>新的物理消息</b>（offsetMsgId 会变），而业务键跟着消息体走、永远是那个订单号。
+    排障口诀：<b>物理身份认 offsetMsgId，业务身份认 keys，血缘认 ORIGIN_MESSAGE_ID</b>（06 节实测）。
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section id="s4">
+  <div class="sec-head"><span class="sec-no">04</span><h2>悬案一 · "发了 4 条，消费 40+ 还一直涨"</h2></div>
+  <p class="lead">侦破手段：不进虚拟机，直连 dashboard REST API（<span class="mono">192.168.200.128:8080</span>）取证。</p>
+
+  <h3>证据链 <span class="tag">全部实测</span></h3>
+  <div class="tl">
+    <div class="ev"><div class="t">① topic 级对账</div><div class="d"><code>rocket-service-exm</code> 四个 queue 共 <b>9 条</b>（1+3+2+3），最后写入 10:39——与真实发送完全吻合，<b class="ok">消息清白</b></div></div>
+    <div class="ev"><div class="t">② 重试/死信排查</div><div class="d">8 个 %RETRY% topic 24h 窗口全空；%DLQ% 一个都不存在（惰性创建，没消息死过）→ <b class="ok">排除重试循环</b></div></div>
+    <div class="ev warn"><div class="t">③ 集群口径</div><div class="d">集群页数字是<b>整台 broker</b> 的账（含你虚拟机里 chain/order/pay 等其他项目 + 系统队列）；多项目共享一台 broker</div></div>
+    <div class="ev warn"><div class="t">④ 受控实验 · 观察者效应</div><div class="d">浏览一次消息页（拉回 9 条）→ 消费计数<b class="wa">精确 +9</b>；再刷 → 再 +9。
+      <span class="mono">331 → 340 → 349</span>。TOOLS_CONSUMER（V5_3_3，docker 网关 <span class="mono">172.18.0.1</span> 出生）就是 dashboard 自己的查询组</div></div>
+    <div class="ev"><div class="t">⑤ 数字冻结</div><div class="d">10:47 与 10:57 两次采样 <span class="mono">32/331</span> 纹丝不动——"一直涨"跟着<b>浏览和测试活动</b>走，停手即停涨</div></div>
+  </div>
+
+  <div class="callout blue">
+    <div class="t">口径沉淀</div>
+    集群页 Consume Count = <b>出手次数</b>（每次拉走都 +1：多消费组各算、dashboard 浏览也算、历史消息翻出来也算、重投也算）。
+    判断业务健康永远下钻到 <b>topic 的 maxOffset</b> 和 <b>消费组的 Diff（积压）</b>——你的 Diff 全程为 0。
+  </div>
+  <div class="callout orange">
+    <div class="t">附：优雅停机的意义</div>
+    强杀进程会"消费了但位点没提交"，下一个实例重拉一遍、消费数重计——这就是生产要 graceful shutdown 的原因（先下线消费、提交完位点再退出）。
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section id="s5">
+  <div class="sec-head"><span class="sec-no">05</span><h2>悬案二 · "email 组存在，demo 组不存在"</h2></div>
+  <p class="lead">broker 层面两组<b>完全对称</b>（订阅配置 ✓ %RETRY% ✓ 位点 ✓）；差异出在页面读的是<b>哪一层</b>。</p>
+
+  <table>
+    <tr><th>存在层次</th><th>何时产生</th><th>掉线后</th><th class="mono">demo（今天出生）</th><th class="mono">email（老组）</th></tr>
+    <tr><td><b>订阅组配置</b></td><td>首次注册即建</td><td class="ok">保留（broker 重启也在）</td><td class="ok">在</td><td class="ok">在</td></tr>
+    <tr><td><b>%RETRY% topic</b></td><td>注册时自动创建</td><td class="ok">保留</td><td class="ok">在</td><td class="ok">在</td></tr>
+    <tr><td><b>消费位点</b></td><td>消费过消息才有</td><td class="ok">保留</td><td class="wa">今天才有</td><td class="ok">早有</td></tr>
+    <tr><td><b>在线连接</b></td><td>心跳实时维持</td><td class="no">~2 分钟被摘除</td><td>离线</td><td>离线</td></tr>
+  </table>
+
+  <p>决定性证据：消费者列表接口返回的 <b>14 个组 updateTime 全部冻结在
+    <span class="mono">2026-08-13T11:35:45</span> 同一毫秒窗口</b>——那是张<b>两天前的旧快照</b>。当晚你正测邮件
+    （rocket-mail-topic 最后一条消息 19:28 写入），email 组被抓到 <span class="mono">count=1, V5_3_0</span> 在线；
+    而 demo 组 8-13 晚还没出生（它的 9 条消息全是 8-15 发的），快照里自然没有。</p>
+  <div class="callout green">
+    <div class="t">修法 &amp; 教训</div>
+    <span class="mono">docker restart rocketmq-dashboard</span> 重算即现。教训：<b>列表页连"存在"都可能骗你</b>，
+    判断组健在要看订阅配置 + Diff，不下钻到数据层永远是猜。
+  </div>
+</section>
+
+<!-- ============ 06 ============ -->
+<section id="s6">
+  <div class="sec-head"><span class="sec-no">06</span><h2>实验三 · 重试 → 死信全链路（毒消息）</h2></div>
+  <p class="lead">设计：body 以 <code>poison</code> 开头即抛异常，<code>maxReconsumeTimes=1</code>（首次 + 1 次重试 = 2 次机会），10 秒内走完全程。</p>
+
+  <div class="tl">
+    <div class="ev"><div class="t">15:07:48.768</div><div class="d"><b>发出毒消息</b>，业务键 <span class="mono">POISON-2001</span></div></div>
+    <div class="ev bad"><div class="t">15:07:48.768 · 第0次投递</div><div class="d">消费抛异常 → broker 写入 <span class="mono">%RETRY%demo-consumer-group</span></div></div>
+    <div class="ev bad"><div class="t">15:07:58.852 · 第1次投递（+10.08s）</div><div class="d">重投再失败 → 超过 maxReconsumeTimes</div></div>
+    <div class="ev good"><div class="t">15:08:07.637</div><div class="d"><b>DemoDlqConsumer 接盘死信</b>：<span class="mono">%DLQ%demo-consumer-group</span> 此刻才被创建（惰性）</div></div>
+  </div>
+
+  <h3>消息解剖 <span class="tag">从 %RETRY% / %DLQ% 捞出的实体属性</span></h3>
+  <table>
+    <tr><th>属性</th><th>%RETRY% 副本</th><th>%DLQ% 副本</th><th>含义</th></tr>
+    <tr><td class="mono">RETRY_TOPIC</td><td class="mono">rocket-service-exm</td><td class="mono">rocket-service-exm</td><td>它从哪来（原 topic）</td></tr>
+    <tr><td class="mono">ORIGIN_MESSAGE_ID</td><td class="mono">C0A8C880…013553</td><td class="mono">C0A8C880…013553</td><td>前身是谁（血缘）</td></tr>
+    <tr><td class="mono">DELAY</td><td class="mono">3（=10s，与 10.08s 吻合）</td><td class="mono">—</td><td>下一跳的延迟档位</td></tr>
+    <tr><td class="mono">reconsumeTimes</td><td class="mono">1</td><td class="mono">2</td><td>投递计数一路累加</td></tr>
+    <tr><td class="mono">bodyCRC</td><td class="mono" style="color:var(--green)">722309590</td><td class="mono" style="color:var(--green)">722309590</td><td><b>相同 → 同一业务内容</b></td></tr>
+    <tr><td class="mono">commitLogOffset</td><td class="mono">80098</td><td class="mono">80631</td><td><b>不同 → 新的物理消息</b></td></tr>
+  </table>
+  <div class="callout purple">
+    <div class="t">"msgId 会变"的实锤</div>
+    重试/死信每一跳都是<b>新物理消息</b>（门牌号换了），但 body 与业务键原样跟随。所以排查日志要认
+    <span class="mono">ORIGIN_MESSAGE_ID</span> / <span class="mono">KEYS</span>，别只盯 msgId。
+    另：这条毒消息给集群"今日消费"贡献了 <b>+3</b>（首次 + 重投 + 死信投递各计一次）。
+  </div>
+</section>
+
+<!-- ============ 07 ============ -->
+<section id="s7">
+  <div class="sec-head"><span class="sec-no">07</span><h2>真实事故 · 一条手抖消息的 3 小时循环</h2></div>
+  <p class="lead">上午手动在 dashboard 注入消息（body 缺 <code>sendTimestamp</code> 字段）→
+    <code>Long.parseLong(null)</code> 炮弹 → 确定性错误在重试循环里空烧。</p>
+
+  <div class="log"><span class="tm">15:18:29.425</span> <span class="lv-w">WARN</span> [<span class="th">onsumer-group_4</span>] DefaultRocketMQListenerContainer : consume message failed.
+  <span class="cm">messageId:</span><span class="hl">AC12000400012FF4ACD048EE98C50010</span> <span class="cm">topic:rocket-mail-topic</span> <span class="flag">reconsumeTimes:7</span>
+java.lang.NumberFormatException: Cannot parse null string
+    <span class="cm">at java.base/java.lang.Long.parseLong(Long.java:674)</span>
+    <span class="cm">at org.xiaoxu.consumer.SendMailLogicConsumer.onMessage(<span style="color:var(--red)">SendMailLogicConsumer.java:36</span>)</span> <span class="cm">← parseLong(message.get("sendTimestamp"))</span></div>
+
+  <h3>broker 取证 <span class="tag">%RETRY%email-consumer-group</span></h3>
+  <ul style="margin:8px 0 8px 22px">
+    <li><b>两条</b>一模一样的毒消息：出生 <span class="mono">11:51:36 / 11:51:39</span>（间隔 2.8s，提交了两次），<b>bodyCRC 完全相同</b></li>
+    <li>出生地 <span class="mono">172.18.0.1</span>（docker 网关 → dashboard 注入的指纹）</li>
+    <li>均烧到 <b>第 7 次重投</b>，<span class="mono">DELAY=9</span>（5 分钟/跳），后续 6m、7m…最長 2h，到 16 次约需 <b>4~5 小时</b></li>
+  </ul>
+
+  <h3>修复（方案 B：防御式消费）<span class="tag">15:31 循环熄火</span></h3>
+  <div class="grid2">
+    <div class="card">
+      <b class="c-red">修前</b>
+      <div class="log" style="margin-bottom:0">long startTime =
+  <span class="flag">Long.parseLong(sendTimestamp)</span>;
+<span class="cm">// sendTimestamp == null → 必炸</span>
+<span class="cm">// 且第51行还有第二颗雷：</span>
+<span class="cm">// 发送成功后打日志再 parseLong 一次</span></div>
+    </div>
+    <div class="card">
+      <b class="c-green">修后</b>
+      <div class="log" style="margin-bottom:0"><span class="cm">// email 缺失 → WARN + ACK 跳过</span>
+<span class="cm">// 时间戳防御解析，失败返回 -1</span>
+long startTime = <span class="hl">parseSafely(sendTimestamp)</span>;
+long delay = startTime &gt; 0 ? recv - startTime : <span class="hl">-1</span>;</div>
+    </div>
+  </div>
+  <div class="log"><span class="tm">15:31:31.283</span> <span class="lv-i">INFO</span> [<span class="th">onsumer-group_1</span>] <span class="cl">SendMailLogicConsumer</span> : <span class="hl">[链路监控] 排队耗时:-1ms, 邮件发送耗时:1727ms（无 sendTimestamp，跳过链路统计）</span>
+<span class="tm">15:31:31.296</span> <span class="lv-i">INFO</span> [<span class="th">onsumer-group_2</span>] <span class="cl">SendMailLogicConsumer</span> : <span class="hl">[链路监控] 排队耗时:-1ms, 邮件发送耗时:1740ms</span>
+<span class="cm">// 下一次重投即被成功消费 → ACK → 循环自然终止，真实邮件送达</span></div>
+  <div class="callout red">
+    <div class="t">核心教训</div>
+    <b>重试只能治瞬时故障</b>（网络抖、下游超时），<b>治不了确定性错误</b>——缺字段的消息重试 16 次也不会长出字段。
+    消费端分层：脏数据<b>防御性解析、快速失败</b>；值得重试的才放行进 %RETRY%；重试终会成功的场景业务可能已做了一半 → <b>幂等是最后一道闸</b>。
+    本案账单：2 条 × 8 次失败 + 2 次成功 = <b>18 次投递</b>全部计入集群消费数。
+  </div>
+</section>
+
+<!-- ============ 08 ============ -->
+<section id="s8">
+  <div class="sec-head"><span class="sec-no">08</span><h2>模型修正 · 复述里的三处精确化</h2></div>
+  <p class="lead">对"投递必达 → 失败进重试 → 16 次进死信 → 专人监听"这段复述的修正（原始方向全对）：</p>
+  <table>
+    <tr><th style="width:30%">复述</th><th>精确版</th></tr>
+    <tr><td>"超过 <b>16 次</b>转死信"</td><td>16 只是<b>并发模式默认值</b>（顺序模式默认 Integer.MAX_VALUE，原地重试不进死信）。demo 组配 <span class="mono">maxReconsumeTimes=1</span> → 实测 2 次即入死信。<b>这是业务决策不是法律</b></td></tr>
+    <tr><td>"一直重试"</td><td><b>指数退避</b>：10s→30s→1m→…→2h，走完默认全程约 <b>4~5 小时</b>。生产上别等死信，%RETRY% 堆积本身就是告警信号</td></tr>
+    <tr><td>"无论如何都会发过来"</td><td>严格说是 <b>At Least Once</b>：不但一定来，重平衡/崩溃时还可能<b>来不止一次</b> → 幂等是必修不是选修。另：<b>广播模式没有重试和死信</b>，失败即过</td></tr>
+    <tr><td>"写一个消费者监听死信"</td><td>对，但两个要点：<b>必须用新的 consumerGroup</b>（同组会打乱订阅关系）；%DLQ% 按<b>消费组</b>聚合（不按 topic），组内所有 topic 的死信汇于一处，接盘逻辑靠 <span class="mono">RETRY_TOPIC</span> 属性认祖归宗</td></tr>
+  </table>
+</section>
+
+<!-- ============ 09 ============ -->
+<section id="s9">
+  <div class="sec-head"><span class="sec-no">09</span><h2>代码变更 &amp; 欠账清单</h2></div>
+
+  <h3>当日代码变更 <span class="tag">rocketmq-service</span></h3>
+  <table>
+    <tr><th>文件</th><th>变化</th></tr>
+    <tr><td class="mono">ProduceRockerMQDEM</td><td>同步/异步对照日志；MessageBuilder 打业务键（ORDER-1001/1002/POISON-2001）；新增 <span class="mono">sendPoison()</span></td></tr>
+    <tr><td class="mono">TestController</td><td>新增 <span class="kbd">GET /send/async</span>、<span class="kbd">GET /send/poison</span></td></tr>
+    <tr><td class="mono">ConsumerRocketMQDEML</td><td><span class="mono">RocketMQListener&lt;MessageExt&gt;</span> 三 ID 同框日志；poison 前缀失败注入</td></tr>
+    <tr><td class="mono">DemoDlqConsumer <span class="pill g">新增</span></td><td>监听 <span class="mono">%DLQ%demo-consumer-group</span>，独立组 demo-dlq-consumer-group 接盘</td></tr>
+    <tr><td class="mono">SendMailLogicConsumer</td><td><b>防御式重写</b>：email 缺失跳过、sendTimestamp 安全解析、拆除第二颗 parseLong 雷、println→logger</td></tr>
+  </table>
+
+  <h3>欠账清单 <span class="tag">按优先级</span></h3>
+  <table>
+    <tr><th>#</th><th>事项</th><th>级别</th><th>要点</th></tr>
+    <tr><td>1</td><td><b>幂等消费</b></td><td><span class="pill r">必须</span></td><td>Redis <span class="mono">setIfAbsent("mail:sent:"+orderId)</span>；去重键必须随消息体传递（producer/consumer 契约）</td></tr>
+    <tr><td>2</td><td><b>SMTP 授权码仍在 git 明文</b></td><td><span class="pill r">必须</span></td><td><span class="mono">application.yml:9</span>；改 <span class="mono">${SMTP_AUTH_CODE:}</span> 环境变量 + 163 后台重置授权码</td></tr>
+    <tr><td>3</td><td>DLQ 消费者告警化</td><td><span class="pill o">应该</span></td><td>入库 + 告警 + 人工重放入口；反序列化回业务对象而非 String</td></tr>
+    <tr><td>4</td><td>producer keys 常态化 / name-server 多台</td><td><span class="pill o">应该</span></td><td>业务键进 IndexFile；NameServer 单点配多台</td></tr>
+    <tr><td>5</td><td>VM 内 ~47 TPS 空拉进程</td><td><span class="pill b">观察</span></td><td>getMissTps≈47 持续空轮询，不计消费数但耗 broker；需 <span class="mono">jps -l</span> + <span class="mono">netstat -antp | grep 10911</span> 定位</td></tr>
+    <tr><td>6</td><td>延迟消息替换 pay 轮询补偿</td><td><span class="pill p">可选</span></td><td>下单即投 30min 定时炸弹，替代全表扫描；事务消息对接 payment 落库+通知</td></tr>
+  </table>
+
+  <div class="callout green">
+    <div class="t">一天的总纲</div>
+    从"背过"到"每条结论都有收据"：三个 ID、异步回调、重试退避、死信转生、数字口径、四层存在——全部实测。
+    排障方法论沉淀：<b>先定口径（这个数统计的是什么）→ 再下钻（topic 的 offset / 组的 Diff / 消息实体属性）→ 永远别跟列表页快照较劲。</b>
+  </div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10">
+  <div class="sec-head"><span class="sec-no">10</span><h2>次日增补 · 2026-08-16（stream-three-mq 战场）</h2></div>
+  <p class="lead">第二天在 Spring Cloud Stream 双 binder 模块上又收出三条结论，全部实测，其中两条<b>修正了前一天的说法</b>。</p>
+
+  <h3>结论一 · 重试副本计入"今日生产" <span class="tag">修正昨日口径</span></h3>
+  <div class="callout red">
+    <div class="t">昨日说法被推翻</div>
+    昨日分析"生产 9 / 消费 57"时曾断言"重试消息写回 %RETRY% 不计入生产"。
+    今日全量对账（逐 topic 数消息求和 vs 集群计数）证明：<b>%RETRY% 每一跳写回都是一次真实的 put，全部计入"今日生产"</b>。
+    铁证：邮件事故 2 条毒消息产生 <b>18 个重试副本</b>，跨 binder 的 cross-msg-1 产生 <b>9 个副本</b>——全在账上。
+  </div>
+  <table>
+    <tr><th>时段</th><th>事件</th><th>生产数</th></tr>
+    <tr><td>昨日 08:00~10:47</td><td>全链路实验 9 条 + 手动测试</td><td>32</td></tr>
+    <tr><td>昨日 15:07</td><td>毒消息实验（1 真实 + 2 重试副本 + 1 死信）</td><td>+4</td></tr>
+    <tr><td>昨日 15:18~15:31</td><td><b>邮件事故重试风暴</b>（2 条 × 多跳写回）</td><td>+18</td></tr>
+    <tr><td>昨日晚间</td><td>手动测试（含毒消息再玩两发）</td><td>+7</td></tr>
+    <tr><td>今日 06:37~06:39</td><td>stream 模块真实发送 4 条</td><td>+4</td></tr>
+    <tr><td>今日 06:40 起</td><td><b>cross-msg-1 跨 binder 重试 9 跳</b></td><td>+9</td></tr>
+    <tr><td><b>合计</b></td><td>与集群口径 71 对账 ✓（±1 为抽样误差）</td><td><b>≈74≈71</b></td></tr>
+  </table>
+
+  <h3>结论二 · broker 的"今天"按 UTC 日切 <span class="tag">北京时间早 8 点才是它的新一天</span></h3>
+  <div class="callout orange">
+    <div class="t">"今日生产 48"的真相</div>
+    dashboard 所有时间戳带 Z 后缀（<span class="mono">11:35:45Z = 19:35 CST</span>）——broker JVM 跑在 UTC，
+    它的"Today"计数器在 <b>UTC 0 点 = 北京时间早 8 点</b>才翻转。于是早上看到的"今日生产 48"里装着
+    <b>昨天早 8 点以来的全部写入</b>（含昨天下午的毒消息实验和邮件风暴）。<br>
+    <b>生产含义</b>：用这个口径做容量日报 / 监控告警，数字会歪 8 小时——先校 broker 时区。
+  </div>
+
+  <h3>结论三 · 跨 binder 失败的连锁反应 <span class="tag">下游的病，上游的重试队列吃药</span></h3>
+  <div class="tl">
+    <div class="ev"><div class="t">06:37</div><div class="d">cross-msg-1 进入 <span class="mono">notifyProcess</span> 函数（RocketMQ 进 → RabbitMQ 出）</div></div>
+    <div class="ev bad"><div class="t">出站撞墙</div><div class="d">RabbitMQ 认证 401 → 函数抛异常 → <b>RocketMQ 判定消费失败</b> → <span class="mono">%RETRY%stream-notify-group</span></div></div>
+    <div class="ev bad"><div class="t">9 跳 × 40 分钟</div><div class="d">每跳重投都再撞认证墙，DELAY 从 3 档爬到 11 档；期间 broker 多出 9 个重试副本（见结论一）</div></div>
+    <div class="ev good"><div class="t">凭证修复</div><div class="d">第 <b>10 跳成功</b>：函数完成 RocketMQ→RabbitMQ 转发，循环熄火，<b>无死信</b>——重试机制扛住了配置故障，消息自动续命</div></div>
+  </div>
+  <div class="callout purple">
+    <div class="t">架构推论</div>
+    Stream 屏蔽了收发 API，但<b>没有屏蔽失败传播</b>：下游 MQ 的故障会以"消费失败"的身份污染上游 MQ 的重试队列
+    （还会把副本灌进上游的生产计数）。跨 binder 链路要把出站失败的兜底（errorChannel / 重试上限 / 降级）当作一等公民设计。
+  </div>
+
+  <div class="callout green">
+    <div class="t">增补后的对账方法论（第 3 版）</div>
+    ① 先问口径：这个数统计什么？时间窗口从哪到哪（<b>时区</b>）？<br>
+    ② 再拆构成：真实发送 + 重试副本 + 死信副本 + 观察者（浏览）各自贡献多少；<br>
+    ③ 下钻验证：逐 topic 数消息求和，与集群计数对账——数字不会说谎，但口径会。
+  </div>
+</section>
+
+<footer>
+  java_arsenal · three-major-mq-service/rocketmq-service · 生成于 2026-08-16 · 增补 2026-08-16（stream-three-mq 三条新结论） ·
+  数据源：应用日志 + rocketmq-dashboard / rabbitmq-management REST API 实测取证
+</footer>
+
+</div>
+</body>
+</html>

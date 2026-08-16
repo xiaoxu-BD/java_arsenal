@@ -23,6 +23,8 @@
         <module>co_insurance</module>
         <module>idea-remotedebug</module>
         <module>business-work</module>
+        <module>pay</module>
+        <module>stream-three-mq</module>
     </modules>
 
 

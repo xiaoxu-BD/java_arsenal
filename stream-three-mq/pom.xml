@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.xiaoxu</groupId>
+        <artifactId>java_arsenal</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>stream-three-mq</artifactId>
+    <packaging>jar</packaging>
+    <name>stream-three-mq</name>
+    <description>Spring Cloud Stream 双 binder 实战：一套函数式代码同时驱动 RocketMQ 与 RabbitMQ</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 两个 binder：版本全部由根 BOM 托管（SC 2023.0.0 + SCA 2023.0.1.2） -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+        </dependency>
+    </dependencies>
+</project>

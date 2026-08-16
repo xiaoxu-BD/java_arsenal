@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.xiaoxu</groupId>
+        <artifactId>java_arsenal</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>pay</artifactId>
+    <packaging>jar</packaging>
+
+    <name>pay</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.xiaoxu</groupId>
+            <artifactId>datasource-service</artifactId>
+            <version>1.0</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.javen205</groupId>-->
+<!--            <artifactId>IJPay-AliPay</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.xiaoxu</groupId>
+            <artifactId>base-service</artifactId>
+        </dependency>
+    </dependencies>
+</project>
