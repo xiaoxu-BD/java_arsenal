@@ -169,7 +169,17 @@ public class FlowableServiceImpl implements FlowableService {
         final String businessKey = getBusinessKeyByTaskId(taskId);
         final String processInstanceId = getProcessInstanceIdByTaskId(taskId);
 
-        // 2) 候选组任务 → 自动认领
+        // 2) 校验操作人权限：Flowable 的 complete 不校验 assignee，
+        //    任务已分配给他人、或当前用户不在候选组时必须拒绝，防止越权审批
+        Task taskToCheck = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (taskToCheck == null) {
+            throw new RuntimeException("任务不存在: " + taskId);
+        }
+        if (!isTaskOperator(taskToCheck, username)) {
+            throw new RuntimeException("无权操作该任务: taskId=" + taskId + ", user=" + username);
+        }
+
+        // 3) 候选组任务 → 自动认领
         claimIfUnassigned(taskId, username);
 
         // 3) 写入 ACT_HI_COMMENT，持久化审批意见到流程历史
@@ -194,12 +204,23 @@ public class FlowableServiceImpl implements FlowableService {
         String taskName = currentTask != null ? currentTask.getName() : taskId;
         completeTask(taskId, variables);
 
-        // 4.5) 记录审批日志
+        // 4.5) 记录审批日志：挪到事务提交后发送，避免回滚的审批留下审计记录
         String action = approved ? ApprovalAction.APPROVE.name() : ApprovalAction.REJECT.name();
-        auditLogService.recordWorkflowLog(
+        Runnable auditLogTask = () -> auditLogService.recordWorkflowLog(
                 processInstanceId, taskId, taskName,
                 processDefinitionKey, businessKey,
                 action, comment, username);
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                    new org.springframework.transaction.support.TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            auditLogTask.run();
+                        }
+                    });
+        } else {
+            auditLogTask.run();
+        }
 
         // 5) 发布审批事件：事务提交后由 ApprovalEventListener 处理业务回调
         ApprovalEvent.ActionType actionType = approved 
@@ -310,10 +331,31 @@ public class FlowableServiceImpl implements FlowableService {
         if (task == null) {
             throw new RuntimeException("任务不存在: " + taskId);
         }
-        return runtimeService.createProcessInstanceQuery()
+        ProcessInstance instance = runtimeService.createProcessInstanceQuery()
                 .processInstanceId(task.getProcessInstanceId())
-                .singleResult()
-                .getBusinessKey();
+                .singleResult();
+        if (instance == null) {
+            throw new RuntimeException("流程实例不存在（可能已被删除）: " + task.getProcessInstanceId());
+        }
+        return instance.getBusinessKey();
+    }
+
+    /**
+     * 判断用户是否有权操作任务：是受理人，或属于任务的某个候选组
+     */
+    private boolean isTaskOperator(Task task, String username) {
+        if (username.equals(task.getAssignee())) {
+            return true;
+        }
+        Set<String> myGroups = new java.util.HashSet<>(workflowIdentityService.getGroupsOf(username));
+        try {
+            return taskService.getIdentityLinksForTask(task.getId()).stream()
+                    .filter(link -> link.getGroupId() != null)
+                    .anyMatch(link -> myGroups.contains(link.getGroupId()));
+        } catch (Exception e) {
+            log.warn("查询任务候选组失败, taskId={}", task.getId(), e);
+            return false;
+        }
     }
 
     @Override
@@ -507,7 +549,8 @@ public class FlowableServiceImpl implements FlowableService {
                     vo.setTitle(order.getTitle());
                     vo.setAmount(order.getAmount());
                 }
-            } else if (ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)) {
+            } else if (ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)
+                    || ProcessDefinitionKey.LEAVE_REQUEST_V2.equals(processDefinitionKey)) {
                 ApproveLeave leave = approveLeaveMapper.selectById(businessId);
                 if (leave != null) {
                     vo.setApplicant(leave.getUserName());

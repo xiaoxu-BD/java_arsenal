@@ -1,6 +1,7 @@
 package org.xiaoxu.pay.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,12 +12,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Controller
 public class PayRedirectController {
 
-    private static final String FRONTEND_URL = "http://localhost:5173/pay/success";
+    @Value("${alipay.frontendUrl:http://localhost:5173/pay/success}")
+    private String frontendUrl;
 
     @GetMapping("/pay/success")
     public String paySuccess(HttpServletRequest request) {
         String outTradeNo = request.getParameter("out_trade_no");
-        String redirectUrl = UriComponentsBuilder.fromHttpUrl(FRONTEND_URL)
+        String redirectUrl = UriComponentsBuilder.fromHttpUrl(frontendUrl)
                 .queryParam("out_trade_no", outTradeNo)
                 .toUriString();
         return "redirect:" + redirectUrl;

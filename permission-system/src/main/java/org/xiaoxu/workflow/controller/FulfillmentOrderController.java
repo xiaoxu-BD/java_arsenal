@@ -3,8 +3,10 @@ package org.xiaoxu.workflow.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.xiaoxu.common.constants.PermissionConstants;
 import org.xiaoxu.common.utils.Result;
 import org.xiaoxu.workflow.dto.FulfillmentOrderCreateDTO;
 import org.xiaoxu.workflow.dto.FulfillmentOrderQueryDTO;
@@ -58,7 +60,7 @@ public class FulfillmentOrderController {
     }
 
     /**
-     * 删除履约单（逻辑删除）
+     * 删除履约单（仅草稿/已撤回状态可删）
      */
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
@@ -67,9 +69,11 @@ public class FulfillmentOrderController {
     }
 
     /**
-     * 变更履约单状态
+     * 变更履约单状态（管理端人工干预入口：可直接把审批中的单子改为通过/驳回，
+     * 会绕过 Flowable 审批与付款单生成，仅限拥有工作流管理权限的用户）
      */
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.WORKFLOW_ADMIN_LIST + "')")
     public Result<FulfillmentOrderVO> changeStatus(@PathVariable Long id,
                                                      @Valid @RequestBody FulfillmentStatusChangeDTO dto) {
         return Result.success(fulfillmentOrderService.changeStatus(id, dto.getStatus(), dto.getRemark()));

@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.springframework.stereotype.Component;
+import org.xiaoxu.workflow.approval.ApprovalContext;
+import org.xiaoxu.workflow.approval.FulfillmentApprovalHandler;
 import org.xiaoxu.workflow.constant.ApprovalStatus;
 import org.xiaoxu.workflow.entity.ApproveLeave;
 import org.xiaoxu.workflow.entity.FulfillmentOrder;
@@ -29,6 +31,7 @@ public class ApprovalStatusSyncJob {
     private final HistoryService historyService;
     private final ApproveLeaveService approveLeaveService;
     private final FulfillmentOrderService fulfillmentOrderService;
+    private final FulfillmentApprovalHandler fulfillmentApprovalHandler;
 
     /**
      * 同步请假单审批状态
@@ -124,10 +127,18 @@ public class ApprovalStatusSyncJob {
 
                 if (processInstance.getEndTime() != null) {
                     String newStatus = determineApprovalStatus(processInstanceId);
-                    
+
                     if (newStatus != null && !newStatus.equals(order.getStatus())) {
-                        order.setStatus(newStatus);
-                        fulfillmentOrderService.updateById(order);
+                        // 走审批处理器回调而非直接改状态，补齐付款单等副作用
+                        ApprovalContext ctx = ApprovalContext.builder()
+                                .businessKey(order.getOrderNo())
+                                .processInstanceId(processInstanceId)
+                                .build();
+                        if (ApprovalStatus.APPROVED.name().equals(newStatus)) {
+                            fulfillmentApprovalHandler.onApproved(ctx);
+                        } else {
+                            fulfillmentApprovalHandler.onRejected(ctx);
+                        }
                         updatedCount++;
                         log.info("履约单状态已同步, id={}, orderNo={}, newStatus={}",
                                 order.getId(), order.getOrderNo(), newStatus);
@@ -157,14 +168,15 @@ public class ApprovalStatusSyncJob {
             // 判断审批结果
             Object approved = variables.get("approved");
             if (approved instanceof Boolean) {
-                return Boolean.TRUE.equals(approved) 
-                        ? ApprovalStatus.APPROVED.name() 
+                return Boolean.TRUE.equals(approved)
+                        ? ApprovalStatus.APPROVED.name()
                         : ApprovalStatus.REJECTED.name();
             }
 
-            // 如果没有 approved 变量，可能是自动完成的（如HR备案）
-            // 默认返回已通过
-            return ApprovalStatus.APPROVED.name();
+            // approved 变量缺失说明流程异常结束（如被管理员删除），
+            // 不能默认按通过处理（履约会误生成付款单），留待人工核查
+            log.warn("流程缺少 approved 变量，跳过状态同步: processInstanceId={}", processInstanceId);
+            return null;
         } catch (Exception e) {
             log.error("判断审批结果失败, processInstanceId={}", processInstanceId, e);
             return null;

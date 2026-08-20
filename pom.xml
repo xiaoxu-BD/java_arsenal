@@ -25,6 +25,7 @@
         <module>business-work</module>
         <module>pay</module>
         <module>stream-three-mq</module>
+        <module>chunk-upload-demo</module>
     </modules>
 
 

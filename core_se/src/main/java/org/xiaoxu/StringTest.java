@@ -29,7 +29,18 @@ public class StringTest {
 //        List<String> res = List.of(String.join("&", str.split(",")));
 //        System.out.println(res);
 
-        String str = "ABc";
+        Integer a = -128;
+        Integer b = -128;
+        System.out.println(a == b);
+
+        Integer c = 128;
+        Integer d = 128;
+        System.out.println(c == d);
+
+
+
+
+       /* String str = "ABc";
         String st2 = "ABc";
 
         String intern = new String("BAC").intern();
@@ -43,7 +54,7 @@ public class StringTest {
             log.info("已经忽略了大小写了 ");
         }else {
             log.info("没有忽略大小写");
-        }
+        }*/
 
     }
 }

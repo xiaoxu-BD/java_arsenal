@@ -70,6 +70,7 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public ApproveLeaveVO submitApproval(String userName, String identifier, String days, String processDefinitionKey) {
         LambdaQueryWrapper<ApproveLeave> wrapper = new LambdaQueryWrapper<ApproveLeave>()
                 .eq(ApproveLeave::getIdentifier, identifier);
@@ -77,6 +78,19 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
         if (Objects.isNull(one)) {
             throw new RuntimeException("请假单不存在");
         }
+
+        // 只有草稿/已驳回的请假单才能提交，防止重复提交产生多个流程实例
+        if (ApprovalStatus.PROCESSING.name().equals(one.getStatus())) {
+            throw new RuntimeException("请假单已在审批中，请勿重复提交");
+        }
+        if (!ApprovalStatus.DRAFT.name().equals(one.getStatus())
+                && !ApprovalStatus.REJECTED.name().equals(one.getStatus())) {
+            throw new RuntimeException("当前状态不允许提交审批: " + one.getStatus());
+        }
+
+        // 审批层级所依赖的 days 以数据库存储的请假天数为准确认，客户端传值仅作兼容
+        String effectiveDays = one.getLeaveDay() != null
+                ? one.getLeaveDay().toPlainString() : days;
 
         // 构建流程变量
         Map<String, Object> variables = new HashMap<>();
@@ -92,11 +106,22 @@ public class FlowableLeaveServiceImpl implements FlowableLeaveService {
             log.info("使用V2流程，审批人变量：manager={}, director={}, hr={}", managerApprover, directorApprover, hrApprover);
         }
 
-        String processId = startProcess(processDefinitionKey, userName + ":" + identifier, days, variables);
+        String processId = startProcess(processDefinitionKey, userName + ":" + identifier, effectiveDays, variables);
 
-        one.setProcessInstanceId(processId);
+        // 条件更新抢占状态：并发提交时只有一个请求能成功，失败方随事务回滚（流程实例一并回滚）
+        ApproveLeave patch = new ApproveLeave();
+        patch.setStatus(ApprovalStatus.PROCESSING.name());
+        patch.setProcessInstanceId(processId);
+        boolean claimed = approveLeaveService.update(patch,
+                new LambdaQueryWrapper<ApproveLeave>()
+                        .eq(ApproveLeave::getId, one.getId())
+                        .in(ApproveLeave::getStatus,
+                                ApprovalStatus.DRAFT.name(), ApprovalStatus.REJECTED.name()));
+        if (!claimed) {
+            throw new RuntimeException("请假单已在审批中，请勿重复提交");
+        }
         one.setStatus(ApprovalStatus.PROCESSING.name());
-        approveLeaveService.updateById(one);
+        one.setProcessInstanceId(processId);
 
         // 发布部门流程事件（请假已提交）
         String department = getUserDepartment(userName);

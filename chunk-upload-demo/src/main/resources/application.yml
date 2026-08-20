@@ -1,0 +1,14 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: chunk-upload-demo
+  servlet:
+    multipart:
+      max-file-size: 32MB
+      max-request-size: 40MB
+
+chunk-upload:
+  # 分片与最终文件的落地目录
+  storage-dir: E:/chunk-upload-demo

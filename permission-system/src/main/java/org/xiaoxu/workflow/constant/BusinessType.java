@@ -21,13 +21,24 @@ public enum BusinessType {
 
     /**
      * 根据流程定义 Key 获取中文标签
+     * 兼容三种入参：流程定义 key（leave-request / leave-request-v2 / fulfillment-approval）、
+     * 管理端聚合查询使用的短 key（leave / fulfillment）
      */
-    public static String getLabelByKey(String processDefinitionKey) {
+    public static String getLabelByKey(String key) {
+        if (key == null) {
+            return null;
+        }
         for (BusinessType type : values()) {
-            if (type.getProcessDefinitionKey().equals(processDefinitionKey)) {
+            if (type.getProcessDefinitionKey().equals(key)) {
                 return type.getLabel();
             }
         }
-        return processDefinitionKey;
+        if (ProcessDefinitionKey.LEAVE_REQUEST_V2.equals(key) || "leave".equals(key)) {
+            return LEAVE.getLabel();
+        }
+        if ("fulfillment".equals(key)) {
+            return FULFILLMENT.getLabel();
+        }
+        return key;
     }
 }

@@ -17,8 +17,9 @@ public class DepartmentFlowEventListener {
 
     /**
      * 处理部门流程事件
+     * fallbackExecution = true：发布方没有事务时也执行，避免事件被静默丢弃
      */
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void handleDepartmentFlowEvent(DepartmentFlowEvent event) {
         log.info("收到部门流程事件: eventType={}, businessType={}, department={}",
                 event.getEventType(), event.getBusinessType(), event.getDepartment());

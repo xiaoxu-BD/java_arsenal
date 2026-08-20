@@ -118,6 +118,11 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
         if (order == null) {
             throw new RuntimeException("履约单不存在");
         }
+        // 审批中的履约单删除会导致流程实例与业务数据脱钩，回调将找不到记录
+        if (!ApprovalStatus.DRAFT.name().equals(order.getStatus())
+                && !ApprovalStatus.CANCELLED.name().equals(order.getStatus())) {
+            throw new RuntimeException("只有草稿或已撤回的履约单才能删除");
+        }
         fulfillmentOrderMapper.deleteById(id);
     }
 
@@ -197,6 +202,18 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
         // 使用指定的流程 key，默认为 fulfillment-approval
         String key = processKey != null ? processKey : ProcessDefinitionKey.FULFILLMENT_APPROVAL;
 
+        // 条件更新抢占状态：并发提交时只有一个请求能把 DRAFT 改为 PROCESSING，
+        // 其余直接失败，避免产生重复流程实例（事务内回滚会还原状态）
+        FulfillmentOrder claim = new FulfillmentOrder();
+        claim.setStatus(ApprovalStatus.PROCESSING.name());
+        int claimed = fulfillmentOrderMapper.update(claim,
+                new LambdaQueryWrapper<FulfillmentOrder>()
+                        .eq(FulfillmentOrder::getId, id)
+                        .eq(FulfillmentOrder::getStatus, ApprovalStatus.DRAFT.name()));
+        if (claimed != 1) {
+            throw new RuntimeException("只有草稿状态的履约单才能提交审批");
+        }
+
         // 构建流程变量：把业务数据传入，供网关条件表达式使用
         Map<String, Object> variables = new HashMap<>();
         variables.put(ProcessVariables.AMOUNT, order.getAmount());
@@ -212,7 +229,7 @@ public class FulfillmentOrderServiceImpl extends ServiceImpl<FulfillmentOrderMap
                 variables
         );
 
-        // 更新履约单状态
+        // 更新流程实例 ID
         order.setStatus(ApprovalStatus.PROCESSING.name());
         order.setProcessInstId(processInstId);
         fulfillmentOrderMapper.updateById(order);

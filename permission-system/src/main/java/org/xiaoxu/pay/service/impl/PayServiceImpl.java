@@ -168,14 +168,23 @@ public class PayServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implem
     @Transactional
     public String handleNotify(Map<String, String> params) {
         try {
-            // 1. 验签
+            // 1. 验签（失败时打印待验签内容与公钥指纹，便于排查公钥配错/沙箱重置问题）
             boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
             if (!signVerified) {
-                log.error("支付回调验签失败");
+                log.error("支付回调验签失败: notifyAppId={}, signType={}, sign={}, checkContent={}, configuredPublicKeySha256={}",
+                        params.get("app_id"), params.get("sign_type"), params.get("sign"),
+                        AlipaySignature.getSignCheckContentV1(params), sha256Fingerprint(alipayPublicKey));
                 return "failure";
             }
 
-            // 2. 获取关键参数
+            // 2. 校验 app_id，防止其他应用的回调或伪造请求
+            String notifyAppId = params.get("app_id");
+            if (notifyAppId != null && !appId.equals(notifyAppId)) {
+                log.error("支付回调 app_id 不匹配: configured={}, notify={}", appId, notifyAppId);
+                return "failure";
+            }
+
+            // 3. 获取关键参数
             String orderNo = params.get("out_trade_no");
             String tradeNo = params.get("trade_no");
             String tradeStatus = params.get("trade_status");
@@ -184,7 +193,7 @@ public class PayServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implem
 
             log.info("收到支付回调: orderNo={}, tradeNo={}, status={}", orderNo, tradeNo, tradeStatus);
 
-            // 3. 查询订单
+            // 4. 查询订单
             PayOrder order = payOrderMapper.selectOne(
                     new LambdaQueryWrapper<PayOrder>().eq(PayOrder::getOrderNo, orderNo)
             );
@@ -193,24 +202,39 @@ public class PayServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implem
                 return "failure";
             }
 
-            // 4. 验证金额
+            // 5. 幂等：已支付成功的订单直接应答 success（支付宝会对未收到 success 的通知重试多次）
+            boolean tradeSuccess = "TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus);
+            if (tradeSuccess && PayOrderStatus.PAID.name().equals(order.getStatus())) {
+                log.info("订单已支付，忽略重复回调: orderNo={}, tradeNo={}", orderNo, tradeNo);
+                return "success";
+            }
+
+            // 6. 验证金额
             if (order.getAmount().compareTo(new BigDecimal(totalAmount)) != 0) {
                 log.error("金额不匹配: order={}, alipay={}", order.getAmount(), totalAmount);
                 return "failure";
             }
 
-            // 5. 记录支付记录
-            PayRecord record = new PayRecord();
-            record.setOrderNo(orderNo);
-            record.setAlipayTradeNo(tradeNo);
-            record.setTradeStatus(tradeStatus);
-            record.setTotalAmount(new BigDecimal(totalAmount));
-            record.setBuyerId(buyerId);
-            record.setRawData(params.toString());
-            payRecordMapper.insert(record);
+            // 7. 记录支付记录（同一笔交易不重复落库）
+            Long existRecords = payRecordMapper.selectCount(
+                    new LambdaQueryWrapper<PayRecord>()
+                            .eq(PayRecord::getOrderNo, orderNo)
+                            .eq(PayRecord::getAlipayTradeNo, tradeNo)
+            );
+            if (existRecords == null || existRecords == 0) {
+                PayRecord record = new PayRecord();
+                record.setOrderNo(orderNo);
+                record.setAlipayTradeNo(tradeNo);
+                record.setTradeStatus(tradeStatus);
+                record.setTotalAmount(new BigDecimal(totalAmount));
+                record.setBuyerId(buyerId);
+                record.setRawData(params.toString());
+                record.setCreateTime(LocalDateTime.now());
+                payRecordMapper.insert(record);
+            }
 
-            // 6. 更新订单状态
-            if ("TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus)) {
+            // 8. 更新订单状态
+            if (tradeSuccess) {
                 order.setStatus(PayOrderStatus.PAID.name());
                 order.setAlipayTradeNo(tradeNo);
                 order.setPayTime(LocalDateTime.now());
@@ -330,5 +354,22 @@ public class PayServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> implem
     private String generateOrderNo() {
         return "PAY" + LocalDateTime.now().format(ORDER_NO_FORMAT)
                 + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    /**
+     * 公钥 DER 内容的 SHA-256 指纹（前 16 位十六进制），用于核对服务实际加载的公钥
+     */
+    private String sha256Fingerprint(String publicKey) {
+        try {
+            byte[] digest = java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(java.util.Base64.getDecoder().decode(publicKey));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.substring(0, 16);
+        } catch (Exception e) {
+            return "invalid-key";
+        }
     }
 }

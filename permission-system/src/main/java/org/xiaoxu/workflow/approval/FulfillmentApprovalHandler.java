@@ -44,22 +44,26 @@ public class FulfillmentApprovalHandler implements ApprovalHandler {
         if (order != null) {
             // 查询用户信息 此处Creator就是 所属人id
             String creator = order.getCreator();
-            SystemUsers systemUsers = userMapper.selectOne(new LambdaQueryWrapper<SystemUsers>().eq(SystemUsers::getUsername, creator));
+            SystemUsers user = userMapper.selectOne(
+                    new LambdaQueryWrapper<SystemUsers>().eq(SystemUsers::getUsername, creator));
 
-            SystemUsers user = userMapper.selectById(systemUsers.getId());
-            String username = user != null ? user.getUsername() : "unknown";
-            
+            if (user == null || user.getId() == null) {
+                // 创建人不存在时仅告警，不能让 NPE 吞掉整个回调（状态已更新但付款单会缺失）
+                log.error("履约单创建人不存在，无法生成付款单: orderNo={}, creator={}", orderNo, creator);
+                return;
+            }
+
             // 创建付款单
             payService.createPayOrder(
                     "fulfillment",
                     order.getId(),
                     context.getProcessInstanceId(),
-                    systemUsers.getId(),
-                    username,
+                    user.getId(),
+                    user.getUsername(),
                     "履约单付款：" + order.getTitle(),
                     order.getAmount()
             );
-            
+
             log.info("履约单审批通过，已生成付款单: orderNo={}", orderNo);
         }
     }

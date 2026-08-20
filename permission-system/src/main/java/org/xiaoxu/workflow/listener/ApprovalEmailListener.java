@@ -73,7 +73,7 @@ public class ApprovalEmailListener implements ExecutionListener {
             order.setNotified("1");
             mapper.updateById(order);
 
-        } else if (ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)) {
+        } else if (isLeaveProcess(processDefinitionKey)) {
             // 请假单：businessKey = "用户名:identifier"
             ApproveLeaveMapper mapper = SpringContextHolder.getBean(ApproveLeaveMapper.class);
             String identifier = parseIdentifier(businessKey);
@@ -109,6 +109,12 @@ public class ApprovalEmailListener implements ExecutionListener {
         } else {
             log.info("未知的流程定义 key: {}, 跳过邮件通知", processDefinitionKey);
         }
+    }
+
+    /** 请假 v1/v2 两种流程的 businessKey 结构一致，邮件逻辑共用 */
+    private boolean isLeaveProcess(String processDefinitionKey) {
+        return ProcessDefinitionKey.LEAVE_REQUEST.equals(processDefinitionKey)
+                || ProcessDefinitionKey.LEAVE_REQUEST_V2.equals(processDefinitionKey);
     }
 
     private SystemUsers findUserByUsername(UserMapper userMapper, String username) {

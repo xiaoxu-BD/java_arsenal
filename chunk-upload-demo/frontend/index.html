@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分片上传 Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 60px auto; color: #24292f; }
+    h1 { font-size: 20px; }
+    #bar { height: 12px; background: #eaeef2; border-radius: 6px; overflow: hidden; margin: 12px 0; }
+    #bar > div { height: 100%; width: 0; background: #2da44e; transition: width .15s; }
+    #status { color: #57606a; font-size: 14px; min-height: 20px; white-space: pre-wrap; }
+    button { padding: 6px 18px; border: 1px solid #d0d7de; border-radius: 6px; background: #f6f8fa; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h1>文件分片上传 Demo（策略由后端下发）</h1>
+  <input type="file" id="file" />
+  <button id="upload" disabled>上传</button>
+  <div id="bar"><div></div></div>
+  <div id="status"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

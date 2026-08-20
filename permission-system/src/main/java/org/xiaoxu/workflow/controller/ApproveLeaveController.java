@@ -50,6 +50,7 @@ public class ApproveLeaveController {
 
     /**
      * 提交审批
+     * 默认走 v2 流程（LeaveApprovalHandler 只注册了 v2 的回调，v1 提交后业务状态将无人回写）
      */
     @PostMapping("/{id}/submit")
     public Result<ApproveLeaveVO> submitApproval(@PathVariable Long id,
@@ -57,17 +58,25 @@ public class ApproveLeaveController {
                                                   @RequestParam String identifier,
                                                   @RequestParam(required = false) String processKey,
                                                   Authentication authentication) {
-        String processDefinitionKey = (processKey != null && !processKey.isEmpty()) 
-            ? processKey : "leave-request";
+        String processDefinitionKey = (processKey != null && !processKey.isEmpty())
+            ? processKey : org.xiaoxu.workflow.constant.ProcessDefinitionKey.LEAVE_REQUEST_V2;
         return Result.success(flowableLeaveService.submitApproval(
             authentication.getName(), identifier, days, processDefinitionKey));
     }
 
     /**
-     * 删除请假单（仅草稿状态）
+     * 删除请假单（仅草稿/已驳回状态，审批中的删除会导致流程实例与业务数据脱钩）
      */
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
+        org.xiaoxu.workflow.entity.ApproveLeave leave = approveLeaveService.getById(id);
+        if (leave == null) {
+            return Result.success();
+        }
+        String status = leave.getStatus();
+        if (org.xiaoxu.workflow.constant.ApprovalStatus.PROCESSING.name().equals(status)) {
+            throw new RuntimeException("审批中的请假单不允许删除");
+        }
         approveLeaveService.removeById(id);
         return Result.success();
     }
