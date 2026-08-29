@@ -16,6 +16,9 @@
 </head>
 <body>
   <h1>文件分片上传 Demo（策略由后端下发）</h1>
+  <div style="margin-bottom: 10px">
+    <label><input type="checkbox" id="oss-mode" /> 上传到阿里云 OSS（需配置凭据，否则接口报错）</label>
+  </div>
   <input type="file" id="file" />
   <button id="upload" disabled>上传</button>
   <div id="bar"><div></div></div>

@@ -30,8 +30,12 @@ const CONCURRENCY = 3;
 
 const fileInput = document.querySelector<HTMLInputElement>('#file')!;
 const uploadBtn = document.querySelector<HTMLButtonElement>('#upload')!;
+const ossToggle = document.querySelector<HTMLInputElement>('#oss-mode')!;
 const progressBar = document.querySelector<HTMLElement>('#bar > div')!;
 const statusEl = document.querySelector<HTMLElement>('#status')!;
+
+/** 当前请求走本地磁盘版还是 OSS 版后端接口 */
+let apiBase = '/api/upload';
 
 function setStatus(text: string): void {
   statusEl.textContent = text;
@@ -41,9 +45,9 @@ function setProgress(loaded: number, total: number): void {
   progressBar.style.width = total > 0 ? `${((loaded / total) * 100).toFixed(1)}%` : '0';
 }
 
-/** 断点续传：同一文件（名字 + 大小）复用上次的 uploadId */
+/** 断点续传：同一文件（名字 + 大小）复用上次的 uploadId，本地/OSS 模式分开记 */
 function resumeKey(file: File): string {
-  return `chunk-upload:${file.name}:${file.size}`;
+  return `chunk-upload:${apiBase}:${file.name}:${file.size}`;
 }
 
 /** 第 index 片的实际字节数（最后一片可能不满） */
@@ -65,7 +69,7 @@ function uploadChunk(uploadId: string, index: number, blob: Blob, onProgress: (l
   form.append('file', blob, `chunk_${index}`);
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `/api/upload/${uploadId}/chunk/${index}`);
+    xhr.open('POST', `${apiBase}/${uploadId}/chunk/${index}`);
     xhr.timeout = 120_000;
     xhr.upload.onprogress = e => onProgress(e.loaded);
     xhr.onload = () => xhr.status < 300
@@ -106,6 +110,7 @@ async function runPool(items: number[], limit: number, worker: (item: number) =>
 
 async function upload(file: File): Promise<void> {
   uploadBtn.disabled = true;
+  apiBase = ossToggle.checked ? '/api/oss-upload' : '/api/upload';
   try {
     // 1. 断点续传：本地记着这个文件的任务就先问后端进度；后端若已重启丢任务则重新初始化
     const savedId = localStorage.getItem(resumeKey(file));
@@ -115,7 +120,7 @@ async function upload(file: File): Promise<void> {
     const uploaded = new Set<number>();
 
     if (savedId) {
-      const status = await api<StatusResponse>(`/api/upload/${savedId}/status`).catch(() => undefined);
+      const status = await api<StatusResponse>(`${apiBase}/${savedId}/status`).catch(() => undefined);
       if (status?.finished) {
         setStatus(`该文件此前已上传完成：\n${status.mergedPath ?? ''}`);
         return;
@@ -129,7 +134,7 @@ async function upload(file: File): Promise<void> {
       }
     }
     if (uploadId === null) {
-      const init = await api<InitResponse>('/api/upload/init', {
+      const init = await api<InitResponse>(`${apiBase}/init`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fileName: file.name, fileSize: file.size }),
@@ -168,7 +173,7 @@ async function upload(file: File): Promise<void> {
 
     // 3. 分片传齐，交给后端合并并校验
     setStatus('分片传齐，正在合并...');
-    const merged = await api<MergeResponse>(`/api/upload/${id}/merge`, { method: 'POST' });
+    const merged = await api<MergeResponse>(`${apiBase}/${id}/merge`, { method: 'POST' });
     setProgress(file.size, file.size);
     setStatus(`上传完成：${merged.fileName}（${merged.size} 字节）\n已保存到后端：${merged.path}`);
     localStorage.removeItem(resumeKey(file));

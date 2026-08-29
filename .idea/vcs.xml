@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/permission-system/agents-dynamic-menu-enhancements" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/permission-system/permission-system-web" vcs="Git" />
   </component>
 </project>

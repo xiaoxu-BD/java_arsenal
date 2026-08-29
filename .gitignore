@@ -8,6 +8,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/vcs.xml
 *.iws
 *.iml
 *.ipr
@@ -39,7 +40,8 @@ build/
 .DS_Store
 
 ### Env ###
-.envpermission-system-miniapp/dist/
+.env
+permission-system-miniapp/dist/
 permission-system-miniapp/node_modules/
 permission-system-miniapp/
 logs/
@@ -47,3 +49,4 @@ logs/
 *.tar
 *.7z
 node_modules
+.idea/
