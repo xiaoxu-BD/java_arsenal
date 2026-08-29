@@ -26,6 +26,7 @@
         <module>pay</module>
         <module>stream-three-mq</module>
         <module>chunk-upload-demo</module>
+        <module>excel-demo</module>
     </modules>
 
 

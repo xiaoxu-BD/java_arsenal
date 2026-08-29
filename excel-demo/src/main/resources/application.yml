@@ -1,0 +1,31 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: excel-demo
+  servlet:
+    multipart:
+      # 大文件异步导入走本地盘, 同步接口只适合小文件, 这里给足上限
+      max-file-size: 200MB
+      max-request-size: 220MB
+  datasource:
+    # createDatabaseIfNotExist: 首次启动自动建库; 建表由 schema.sql 幂等执行
+    url: jdbc:mysql://${MYSQL_HOST:192.168.200.128}:${MYSQL_PORT:3306}/${MYSQL_DB:excel_demo}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:NFTurbo666}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+mybatis-plus:
+  configuration:
+    # 排查 SQL 时再打开, 百万行造数/导入时别开, 会刷爆控制台
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+excel:
+  # 异步任务的导入原件/错误回执/导出产物落地目录
+  storage-dir: ${EXCEL_STORAGE_DIR:E:/excel-demo}

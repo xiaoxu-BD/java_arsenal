@@ -50,3 +50,4 @@ logs/
 *.7z
 node_modules
 .idea/
+dist/
