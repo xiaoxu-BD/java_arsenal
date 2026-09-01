@@ -1,5 +1,6 @@
 # application.yml
-spring:
-  ai:
-    dashscope:
-      api-key: sk-1d39dfe08eb04bc489870eba98a07d71
+
+
+
+server:
+  port: 18080

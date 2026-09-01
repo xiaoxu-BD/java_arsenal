@@ -59,7 +59,7 @@ public class UserImportListener implements ReadListener<UserImportRow> {
     public void invoke(UserImportRow row, AnalysisContext context) {
         rowCount++;
         task.setProcessed(rowCount);
-
+        //Excel 真实行号（因为第0行是表头，所以要 +1）
         int excelRowNo = context.readRowHolder().getRowIndex() + 1;
         String fieldError = checkRow(row);
         if (fieldError != null) {
