@@ -1,0 +1,11 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": [
+    { "roomId": "ROOM_001", "groupName": "货物申报群A" },
+    { "roomId": "ROOM_002", "groupName": "货物申报群B" },
+    { "roomId": "ROOM_003", "groupName": "华东货物申报群" },
+    { "roomId": "ROOM_004", "groupName": "华南货物申报群" },
+    { "roomId": "ROOM_005", "groupName": "测试群-不要使用" }
+  ]
+}

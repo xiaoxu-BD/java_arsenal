@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>建造者模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#bae6fd;color:#0369a1}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:8px 15px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:13.5px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button:disabled{opacity:.4;cursor:not-allowed}
+/* 配置区 */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.opt label{display:block;font-size:12px;color:#64748b;margin-bottom:6px;font-weight:600}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{background:#f1f5f9;color:#475569;border:1.5px solid #e2e8f0;padding:6px 12px;font-size:13px}
+.seg button.on{background:#4f46e5;color:#fff;border-color:#4f46e5}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 成品 */
+.result{margin-top:16px;border-radius:14px;border:2px dashed #cbd5e1;padding:18px;min-height:90px;position:relative}
+.result.none{color:#94a3b8;text-align:center;padding-top:34px}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.pc{animation:pop .4s;background:linear-gradient(135deg,#eef2ff,#ecfdf5);border:2px solid #34d399;border-radius:12px;padding:14px 18px}
+.pc h4{font-size:16px;color:#065f46;margin-bottom:6px}
+.pc div{font:13px Consolas,monospace;color:#334155;line-height:1.8}
+.pc .lock{display:inline-block;background:#065f46;color:#fff;font-size:11px;border-radius:6px;padding:1px 8px;margin-left:8px}
+/* 对比条 */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.vs>div{border-radius:12px;padding:12px;font-size:12.5px;line-height:1.6}
+.vs .bad{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.vs .good{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.vs b{display:block;margin-bottom:4px;font-size:13.5px}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.75 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.ln.bad{background:rgba(248,113,113,.14);border-left-color:#f87171}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:150px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>建造者模式 Builder <span class="tag">创建型</span></h1>
+  <p class="sub">一句话核心：<b>多可选参数的对象分步构建</b> —— 链式具名调用，build() 一次成型、不可再改</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 配一台电脑（左侧操作，右侧代码同步生成）</div>
+      <div class="opts">
+        <div class="opt"><label>CPU（必填）</label>
+          <div class="seg" id="cpu"><button class="on" onclick="pick('cpu','i3',this)">i3</button><button onclick="pick('cpu','i5',this)">i5</button><button onclick="pick('cpu','i9',this)">i9</button></div>
+        </div>
+        <div class="opt"><label>内存 GB（默认 8）</label>
+          <div class="seg" id="mem"><button onclick="pick('mem',8,this)">8</button><button class="on" onclick="pick('mem',16,this)">16</button><button onclick="pick('mem',32,this)">32</button></div>
+        </div>
+        <div class="opt"><label>硬盘 GB（默认 256）</label>
+          <div class="seg" id="disk"><button onclick="pick('disk',256,this)">256</button><button class="on" onclick="pick('disk',512,this)">512</button><button onclick="pick('disk',2048,this)">2048</button></div>
+        </div>
+        <div class="opt"><label>独立显卡（默认无）</label>
+          <div class="seg" id="gpu"><button class="on" onclick="pick('gpu',false,this)">不要</button><button onclick="pick('gpu',true,this)">要</button></div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button onclick="build()">build() 组装成型</button>
+        <button class="ghost" onclick="chaos()">看反例：位置参数构造器</button>
+      </div>
+      <div class="result none" id="result">还是"半成品"：Builder 正在收集参数，Computer 对象尚不存在</div>
+      <div class="vs">
+        <div class="bad"><b>✗ 重载构造器（伸缩式）</b>选项组合爆炸要写 N 个构造器；new Computer("i5",16,512,true) —— 第 4 个参数是什么意思？传串位编译器也不报错</div>
+        <div class="good"><b>✓ 建造者</b>new Builder("i5").memory(16).build() 每个值具名可读；必填项放构造器想漏都漏不掉；成型后全字段 final 不可变</div>
+      </div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>必填进构造器</b>：CPU 放在 Builder(String cpu) 里，漏配编译都过不了</li>
+        <li data-n="2"><b>可选项给默认值</b>：不显式设置也有兜底，链式调用返回 this</li>
+        <li data-n="3"><b>build() 才真正成型</b>：一次性 new 出全 final 的不可变对象——没有 setter，多线程共享零风险（JDK 同款：StringBuilder）</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 链式调用实时生成</div>
+      <pre class="code" id="code">Computer pc = new Computer.Builder("i5")   // 必填：CPU
+        .memory(16)                          // 可选：内存
+        .disk(512)                           // 可选：硬盘
+        .gpu(true)                           // 可选：独显
+        .build();                            // 一次成型，此后不可改</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const cfg={cpu:'i5',mem:16,disk:512,gpu:false};
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function pick(key,val,btn){
+  cfg[key]=val;
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const line={cpu:0,mem:1,disk:2,gpu:3}[key];
+  renderCode(line);reset();
+  const name={cpu:'cpu('+val+')',mem:'memory('+val+')',disk:'disk('+val+')',gpu:'gpu('+val+')'}[key];
+  log('builder.'+name+'  返回 this，继续链式','info');
+}
+function renderCode(hlLine){
+  const lines=['Computer pc = new Computer.Builder("'+cfg.cpu+'")   // 必填：CPU'];
+  lines.push('        .memory('+cfg.mem+')                          // 可选：内存');
+  lines.push('        .disk('+cfg.disk+')'+(cfg.disk<1000?'                           ':'                          ')+'// 可选：硬盘');
+  lines.push('        .gpu('+cfg.gpu+')                           // 可选：独显');
+  lines.push('        .build();                            // 一次成型，此后不可改');
+  const pre=$('code');const scroll=pre.scrollTop;
+  pre.textContent=lines.join('\n');paint2(pre);pre.scrollTop=scroll;
+  document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',i===(hlLine??0)));
+}
+function paint2(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(new|return|this|true|false)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function build(){
+  const r=$('result');r.className='result';
+  r.innerHTML='<div class="pc"><h4>组装成功'+''+
+    '<span class="lock">不可变 · 无 setter</span></h4><div>'+
+    'cpu    = "'+cfg.cpu+'"<br>memory = '+cfg.mem+' GB<br>disk   = '+cfg.disk+' GB<br>gpu    = '+cfg.gpu+'</div></div>';
+  document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',i===4));
+  log('build() -> Computer{cpu='+cfg.cpu+', memory='+cfg.mem+'GB, disk='+cfg.disk+'GB, gpu='+cfg.gpu+'}','ok');
+  log('再改配置试试：新对象是新 Builder 造的，这台谁也改不动','info');
+}
+function chaos(){
+  log('反例：new Computer("'+cfg.cpu+'", '+cfg.mem+', '+cfg.disk+', true)','err');
+  log('　→ true 是独显？蓝牙？超频？三个月后没人敢动这行代码','err');
+  document.querySelectorAll('#code .ln').forEach(e=>e.classList.remove('on'));
+}
+function reset(){const r=$('result');r.className='result none';r.textContent='还是"半成品"：Builder 正在收集参数，Computer 对象尚不存在';}
+renderCode();
+log('点左侧选项配机，再按 build() 成型；「反例」按钮看位置参数的痛','info');
+</script>
+</body>
+</html>

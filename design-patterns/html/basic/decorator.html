@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>装饰器模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fde68a;color:#b45309}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button.danger{background:#fff;color:#dc2626;border-color:#fecaca}
+button.danger:hover{background:#fef2f2}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 套娃舞台 */
+.cupzone{display:grid;grid-template-columns:1fr 220px;gap:16px;align-items:start}
+@media(max-width:700px){.cupzone{grid-template-columns:1fr}}
+.onion{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:16px;padding:18px;min-height:230px;display:flex;align-items:center;justify-content:center}
+.layer{border-radius:14px;padding:12px 14px;transition:.3s}
+@keyframes pop{0%{transform:scale(.9);opacity:.4}100%{transform:scale(1);opacity:1}}
+.layer.pop{animation:pop .3s}
+.base{background:#fef9c3;border:2px solid #eab308;text-align:center;min-width:150px}
+.base b{color:#854d0e}
+.l-milk{background:#eff6ff;border:2px solid #60a5fa}
+.l-sugar{background:#fdf2f8;border:2px solid #f472b6}
+.layer .cap{font-size:11.5px;color:#64748b;font-family:Consolas,monospace;margin-bottom:6px}
+.layer .nm{font-size:14px;font-weight:700}
+.bill{background:#fff;border:2px solid #a5b4fc;border-radius:14px;padding:14px}
+.bill h4{font-size:14px;margin-bottom:8px;color:#3730a3}
+.bill .li{display:flex;justify-content:space-between;font:12.5px Consolas,monospace;color:#475569;padding:3px 0;border-bottom:1px dashed #e2e8f0}
+.bill .total{display:flex;justify-content:space-between;font-weight:800;color:#1e293b;padding-top:8px;font-size:15px}
+.warnbox{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.warnbox b{display:block;margin-bottom:3px}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:160px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>装饰器模式 Decorator <span class="tag">结构型</span></h1>
+  <p class="sub">一句话核心：<b>装饰者和被装饰者实现同一抽象，层层包裹动态增强</b> —— 加料不用改咖啡的代码</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 点一杯咖啡，随便加料（可以重复加）</div>
+      <div class="btnrow" style="margin-bottom:14px">
+        <button onclick="addBase()">点一杯浓缩咖啡（¥15）</button>
+        <button class="ghost" onclick="add('milk')">+ 牛奶（¥4）</button>
+        <button class="ghost" onclick="add('sugar')">+ 糖（¥1）</button>
+        <button class="ghost" onclick="undo()">撤销最外层一层</button>
+        <button class="danger" onclick="resetAll()">全部倒掉</button>
+      </div>
+      <div class="cupzone">
+        <div class="onion" id="onion"><span style="color:#94a3b8;font-size:13px">先点一杯咖啡 base（Component）</span></div>
+        <div class="bill">
+          <h4>账单</h4>
+          <div class="li"><span>浓缩咖啡</span><span>¥15.0</span></div>
+          <div id="extras"></div>
+          <div class="total"><span>合计</span><span id="total">¥15.0</span></div>
+        </div>
+      </div>
+      <div class="warnbox" id="warnbox" style="display:none">
+        <b>如果不套娃，改用"子类穷举"会怎样？</b>
+        <span id="warnText"></span>
+      </div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>同一抽象</b>：牛奶、糖、浓缩咖啡都是 Beverage —— 所以"加料后的咖啡"仍是一杯 Beverage，可以继续包</li>
+        <li data-n="2"><b>装饰器 = 自己是饮品 + 手里包着一杯饮品</b>：cost() = 自己的加价 + 里层的 cost()，像剥洋葱层层累加</li>
+        <li data-n="3"><b>开闭原则</b>：新增"椰果"只需加一个装饰器类，咖啡和旧装饰器零改动；任意组合无需提前穷举</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        JDK 同款：new BufferedReader(new InputStreamReader(new FileInputStream(f))) —— 每个流都在给底层流"加料"。
+        对比代理模式：结构相同，意图不同（装饰器=增强功能，代理=控制访问）。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 加料时看这行</div>
+      <pre class="code" id="code">public abstract class CondimentDecorator extends Beverage {
+    protected final Beverage beverage;   // 被装饰者（可能已加过料）
+
+    public double cost() {
+        return beverage.cost();          // 默认：直接转发里层
+    }
+}
+
+public class Milk extends CondimentDecorator {
+    public Milk(Beverage beverage) { super(beverage); }
+
+    public double cost() {
+        return beverage.cost() + 4.0;    // ★ 里层价格 + 我的加价
+    }
+}
+
+public class Sugar extends CondimentDecorator {
+    public Sugar(Beverage beverage) { super(beverage); }
+
+    public double cost() {
+        return beverage.cost() + 1.0;    // ★ 里层价格 + 我的加价
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const PRICE={base:15,milk:4,sugar:1},NAME={base:'浓缩咖啡',milk:'牛奶',sugar:'糖'};
+let stack=[];   // 元素顺序：从里到外，第一项必须是 base
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|abstract|extends|return|new|this|final)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+function addBase(){
+  if(stack.length){log('已有咖啡，直接加料即可','err');return;}
+  stack=['base'];render();on([]);
+  log('new Espresso() —— 裸咖啡 ¥15，它就是最里层的 Component','ok');
+}
+function add(kind){
+  if(!stack.length){log('先点一杯咖啡 base！','err');return;}
+  stack.push(kind);render();
+  on(kind==='milk'?[12,13]:[19,20]);
+  const d=stack.filter(x=>x==='milk').length;
+  log('new '+NAME[kind]+'(当前饮品) —— 又包了一层，此时仍是一杯 Beverage','ok');
+  log('最外层 cost() 开始剥洋葱：'+'beverage.cost() + '+PRICE[kind]+'.0，层层向内','info');
+  warn();
+}
+function undo(){
+  if(!stack.length)return;
+  if(stack.length===1){resetAll();return;}
+  stack.pop();render();on([]);
+  log('剥掉最外一层，退回上一状态','info');warn();
+}
+function warn(){
+  const w=$('warnbox');
+  $('warnText').textContent='当前是「'+desc()+'」。为每种组合写子类的话：仅 2 种配料各最多 2 份，就有 '+
+    combos()+' 种组合类（EspressoWithMilk、EspressoWithSugar、EspressoWith2MilkAnd1Sugar…）；再添一种配料，类数量继续爆炸。装饰器：永远是 1 个 base + N 个装饰器类。';
+  w.style.display = stack.length>1 ? 'block' : 'none';
+}
+function combos(){
+  const counts={milk:0,sugar:0};stack.forEach(x=>{if(counts[x]!==undefined)counts[x]++;});
+  // 已点组合的等价"子类"数粗略估计：每种已用配料按份数+1 种可能（含未被点的 0 份），再乘 base
+  let n=1;
+  ['milk','sugar'].forEach(k=>{if(counts[k]>0)n*=3;});
+  return Math.max(n,2)-1;
+}
+function desc(){
+  return stack.map(x=>NAME[x]).join(' + ');
+}
+function render(){
+  const o=$('onion');
+  if(!stack.length){o.innerHTML='<span style="color:#94a3b8;font-size:13px">先点一杯咖啡 base（Component）</span>';$('extras').innerHTML='';$('total').textContent='¥15.0';return;}
+  let html='<div class="layer base pop"><div class="cap">Beverage（Component）</div><div class="nm">'+NAME.base+'</div></div>';
+  for(let i=1;i<stack.length;i++){
+    const k=stack[i];
+    const inner=html;
+    html='<div class="layer l-'+k+' pop"><div class="cap">第'+i+'层包装 · CondimentDecorator</div><div class="nm">'+NAME[k]+' +¥'+PRICE[k]+'</div>'+inner+'</div>';
+  }
+  o.innerHTML=html;
+  const counts={milk:0,sugar:0};stack.forEach(x=>{if(counts[x]!==undefined)counts[x]++;});
+  $('extras').innerHTML=
+    (counts.milk?('<div class="li"><span>牛奶 x'+counts.milk+'</span><span>¥'+(counts.milk*4).toFixed(1)+'</span></div>'):'')+
+    (counts.sugar?('<div class="li"><span>糖 x'+counts.sugar+'</span><span>¥'+(counts.sugar*1).toFixed(1)+'</span></div>'):'');
+  const t=stack.reduce((s,x)=>s+PRICE[x],0);
+  $('total').textContent='¥'+t.toFixed(1);
+}
+function resetAll(){stack=[];render();on([]);$('warnbox').style.display='none';log('倒掉重点','info');}
+paint($('code'));
+log('点咖啡 → 加牛奶 → 再加糖 → 再加牛奶，看"套娃"和账单','info');
+</script>
+</body>
+</html>

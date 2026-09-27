@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工厂模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600}
+.tag.c1{background:#bae6fd;color:#0369a1}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button.warn{background:#fff;color:#d97706;border-color:#fcd34d}
+button.warn:hover{background:#fffbeb}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#e2e8f0;color:#475569;border:none;padding:7px 14px;font-size:13px}
+.tabs button.on{background:#4f46e5;color:#fff}
+/* 舞台 */
+.flow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.flow .box{border:2px solid #a5b4fc;background:#eef2ff;border-radius:12px;padding:10px 16px;font-size:13.5px;font-weight:600;color:#3730a3}
+.flow .box.fac{border-color:#34d399;background:#ecfdf5;color:#065f46}
+.flow .arrow{color:#94a3b8;font-size:18px;font-weight:700}
+.canvas{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;min-height:130px;display:flex;align-items:center;gap:18px;padding:16px;flex-wrap:wrap}
+.canvas .hint{color:#94a3b8;font-size:13px}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.pop{animation:pop .35s}
+.ocl{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7}
+.ocl.bad{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.ocl.good{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.ocl b{font-size:14px}
+/* 工厂卡片 */
+.fcards{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.fcard{border:2px solid #e2e8f0;border-radius:12px;padding:10px 14px;font:13px Consolas,monospace;background:#fff}
+.fcard small{display:block;color:#94a3b8;font-size:11px;margin-top:3px}
+.fcard.new{border-color:#34d399;background:#ecfdf5;animation:pop .4s}
+/* 规则卡 */
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:360px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.ln.bad{background:rgba(248,113,113,.14);border-left-color:#f87171}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:170px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>工厂模式 Factory <span class="tag c1">创建型</span></h1>
+  <p class="sub">一句话核心：<b>把 new 收口到一处</b>。三兄弟：简单工厂（一个静态方法）→ 工厂方法（一产品一工厂）→ 抽象工厂（一族一起造）</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 你是调用方，只管"要产品"</div>
+      <div class="tabs">
+        <button id="tab1" class="on" onclick="setMode(1)">简单工厂</button>
+        <button id="tab2" onclick="setMode(2)">工厂方法</button>
+      </div>
+      <div class="flow">
+        <div class="box">调用方</div><div class="arrow">→</div>
+        <div class="box fac" id="facName">SimpleFactory.create("circle")</div><div class="arrow">→</div>
+        <div class="box">Shape 产品</div>
+      </div>
+      <div class="btnrow">
+        <button class="ghost" onclick="order('circle')">要一个圆形</button>
+        <button class="ghost" onclick="order('square')">要一个正方形</button>
+        <button class="ghost" onclick="order('triangle')">要一个三角形</button>
+        <button class="warn" onclick="demand()">需求变更：产品经理要新增「六边形」</button>
+        <button class="ghost" onclick="reset()">清空画布</button>
+      </div>
+      <div class="canvas" id="canvas"><span class="hint">产品会画在这里（调用方拿到的都是 Shape 接口）</span></div>
+
+      <div class="ocl bad" id="ocl" style="display:none"></div>
+
+      <div id="fmArea" style="display:none">
+        <div class="pt" style="margin-top:14px">工厂方法：具体工厂阵容（新增产品 = 新增一个工厂类）</div>
+        <div class="fcards" id="fcards">
+          <div class="fcard">CircleFactory<small>create() → new Circle()</small></div>
+          <div class="fcard">SquareFactory<small>create() → new Square()</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>调用方面向接口</b>：只认识 Shape，不关心背后是哪个具体类、怎么 new 出来的</li>
+        <li data-n="2"><b>造对象收口</b>：产品的创建集中一处，产品类名变更时调用方零改动</li>
+        <li data-n="3"><b>开闭原则分水岭</b>：简单工厂加产品要<b>改旧 switch</b>（✗ 对修改开放）；工厂方法加产品只<b>加新类</b>（✓ 对扩展开放）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        抽象工厂再进一步：一个工厂一次造"一族"（同品牌的外设全套），见源码 FactoryDemo 第 3 段。
+        JDK 同款：Calendar.getInstance()、Executors.newFixedThreadPool()。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动</div>
+      <pre class="code" id="code1">public class SimpleFactory {
+    public static Shape create(String type) {
+        return switch (type) {
+            case "circle"   -> new Circle();      // 造圆形
+            case "square"   -> new Square();      // 造正方形
+            case "triangle" -> new Triangle();    // 造三角形
+            case "hexagon"  -> new Hexagon();     // 新增六边形：必须改这里 ✗
+            default -> throw new IllegalArgumentException(type);
+        };
+    }
+}
+
+// 调用方：完全不知道 Circle/Square 的存在
+Shape s = SimpleFactory.create("circle");
+s.draw();</pre>
+      <pre class="code" id="code2" style="display:none">public abstract class ShapeFactory {
+    protected abstract Shape create();          // 工厂方法：子类决定造什么
+}
+
+public class CircleFactory extends ShapeFactory {
+    protected Shape create() { return new Circle(); }
+}
+
+public class HexagonFactory extends ShapeFactory {   // ✓ 新增：只加新类
+    protected Shape create() { return new Hexagon(); }
+}
+
+// 调用方：换产品 = 换工厂，调用方式不变
+ShapeFactory f = new HexagonFactory();
+f.create().draw();</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let mode=1;
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|static|final|class|interface|abstract|extends|implements|return|new|switch|case|default|throw)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(id,lines){document.querySelectorAll('#'+id+' .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+function setMode(m){
+  mode=m;
+  $('tab1').classList.toggle('on',m===1);$('tab2').classList.toggle('on',m===2);
+  $('code1').style.display=m===1?'':'none';$('code2').style.display=m===2?'':'none';
+  $('fmArea').style.display=m===2?'':'none';$('ocl').style.display='none';
+  $('facName').textContent=m===1?'SimpleFactory.create(...)':'XxxFactory.create()';
+  log(m===1?'切换：简单工厂（一个静态方法包打天下）':'切换：工厂方法（一产品一工厂）','info');
+}
+const SHAPES={circle:{name:'Circle',svg:'<svg width="56" height="56"><circle cx="28" cy="28" r="22" fill="#818cf8"/></svg>'},
+square:{name:'Square',svg:'<svg width="56" height="56"><rect x="8" y="8" width="40" height="40" rx="4" fill="#34d399"/></svg>'},
+triangle:{name:'Triangle',svg:'<svg width="56" height="56"><polygon points="28,6 50,50 6,50" fill="#fbbf24"/></svg>'},
+hexagon:{name:'Hexagon',svg:'<svg width="56" height="56"><polygon points="28,4 48,16 48,40 28,52 8,40 8,16" fill="#f472b6"/></svg>'}};
+let hexAdded=false;
+function order(type){
+  const s=document.createElement('div');s.className='pop';s.style.textAlign='center';
+  s.innerHTML=SHAPES[type].svg+'<div style="font:11px Consolas;color:#64748b">'+SHAPES[type].name+'</div>';
+  const hint=$('canvas').querySelector('.hint');if(hint)hint.remove();
+  $('canvas').appendChild(s);
+  if(mode===1){
+    const line={circle:3,square:4,triangle:5,hexagon:6}[type];
+    on('code1',[line,11]);
+    $('facName').textContent='SimpleFactory.create("'+type+'")';
+    log('SimpleFactory.create("'+type+'") -> new '+SHAPES[type].name+'()，draw() 落笔','ok');
+  }else{
+    if(type==='hexagon'&&!hexAdded){demand();}
+    on('code2', type==='hexagon'?[10,14]:type==='circle'?[5,13]:[13]);
+    $('facName').textContent=SHAPES[type].name+'Factory.create()';
+    log(SHAPES[type].name+'Factory.create() -> new '+SHAPES[type].name+'()（工厂决定，无 switch）','ok');
+  }
+}
+function demand(){
+  if(mode===1){
+    on('code1',[6]);
+    const l=document.querySelectorAll('#code1 .ln')[6];l.classList.add('bad');
+    $('ocl').style.display='block';
+    $('ocl').className='ocl bad';
+    $('ocl').innerHTML='<b>✗ 违反开闭原则</b><br>新增六边形必须修改 SimpleFactory 的 switch（右侧红色行）。改旧代码 = 旧逻辑要回归测试，改坏了谁都跑不掉；且工厂类会随产品无限膨胀。';
+    log('需求变更：简单工厂被迫修改旧类 ✗（回归测试范围扩大）','err');
+  }else{
+    if(!hexAdded){
+      const c=document.createElement('div');c.className='fcard new';
+      c.innerHTML='HexagonFactory<small>create() → new Hexagon() ← 新增</small>';
+      $('fcards').appendChild(c);
+      hexAdded=true;
+      on('code2',[8,9]);
+    }
+    $('ocl').style.display='block';
+    $('ocl').className='ocl good';
+    $('ocl').innerHTML='<b>✓ 满足开闭原则</b><br>新增 Hexagon + HexagonFactory 两个新类即可，ShapeFactory、CircleFactory、调用方代码一行不动 —— 对扩展开放，对修改关闭。';
+    log('需求变更：工厂方法只新增 HexagonFactory ✓（旧代码零修改）','ok');
+  }
+}
+function reset(){$('canvas').innerHTML='<span class="hint">产品会画在这里（调用方拿到的都是 Shape 接口）</span>';document.querySelectorAll('.ln').forEach(e=>e.className='ln');}
+document.querySelectorAll('pre.code').forEach(paint);
+log('试试左侧按钮下单，再点「需求变更」对比两种工厂的代价','info');
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>责任链模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+.slider{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:13.5px}
+.slider input{flex:1;accent-color:#4f46e5}
+.slider b{min-width:64px;font-family:Consolas,monospace;color:#4338ca;font-size:16px}
+/* 审批链 */
+.chainv{display:flex;flex-direction:column;gap:0;max-width:420px;margin:0 auto}
+.hnode{border:2px solid #e2e8f0;border-radius:14px;padding:12px 16px;background:#fff;transition:.25s;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hnode .who b{font-size:14.5px}
+.hnode .who small{display:block;color:#94a3b8;font-size:11.5px;margin-top:2px}
+.hnode .st{font-size:12px;font-family:Consolas,monospace;color:#94a3b8;white-space:nowrap}
+.hnode.passing{border-color:#4f46e5;box-shadow:0 0 0 4px rgba(79,70,229,.15)}
+.hnode.approve{border-color:#34d399;background:#ecfdf5}
+.hnode.reject{border-color:#ef4444;background:#fef2f2}
+.hnode .st.ok{color:#059669;font-weight:700}
+.hnode .st.no{color:#dc2626;font-weight:700}
+.link{width:2px;height:26px;background:#cbd5e1;margin:0 auto;position:relative}
+.link::after{content:'';position:absolute;bottom:-2px;left:-4px;border:5px solid transparent;border-top:8px solid #cbd5e1}
+@keyframes passdown{0%{background:#e2e8f0}50%{background:#a5b4fc}100%{background:#e2e8f0}}
+.link.flow{animation:passdown .5s}
+.verdict{max-width:420px;margin:14px auto 0;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.6;display:none;text-align:center}
+.verdict.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;display:block}
+.verdict.no{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;display:block}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:170px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>责任链模式 Chain of Responsibility <span class="tag">行为型</span></h1>
+  <p class="sub">一句话核心：<b>请求沿链传递，处理者"能批就批、批不了传下家"</b> —— 申请人只认识入口，不知道最终谁批</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 提交一张请假单（拖天数 → 提交 → 看单子停在哪）</div>
+      <div class="slider">
+        <span>请假</span>
+        <input type="range" min="1" max="10" value="1" id="days" oninput="$('daysVal').textContent=this.value+' 天'">
+        <b id="daysVal">1 天</b>
+        <button id="submitBtn" onclick="submit()">提交申请</button>
+      </div>
+      <div class="chainv" id="chainv">
+        <div class="hnode" id="h1"><div class="who"><b>组长 GroupLeader</b><small>权限 ≤ 1 天 · 入口</small></div><div class="st" id="s1">待命</div></div>
+        <div class="link" id="l1"></div>
+        <div class="hnode" id="h2"><div class="who"><b>经理 Manager</b><small>权限 ≤ 3 天</small></div><div class="st" id="s2">待命</div></div>
+        <div class="link" id="l2"></div>
+        <div class="hnode" id="h3"><div class="who"><b>总监 Director</b><small>权限 ≤ 7 天 · 链尾</small></div><div class="st" id="s3">待命</div></div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>一人一岗一权限</b>：每个 Handler 只写自己的审批规则（组长只比 1 天），超过就传给 next</li>
+        <li data-n="2"><b>发起方只认识入口</b>：申请人把单子递给组长，不关心后面有几个人、最终谁批</li>
+        <li data-n="3"><b>动态组链</b>：setNext 串链；加一级"HR 总监"只需新增一个类接在链尾，其余不动</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        日常同款：Servlet Filter、网关过滤器、Netty Pipeline。
+        工程版"双向拦截链"（OkHttp 拦截器，请求下行/响应上行）见 advanced/chain 包。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 单子路过时高亮对应行</div>
+      <pre class="code" id="code">public abstract class Approver {
+    protected Approver next;                        // 下一个处理者
+
+    public Approver setNext(Approver next) {        // 串链
+        this.next = next;
+        return next;                                // 返回下家，支持连缀
+    }
+
+    public abstract void handle(LeaveRequest req);  // 能批就批
+}
+
+public class GroupLeader extends Approver {
+    public void handle(LeaveRequest req) {
+        if (req.getDays() &lt;= 1) {
+            System.out.println("组长批准");          // 我的权限内
+        } else if (next != null) {
+            next.handle(req);                       // 传给下家
+        }
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|void|if|else|null|true|false)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+const LIMITS=[1,3,7],NAMES=['组长','经理','总监'];
+function resetChain(){
+  [1,2,3].forEach(i=>{
+    $('h'+i).className='hnode';$('s'+i).textContent='待命';$('s'+i).className='st';
+  });
+  $('verdict').className='verdict';$('verdict').style.display='none';
+  on([]);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function submit(){
+  if($('submitBtn').disabled)return;
+  $('submitBtn').disabled=true;resetChain();
+  const days=+$('days').value;
+  log('提交请假 '+days+' 天 —— 申请人只把单子递给「组长」这个入口','ok');
+  for(let i=0;i<3;i++){
+    const h=$('h'+(i+1)),s=$('s'+(i+1));
+    h.classList.add('passing');
+    s.textContent='审批中…';
+    on([16,17,18,19,20,21]);
+    await sleep(650);
+    if(days<=LIMITS[i]){
+      h.classList.remove('passing');h.classList.add('approve');
+      s.textContent='✓ 批准';s.className='st ok';
+      on([18]);
+      log(NAMES[i]+'：'+days+' 天在我权限内（≤'+LIMITS[i]+'）→ 批准','ok');
+      const v=$('verdict');v.className='verdict ok';
+      v.innerHTML='<b>审批完成</b>：单子经过 '+(i+1)+' 级，由'+NAMES[i]+'批准。申请人全程不知道链上有几个人。';
+      break;
+    }else{
+      s.textContent='✗ 超权限，转交';s.className='st no';
+      on([19,20]);
+      log(NAMES[i]+'：'+days+' 天 > '+LIMITS[i]+' 天，我批不了 → next.handle(req)','info');
+      if(i<2){
+        const lk=$('l'+(i+1));lk.classList.add('flow');
+        await sleep(500);lk.classList.remove('flow');
+        h.classList.remove('passing');
+        log('　单子流向 '+NAMES[i+1]+'…','info');
+      }else{
+        h.classList.remove('passing');h.classList.add('reject');
+        s.textContent='✗ 无法审批';s.className='st no';
+        const v=$('verdict');v.className='verdict no';
+        v.innerHTML='<b>无人能批</b>：'+days+' 天超出链上所有人的权限。链走到头，请求终止（真实系统此时会走"人工通道"）。';
+        log('总监：请假 '+days+' 天？超出任何人的权限，流程终止','err');
+      }
+    }
+  }
+  $('submitBtn').disabled=false;
+}
+paint($('code'));
+log('分别拖到 1 / 3 / 5 / 10 天提交，看单子停在哪一级','info');
+</script>
+</body>
+</html>

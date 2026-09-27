@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模板方法模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button:disabled{opacity:.4;cursor:not-allowed}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{background:#e2e8f0;color:#475569;border:none;padding:7px 14px;font-size:13px}
+.tabs button.on{background:#4f46e5;color:#fff}
+/* 流水线 */
+.pipe{min-height:150px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;padding:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.step{animation:pop .35s;border-radius:12px;padding:10px 14px;font-size:13.5px;font-weight:600;border:2px solid;position:relative}
+.step small{display:block;font-weight:400;font-size:11px;color:#64748b;margin-top:3px}
+.step.fixed{border-color:#60a5fa;background:#eff6ff;color:#1d4ed8}
+.step.var{border-color:#f59e0b;background:#fffbeb;color:#b45309}
+.step.skip{border-color:#cbd5e1;background:#f1f5f9;color:#94a3b8;text-decoration:line-through}
+.step .lock{position:absolute;top:-10px;right:-8px;background:#1d4ed8;color:#fff;font-size:10px;border-radius:6px;padding:1px 6px}
+.result{margin-top:12px;font-size:13px;line-height:1.7;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:10px;padding:10px 14px;display:none}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:160px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>模板方法 Template Method <span class="tag">行为型</span></h1>
+  <p class="sub">一句话核心：<b>final 锁死流程骨架，差异步骤留给子类填空</b>，钩子方法还能反过来影响流程走向</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · make() 一键冲饮品（蓝色=父类锁死，橙色=子类填空）</div>
+      <div class="tabs">
+        <button id="t1" class="on" onclick="setDrink('coffee')">Coffee</button>
+        <button id="t2" onclick="setDrink('teaLemon')">Tea + 钩子=true</button>
+        <button id="t3" onclick="setDrink('teaPlain')">Tea + 钩子=false</button>
+      </div>
+      <div class="btnrow" style="margin-bottom:14px">
+        <button id="runBtn" onclick="make()">drink.make() 执行模板</button>
+        <button class="ghost" onclick="clearPipe()">清空流水线</button>
+      </div>
+      <div class="pipe" id="pipe"><span style="color:#94a3b8;font-size:13px">步骤会依次亮起 —— 顺序永远改不了</span></div>
+      <div class="result" id="result"></div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>骨架 final</b>：make() 的 1→2→3→4 顺序由父类锁死，子类想调换步骤？门都没有</li>
+        <li data-n="2"><b>填空式扩展</b>：子类只实现 brew()/addCondiments() 两个差异步骤，通用步骤父类复用一份</li>
+        <li data-n="3"><b>钩子影响流程</b>：wantCondiments() 返回 false 时第 4 步被跳过 —— 子类能"轻度"控制模板走向</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        JDK 同款：AbstractList 定规则、ArrayList 填实现；AQS、JdbcTemplate 同思路
+        （不依赖继承的"回调版模板"见 advanced/template 包）。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 步骤亮起时对应行高亮</div>
+      <pre class="code" id="code">public abstract class DrinkTemplate {
+
+    public final void make() {              // 模板方法：final 锁流程
+        boilWater();                        // ① 通用：父类实现
+        brew();                             // ② 差异：子类填空
+        pourInCup();                        // ③ 通用：父类实现
+        if (wantCondiments()) {             // ④ 钩子：默认 true
+            addCondiments();                //    差异：子类填空
+        }
+    }
+
+    private void boilWater() { }             // 固定步骤
+    private void pourInCup() { }             // 固定步骤
+    protected abstract void brew();          // 填空
+    protected abstract void addCondiments(); // 填空
+    protected boolean wantCondiments() {     // 钩子
+        return true;
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|abstract|final|return|void|this|if|true|false)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+const DRINKS={
+  coffee:{label:'Coffee',brew:'用 92 度热水冲咖啡粉',cond:'加糖和牛奶',hook:true},
+  teaLemon:{label:'Tea（加柠檬）',brew:'用 80 度热水浸泡茶叶',cond:'加一片柠檬',hook:true},
+  teaPlain:{label:'Tea（原味，钩子=false）',brew:'用 80 度热水浸泡茶叶',cond:'加一片柠檬',hook:false}
+};
+let drink='coffee',running=false;
+function setDrink(d){
+  drink=d;clearPipe();
+  ['t1','t2','t3'].forEach((id,i)=>$(id).classList.toggle('on',['coffee','teaLemon','teaPlain'][i]===d));
+  log('切换到 '+DRINKS[d].label+(d==='teaPlain'?'（覆盖钩子 wantCondiments()=false）':''),'info');
+}
+function chip(html,cls){
+  const p=$('pipe');
+  const hint=p.querySelector('span');if(hint)hint.remove();
+  const s=document.createElement('div');s.className='step '+cls;s.innerHTML=html;
+  p.appendChild(s);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function make(){
+  if(running)return;running=true;$('runBtn').disabled=true;
+  const d=DRINKS[drink];clearPipe();
+  log('new '+d.label+'().make()  —— 客户端只调这一个方法','ok');
+  on([3]);
+  await sleep(450);
+  chip('1. 把水烧开<span>boilWater() · 父类固定</span>','fixed');on([4]);
+  log('① boilWater() 通用步骤，父类一份实现全家族复用','info');
+  await sleep(700);
+  chip('2. '+d.brew+'<span>brew() · 子类填空</span>','var');on([5]);
+  log('② brew() 差异步骤 → 由 '+d.label+' 提供自己的实现','ok');
+  await sleep(700);
+  chip('3. 倒进杯子<span>pourInCup() · 父类固定</span>','fixed');on([6]);
+  log('③ pourInCup() 通用步骤','info');
+  await sleep(700);
+  on([7]);
+  if(d.hook){
+    log('④ wantCondiments() 返回 true → 加料步骤执行','info');
+    await sleep(350);
+    chip('4. '+d.cond+'<span>addCondiments() · 子类填空</span>','var');on([8]);
+    log('　addCondiments() 差异步骤执行','ok');
+  }else{
+    chip('4. '+d.cond+'<span>被钩子跳过</span>','skip');
+    log('④ wantCondiments() 返回 false → 第 4 步被跳过（钩子影响流程）','err');
+  }
+  const r=$('result');r.style.display='block';
+  r.innerHTML='<b>完成！</b>四种饮品共享同一个 make() 骨架 —— 子类从没写过"第1步烧水、第3步倒杯"，也从没机会打乱顺序。'+
+    (drink==='teaPlain'?'钩子返回 false 时流程还能被"缩短"。':'');
+  on([]);
+  running=false;$('runBtn').disabled=false;
+}
+function clearPipe(){
+  $('pipe').innerHTML='<span style="color:#94a3b8;font-size:13px">步骤会依次亮起 —— 顺序永远改不了</span>';
+  $('result').style.display='none';on([]);
+}
+paint($('code'));
+log('分别选三种饮品执行 make()，对比第 2 步和第 4 步的差异','info');
+</script>
+</body>
+</html>

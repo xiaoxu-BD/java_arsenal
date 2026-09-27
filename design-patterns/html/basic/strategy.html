@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>策略模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button.warn{background:#fff;color:#d97706;border-color:#fcd34d}
+button.warn:hover{background:#fffbeb}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 舞台 */
+.dist{display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:13.5px}
+.dist input{flex:1;accent-color:#4f46e5}
+.dist b{min-width:86px;font-family:Consolas,monospace;color:#4338ca}
+.strats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.scard{border:2px solid #e2e8f0;border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:.18s;background:#fff}
+.scard:hover{border-color:#a5b4fc}
+.scard.on{border-color:#4f46e5;background:#eef2ff;box-shadow:0 4px 14px rgba(79,70,229,.15)}
+.scard .ic{font-size:22px}
+.scard b{display:block;font-size:14px;margin-top:4px}
+.scard small{color:#94a3b8;font-size:11px}
+.scard.new{border-style:dashed}
+.route{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;padding:14px;margin-bottom:12px}
+.tracker{height:16px;background:#e2e8f0;border-radius:8px;position:relative;overflow:hidden;margin:8px 0}
+.tracker i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#4f46e5,#34d399);border-radius:8px;transition:width 1.2s}
+.route .meta{display:flex;justify-content:space-between;font:12.5px Consolas,monospace;color:#475569}
+.eta{font-size:13px;color:#475569;margin-top:6px;line-height:1.7}
+.eta b{color:#4338ca}
+.ocl{border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;display:none;margin-top:12px}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:160px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>策略模式 Strategy <span class="tag">行为型</span></h1>
+  <p class="sub">一句话核心：<b>一族可互换的算法</b> —— 上下文把"怎么做"委托出去，运行时随时换，新增算法零修改</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 旅行者出发（换策略不动 Traveler）</div>
+      <div class="dist">
+        <span>行程距离</span>
+        <input type="range" min="100" max="2000" step="50" value="1200" id="dist" oninput="onDist()">
+        <b id="distVal">1200 km</b>
+      </div>
+      <div class="strats" id="strats">
+        <div class="scard" data-key="plane" onclick="pick('plane')"><div class="ic">✈</div><b>PlaneStrategy</b><small>÷800</small></div>
+        <div class="scard" data-key="train" onclick="pick('train')"><div class="ic">🚄</div><b>TrainStrategy</b><small>÷300</small></div>
+        <div class="scard" data-key="bike" onclick="pick('bike')"><div class="ic">🚲</div><b>BicycleStrategy</b><small>÷15</small></div>
+      </div>
+      <div class="btnrow" style="margin-bottom:12px">
+        <button class="warn" id="addBtn" onclick="addEbike()">需求变更：新增「电动车」策略</button>
+      </div>
+      <div class="route">
+        <div class="meta"><span>出发地 ●</span><span id="arrive">目的地 ●</span></div>
+        <div class="tracker"><i id="tk"></i></div>
+        <div class="eta" id="eta">先在上方选一种出行策略</div>
+      </div>
+      <div class="ocl" id="ocl"></div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>组合替代继承</b>：Traveler 持有一个 TravelStrategy 字段，而不是继承出 PlaneTraveler/TrainTraveler… 一堆子类</li>
+        <li data-n="2"><b>运行时可换</b>：setStrategy() 随时切换，同一个 travel() 调用行为完全不同</li>
+        <li data-n="3"><b>开闭原则</b>：新增出行方式只加一个实现类，Traveler 一行不改（点左侧"需求变更"试试）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        JDK 同款：Collections.sort(list, comparator) —— comparator 就是一个可插拔策略。
+        工程落地：策略 + 注册表工厂消除 if-else（见 advanced/factory 包）。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动</div>
+      <pre class="code" id="code">public class Traveler {                   // 上下文
+    private TravelStrategy strategy;      // 组合：一族算法
+
+    public void setStrategy(TravelStrategy s) {
+        this.strategy = s;                // 运行时换策略
+    }
+
+    public void travel(int distanceKm) {
+        // 委托：怎么走完全是策略的事，本类零感知
+        System.out.println("选择[" + strategy.name()
+            + "] 出行 " + distanceKm + "km，预计 "
+            + strategy.costHours(distanceKm) + " 小时");
+    }
+}
+
+public class PlaneStrategy implements TravelStrategy {
+    public int costHours(int km) { return Math.max(1, km / 800); }
+    public String name()       { return "飞机"; }
+}
+
+public class EbikeStrategy implements TravelStrategy {   // ✓ 新增
+    public int costHours(int km) { return km / 25; }
+    public String name()       { return "电动车"; }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|interface|implements|return|new|this|void)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+const STRATS={
+  plane:{name:'飞机',icon:'✈',calc:k=>Math.max(1,Math.round(k/800)),cls:'PlaneStrategy',line:[15]},
+  train:{name:'高铁',icon:'🚄',calc:k=>Math.max(1,Math.round(k/300)),cls:'TrainStrategy',line:[]},
+  bike:{name:'自行车',icon:'🚲',calc:k=>Math.round(k/15),cls:'BicycleStrategy',line:[]},
+  ebike:{name:'电动车',icon:'🛵',calc:k=>Math.round(k/25),cls:'EbikeStrategy',line:[19,20]}
+};
+let cur=null,added=false;
+function onDist(){$('distVal').textContent=$('dist').value+' km';if(cur)render();}
+function pick(key){
+  cur=key;
+  document.querySelectorAll('.scard').forEach(c=>c.classList.remove('on'));
+  document.querySelector('.scard[data-key="'+key+'"]')?.classList.add('on');
+  on(STRATS[key].line);
+  log('traveler.setStrategy(new '+STRATS[key].cls+'())  —— 运行时换策略','info');
+  render(true);
+}
+function render(travel){
+  const s=STRATS[cur],km=+$('dist').value,h=s.calc(km);
+  $('eta').innerHTML='当前策略：<b>'+s.cls+'</b>（'+s.icon+' '+s.name+'）　→　'+km+' km 预计 <b>'+h+' 小时</b>'+
+    (travel?'<br>调用方代码始终是 traveler.travel('+km+') —— 一行没变':'');
+  $('tk').style.width=travel?'100%':'0%';
+  if(travel){setTimeout(()=>{if(cur)$('tk').style.width='0%';},1300);log('traveler.travel('+km+') -> ['+s.name+'] 预计 '+h+' 小时','ok');}
+}
+function addEbike(){
+  if(added){log('电动车策略已存在（重复注册无副作用）','info');return;}
+  added=true;
+  const c=document.createElement('div');
+  c.className='scard new';c.dataset.key='ebike';c.onclick=()=>pick('ebike');
+  c.innerHTML='<div class="ic">🛵</div><b>EbikeStrategy</b><small>÷25 · 新增</small>';
+  $('strats').appendChild(c);
+  $('addBtn').disabled=true;$('addBtn').textContent='电动车策略已上线';
+  const o=$('ocl');o.style.display='block';
+  o.innerHTML='<b>✓ 开闭原则现场版</b>：新增 EbikeStrategy 只加了一个类；右侧代码里 Traveler、travel()、setStrategy() 全部纹丝不动（新增类代码在下方绿色注释行）。没有 if-else 也没有 switch 要改。';
+  on([19,20]);
+  log('新增 EbikeStrategy：Traveler 类零修改 ✓','ok');
+  log('点新的策略卡片试试','info');
+}
+paint($('code'));
+log('选策略 → 拖距离 → 点「新增电动车」→ 再选它','info');
+</script>
+</body>
+</html>

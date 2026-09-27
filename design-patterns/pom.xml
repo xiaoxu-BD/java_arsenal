@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.xiaoxu</groupId>
+        <artifactId>java_arsenal</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>design-patterns</artifactId>
+    <packaging>jar</packaging>
+
+    <name>design-patterns</name>
+    <description>常用设计模式（纯 JavaSE）：basic 初级教学演示 / advanced 高级开发实践</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!--
+        本模块只依赖 JDK，不引入任何第三方库：
+        设计模式的类结构是教学重点，依赖越少越容易对照源码理解。
+        （运行方式：直接运行各包下 *Demo.java 的 main 方法）
+    -->
+    <dependencies/>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

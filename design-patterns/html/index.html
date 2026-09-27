@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b;padding:24px}
+.hero{max-width:1080px;margin:0 auto 22px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:18px;padding:28px 32px}
+.hero h1{font-size:26px}
+.hero p{margin-top:8px;font-size:14px;opacity:.88;line-height:1.7}
+.hero b{background:rgba(255,255,255,.18);padding:1px 8px;border-radius:6px}
+h2.group{max-width:1080px;margin:26px auto 12px;font-size:15px;color:#475569;display:flex;align-items:center;gap:10px}
+h2.group::after{content:'';flex:1;height:1px;background:#cbd5e1}
+.grid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+a.card{display:block;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;text-decoration:none;color:#1e293b;transition:.18s;position:relative;overflow:hidden}
+a.card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(79,70,229,.16);border-color:#a5b4fc}
+a.card .no{position:absolute;right:14px;top:10px;font-size:34px;font-weight:800;color:#f1f5f9}
+a.card h3{font-size:17px;margin-bottom:6px}
+a.card p{font-size:12.5px;color:#64748b;line-height:1.6;min-height:40px}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;margin-bottom:8px}
+.t1{background:#e0f2fe;color:#0369a1}.t2{background:#fef3c7;color:#b45309}.t3{background:#fce7f3;color:#be185d}
+.foot{max-width:1080px;margin:26px auto 0;font-size:12.5px;color:#94a3b8;text-align:center}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>设计模式 · 交互课堂</h1>
+</div>
+
+<h2 class="group">创建型 —— 对象怎么"生"出来</h2>
+<div class="grid">
+  <a class="card" href="basic/singleton.html"><span class="no">01</span><span class="tag t1">创建型</span><h3>单例模式</h3><p>全局只有一个实例：私有构造 + 静态入口，试试"违规 new"会发生什么</p></a>
+  <a class="card" href="basic/factory.html"><span class="no">02</span><span class="tag t1">创建型</span><h3>工厂模式</h3><p>简单工厂 / 工厂方法 / 抽象工厂：把 new 收口，新增产品不改旧代码</p></a>
+  <a class="card" href="basic/builder.html"><span class="no">03</span><span class="tag t1">创建型</span><h3>建造者模式</h3><p>组装电脑：链式调用一眼读懂，build() 一次成型不可再改</p></a>
+  <a class="card" href="basic/prototype.html"><span class="no">04</span><span class="tag t1">创建型</span><h3>原型模式</h3><p>克隆羊：浅拷贝共享引用的坑 vs 深拷贝的彻底隔离</p></a>
+</div>
+
+<h2 class="group">结构型 —— 类和对象怎么"组装"</h2>
+<div class="grid">
+  <a class="card" href="basic/adapter.html"><span class="no">05</span><span class="tag t2">结构型</span><h3>适配器模式</h3><p>220V 插座直连手机会烧毁？中间加个"转接头"试试</p></a>
+  <a class="card" href="basic/decorator.html"><span class="no">06</span><span class="tag t2">结构型</span><h3>装饰器模式</h3><p>咖啡加料层层包裹：5 个类组合出几十种饮品</p></a>
+  <a class="card" href="basic/proxy.html"><span class="no">07</span><span class="tag t2">结构型</span><h3>代理模式</h3><p>明星与经纪人：经纪人挡琐事、放行专业活</p></a>
+  <a class="card" href="basic/facade.html"><span class="no">08</span><span class="tag t2">结构型</span><h3>外观模式</h3><p>家庭影院：手动开 3 台设备 vs 一键观影，点几次按钮？</p></a>
+</div>
+
+<h2 class="group">行为型 —— 对象之间怎么"协作"</h2>
+<div class="grid">
+  <a class="card" href="basic/template.html"><span class="no">09</span><span class="tag t3">行为型</span><h3>模板方法</h3><p>冲咖啡/冲茶：流程骨架锁死，差异步骤子类填空，钩子还能改流程</p></a>
+  <a class="card" href="basic/strategy.html"><span class="no">10</span><span class="tag t3">行为型</span><h3>策略模式</h3><p>出行方式随换随走：新增"电动车"策略，上下文代码零修改</p></a>
+  <a class="card" href="basic/observer.html"><span class="no">11</span><span class="tag t3">行为型</span><h3>观察者模式</h3><p>天气站广播：订阅者自由进出，广播照发不误</p></a>
+  <a class="card" href="basic/chain.html"><span class="no">12</span><span class="tag t3">行为型</span><h3>责任链模式</h3><p>请假审批：拖动天数看看单子会停在谁手里</p></a>
+  <a class="card" href="basic/state.html"><span class="no">13</span><span class="tag t3">行为型</span><h3>状态模式</h3><p>订单流转：状态图上点点看，非法操作直接被拒</p></a>
+</div>
+
+</body>
+</html>

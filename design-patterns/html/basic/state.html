@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>状态模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 状态图 */
+.map{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;padding:22px 12px 16px;position:relative;overflow-x:auto}
+.track{display:flex;align-items:center;justify-content:center;gap:0;min-width:560px}
+.node{border:2px solid #cbd5e1;background:#fff;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:700;color:#64748b;position:relative;transition:.3s;white-space:nowrap}
+.node small{display:block;font-weight:400;font-size:10.5px;color:#94a3b8;font-family:Consolas,monospace}
+.node.cur{border-color:#4f46e5;background:#eef2ff;color:#3730a3;box-shadow:0 0 0 5px rgba(79,70,229,.15);transform:scale(1.08)}
+.node.done{border-color:#94a3b8;background:#f1f5f9}
+.edge{width:54px;height:2px;background:#cbd5e1;position:relative;flex:none}
+.edge::after{content:'';position:absolute;right:-1px;top:-5px;border:6px solid transparent;border-left:8px solid #cbd5e1}
+.edge.lit{background:#4f46e5}
+.edge.lit::after{border-left-color:#4f46e5}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.node.deny{animation:shake .3s 2;border-color:#ef4444!important;color:#dc2626!important}
+/* 取消支线 */
+.cancelrow{display:flex;justify-content:center;margin-top:18px;min-width:560px}
+.cnode{border:2px dashed #f59e0b;background:#fffbeb;color:#b45309;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700}
+.cnode.cur{border-style:solid;background:#fef3c7;box-shadow:0 0 0 5px rgba(245,158,11,.18)}
+.badge{display:inline-block;background:#4f46e5;color:#fff;border-radius:8px;font-size:11px;padding:2px 8px;margin-left:8px}
+.orderbar{margin-top:14px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;font:13px Consolas,monospace;color:#475569}
+.dot{width:10px;height:10px;border-radius:50%;background:#4f46e5;flex:none}
+.ifelse{margin-top:14px;border-radius:12px;padding:12px 14px;font:12px/1.75 Consolas,monospace;background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d;display:none}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:170px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>状态模式 State <span class="tag">行为型</span></h1>
+  <p class="sub">一句话核心：<b>同一操作在不同状态下行为不同</b> —— 订单不写 if-else，把操作全权委托给"当前状态对象"</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 订单流转（试试在"待支付"时直接点发货）</div>
+      <div class="map">
+        <div class="track">
+          <div class="node" id="n0">待支付<small>CreatedState</small></div>
+          <div class="edge" id="e0"></div>
+          <div class="node" id="n1">已支付<small>PaidState</small></div>
+          <div class="edge" id="e1"></div>
+          <div class="node" id="n2">已发货<small>ShippedState</small></div>
+          <div class="edge" id="e2"></div>
+          <div class="node" id="n3">已完成<small>CompletedState</small></div>
+        </div>
+        <div class="cancelrow">
+          <div style="width:54px"></div><div style="width:54px"></div>
+          <div class="cnode" id="n4">已取消 CancelledState（终态）</div>
+        </div>
+      </div>
+      <div class="orderbar"><span class="dot"></span>Order SO-1001 当前状态：<b id="curName">待支付</b><span class="badge" id="curCls">CreatedState</span></div>
+      <div class="btnrow" style="margin-top:14px">
+        <button class="ghost" onclick="act('pay')">order.pay() 支付</button>
+        <button class="ghost" onclick="act('ship')">order.ship() 发货</button>
+        <button class="ghost" onclick="act('confirm')">order.confirm() 确认收货</button>
+        <button class="ghost" onclick="act('cancel')">order.cancel() 取消</button>
+        <button class="ghost" onclick="resetOrder()">新订单</button>
+        <button class="ghost" onclick="toggleIf()">偷看：if-else 写法</button>
+      </div>
+      <div class="ifelse" id="ifelse">// 不用状态模式的订单 —— 每加一个状态，每个方法都要加一层判断：
+public void ship() {
+    if (status.equals("PAID")) { ... }
+    else if (status.equals("CREATED")) { throw new 不允许(); }
+    else if (status.equals("SHIPPED")) { throw new 已发货还发什么(); }
+    else if (status.equals("COMPLETED")) { ... }   // 判断散落各处，改一处漏一处
+}</div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>状态决定行为</b>：pay/ship/confirm 在"待支付/已支付/已发货"下各有着落，不在当前职责内的直接拒绝</li>
+        <li data-n="2"><b>订单只做委托</b>：Order 里没有一个 if(status==…)，全部 state.pay(this) 一行转发</li>
+        <li data-n="3"><b>流转规则收进状态类</b>：谁能流转到谁写在状态类内部，新状态 = 新类（对比下方红框 if-else 版）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        与责任链的区别：责任链是"沿链找人处理"，状态是"我是什么就怎么响应"。
+        规则表版状态机（流转集中校验，见 advanced/state 包）更适合纯流程校验场景。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动</div>
+      <pre class="code" id="code">public class Order {
+    private OrderState state = new CreatedState();
+
+    public void pay()     { state.pay(this); }      // 全权委托
+    public void ship()    { state.ship(this); }     // 没有一个 if
+    public void confirm() { state.confirm(this); }
+
+    void setState(OrderState s) { this.state = s; } // 状态类内部调用
+}
+
+public class CreatedState implements OrderState {
+    public void pay(Order order) {
+        System.out.println("支付成功");
+        order.setState(new PaidState());            // 待支付→已支付
+    }
+    // ship/confirm 走接口 default：当前状态不允许
+}
+
+public interface OrderState {
+    default void pay(Order o)   { throw 不允许("pay"); }
+    default void ship(Order o)  { throw 不允许("ship"); }
+    default void confirm(Order o){ throw 不允许("confirm"); }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|interface|abstract|extends|implements|return|new|this|void|default|throw)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+const STATES=['待支付','已支付','已发货','已完成','已取消'];
+const CLS=['CreatedState','PaidState','ShippedState','CompletedState','CancelledState'];
+const TRANS={pay:{from:0,to:1},ship:{from:1,to:2},confirm:{from:2,to:3},cancel:{from:[0,1],to:4}};
+let cur=0;
+function render(){
+  [0,1,2,3].forEach(i=>{
+    const n=$('n'+i);
+    n.className='node'+(i===cur?' cur':(i<cur?' done':''));
+  });
+  $('n4').className='cnode'+(cur===4?' cur':'');
+  [0,1,2].forEach(i=>$('e'+i).classList.toggle('lit',i<cur&&cur<=3));
+  $('curName').textContent=STATES[cur];
+  $('curCls').textContent=CLS[cur];
+}
+function act(name){
+  const t=TRANS[name];
+  const fromOk=Array.isArray(t.from)?t.from.includes(cur):cur===t.from;
+  const target=$('n'+(Array.isArray(t.from)?cur:t.from));
+  if(!fromOk){
+    target.classList.remove('deny');void target.offsetWidth;target.classList.add('deny');
+    on([18,19,20,21]);
+    log('order.'+name+'() → 当前状态['+STATES[cur]+']不允许该操作 ✗','err');
+    return;
+  }
+  const from=cur;
+  on(name==='pay'?[10,11,12]:[4,5,6,7]);
+  log('order.'+name+'() → '+CLS[from]+'.'
+      +(name==='pay'?'pay(this)':name==='ship'?'ship(this)':name==='confirm'?'confirm(this)':'cancel(this)'),'info');
+  cur=t.to;render();
+  log('　✓ 流转成功：'+STATES[from]+' → '+STATES[cur]+'（setState 由状态类内部调用）','ok');
+  if(cur===4)log('　已取消是终态，后续任何操作都会被拒绝','info');
+  if(cur===3)log('　已完成是终态','info');
+}
+function resetOrder(){cur=0;render();on([]);log('新订单 SO-1001，初始状态：待支付','info');}
+function toggleIf(){const e=$('ifelse');e.style.display=e.style.display==='block'?'none':'block';}
+paint($('code'));
+render();
+log('在"待支付"直接点发货看拒绝；再走 pay → ship → confirm 正常流','info');
+</script>
+</body>
+</html>

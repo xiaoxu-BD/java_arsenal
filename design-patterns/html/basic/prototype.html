@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原型模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#bae6fd;color:#0369a1}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button.danger{background:#fff;color:#dc2626;border-color:#fecaca}
+button.danger:hover{background:#fef2f2}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#e2e8f0;color:#475569;border:none;padding:7px 14px;font-size:13px}
+.tabs button.on{background:#4f46e5;color:#fff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 羊圈 */
+.pen{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:start;margin-bottom:14px}
+.sheep{border:2px solid #a5b4fc;background:#eef2ff;border-radius:14px;padding:14px;text-align:center}
+.sheep.clone{border-color:#34d399;background:#ecfdf5}
+.sheep h4{font-size:15px;margin-bottom:8px}
+.sheep .fld{font:12.5px Consolas,monospace;color:#475569;margin:3px 0}
+.sheep .fld b{color:#1e293b}
+.mid{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:130px}
+.friend{border:2px solid #f59e0b;background:#fffbeb;border-radius:12px;padding:10px 16px;text-align:center;font:13px Consolas,monospace;color:#92400e}
+.friend.shared{border-color:#ef4444;background:#fef2f2}
+.mid .arrow{font-size:20px;color:#94a3b8}
+.mid .lbl{font-size:11px;color:#94a3b8;text-align:center}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.pop{animation:pop .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hit{animation:shake .3s 2}
+.warn{color:#dc2626!important}
+.edit{margin-top:10px;border-top:1px dashed #e2e8f0;padding-top:10px;font-size:13px;color:#475569;line-height:2}
+.edit input{font:inherit;border:1.5px solid #cbd5e1;border-radius:8px;padding:5px 10px;width:110px}
+.edit input:focus{outline:none;border-color:#4f46e5}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:190px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>原型模式 Prototype <span class="tag">创建型</span></h1>
+  <p class="sub">一句话核心：<b>以现有对象为模板复制新对象</b> —— 但浅拷贝只复制"地址"，引用类型会共享，坑就在这</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 克隆羊（左边操作，右边看引用结构）</div>
+      <div class="tabs">
+        <button id="tabS" class="on" onclick="setMode('s')">浅拷贝 clone()</button>
+        <button id="tabD" onclick="setMode('d')">深拷贝 deepClone()</button>
+      </div>
+      <div class="pen">
+        <div class="sheep" id="orig">
+          <h4>原件 · 多莉</h4>
+          <div class="fld">name = <b>多莉</b></div>
+          <div class="fld">age&nbsp; = <b>2</b></div>
+          <div class="edit">改原件名字试试：<input id="origName" value="多莉" onchange="renameOrig(this.value)"></div>
+        </div>
+        <div class="mid" id="mid">
+          <div class="arrow">↔</div>
+          <div class="lbl">friend 引用关系<br>（切换模式后重新克隆）</div>
+        </div>
+        <div class="sheep clone" id="cloneBox" style="display:none">
+          <h4 id="cloneTitle">克隆体</h4>
+          <div class="fld">name = <b id="cName">多莉</b></div>
+          <div class="fld">age&nbsp; = <b id="cAge">2</b></div>
+          <div class="edit">
+            改克隆体的朋友名：<input id="cFriend" value="喜羊羊" onchange="renameFriend(this.value)"><br>
+            改克隆体的年龄：<input id="cAgeIn" type="number" value="2" onchange="setAge(this.value)">
+          </div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="ghost" onclick="doClone()" id="btnClone">clone() 克隆一只</button>
+        <button class="danger" onclick="setMode(mode)">重置舞台</button>
+      </div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>基本类型复制"值"</b>：name、age 各改各的，永不互相影响</li>
+        <li data-n="2"><b>浅拷贝复制"地址"</b>：friend 字段两羊指向同一个对象 —— 一方改名，另一方跟着变（上面试试）</li>
+        <li data-n="3"><b>深拷贝才彻底独立</b>：引用字段也重新造一份；工程上推荐序列化深拷贝（见 advanced/prototype 包）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        什么时候用原型？对象创建成本高（查库、大量计算）且新对象与模板大体相同时，clone 比重新 new+赋值划算。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动</div>
+      <pre class="code" id="code">public class Sheep implements Cloneable {
+    private String name;
+    private int age;
+    private Friend friend;          // 引用类型：考点！
+
+    @Override
+    public Sheep clone() {          // 浅拷贝
+        return (Sheep) super.clone();
+        // friend 只复制了地址 → 两羊共享同一个朋友
+    }
+
+    public Sheep deepClone() {      // 深拷贝
+        Sheep copy = clone();
+        copy.friend = new Friend(this.friend.getName());
+        // 朋友也重新造一个 → 彻底独立
+        return copy;
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let mode='s', cloned=false, friendName='喜羊羊';
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|extends|implements|return|new|this|super|void|static|final)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+function setMode(m){
+  mode=m;cloned=false;friendName='喜羊羊';
+  $('tabS').classList.toggle('on',m==='s');$('tabD').classList.toggle('on',m==='d');
+  $('cloneBox').style.display='none';$('cFriend').value='喜羊羊';$('cAgeIn').value=2;
+  renderMid();document.querySelectorAll('.ln').forEach(e=>e.classList.remove('on'));
+  log(m==='s'?'切换浅拷贝：Object.clone() 逐位复制，引用字段只复制地址':'切换深拷贝：引用字段也重新造一份','info');
+}
+function renderMid(){
+  const mid=$('mid');
+  if(!cloned){
+    mid.innerHTML='<div class="arrow">→</div><div class="lbl">还没有克隆体<br>（点下方按钮）</div>';
+    return;
+  }
+  if(mode==='s'){
+    mid.innerHTML='<div class="lbl">两箭头指向<br>同一个 friend</div>'+
+    '<div class="friend shared" id="friendCard">friend.name = <b>'+friendName+'</b><br><small style="color:#dc2626">共享！双方共用</small></div>'+
+    '<div class="arrow">↔</div>';
+  }else{
+    mid.innerHTML='<div class="friend" id="friendCard">原件的<br><b>'+friendName+'</b></div>'+
+    '<div class="lbl">两个独立 friend</div>'+
+    '<div class="friend" id="friendCard2">克隆体的<br><b>'+friendName+'</b></div>';
+  }
+}
+function doClone(){
+  cloned=true;$('cloneBox').style.display='';$('cloneBox').classList.remove('pop');void $('cloneBox').offsetWidth;$('cloneBox').classList.add('pop');
+  renderMid();
+  on(mode==='s'?[7,8,9]:[12,13,14,17]);
+  log(mode==='s'?'clone() -> 浅拷贝完成：friend 字段是同一个地址':'deepClone() -> 深拷贝完成：friend 重新 new 了一个','ok');
+  log('现在去改克隆体的"朋友名"和"年龄"，观察原件','info');
+}
+function renameFriend(v){
+  if(!cloned){log('先克隆一只再改','err');return;}
+  friendName=v;
+  const shared=mode==='s';
+  const cards=shared?[$('friendCard')]:[$('friendCard2')];
+  cards.forEach(c=>{if(c)c.innerHTML=(shared?'friend.name = <b>'+v+'</b><br><small style="color:#dc2626">共享！双方共用</small>':'克隆体的<br><b>'+v+'</b>');c.classList.add('hit');});
+  on(shared?[4]:[13]);
+  if(shared){
+    log('克隆体改 friend.name = "'+v+'"','info');
+    log('　✗ 原件的朋友也变成 "'+v+'" —— 引用被共享，数据被污染！','err');
+  }else{
+    log('克隆体改 friend.name = "'+v+'"','info');
+    log('　✓ 原件的朋友不受影响 —— 深拷贝彻底隔离','ok');
+  }
+}
+function setAge(v){
+  if(!cloned){log('先克隆一只再改','err');return;}
+  $('cAge').textContent=v;$('cAgeIn').value=v;
+  log('克隆体改 age = '+v+'（基本类型，复制的是值）','info');
+  log('　✓ 原件 age 仍是 2，基本类型永远互不影响','ok');
+}
+function renameOrig(v){$('origName').value=v;log('原件改 name = "'+v+'"（基本类型，克隆体不受影响）','ok');}
+paint($('code'));
+log('默认浅拷贝：先克隆，再改克隆体的朋友名 → 看原件被污染','info');
+</script>
+</body>
+</html>

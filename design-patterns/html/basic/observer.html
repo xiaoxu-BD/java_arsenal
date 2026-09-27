@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>观察者模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 广播舞台 */
+.station{background:linear-gradient(135deg,#4338ca,#6d28d9);color:#fff;border-radius:16px;padding:16px;text-align:center;margin-bottom:18px;position:relative}
+.station h4{font-size:15px}
+.station .data{font:14px Consolas,monospace;margin-top:6px;color:#c7d2fe}
+.station .cnt{font-size:11.5px;opacity:.8;margin-top:4px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(96,165,250,.55)}100%{box-shadow:0 0 0 22px rgba(96,165,250,0)}}
+.station.ping{animation:pulse .9s}
+.observers{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.ob{border:2px solid #e2e8f0;border-radius:14px;padding:13px;background:#fff;transition:.3s;position:relative}
+.ob.on{border-color:#60a5fa;background:#eff6ff}
+.ob h5{font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+.ob .tag2{font-size:10.5px;padding:1px 8px;border-radius:999px}
+.ob.on .tag2{background:#93c5fd;color:#fff}
+.ob:not(.on) .tag2{background:#e2e8f0;color:#94a3b8}
+.ob .show{font:12px Consolas,monospace;margin:8px 0;color:#475569;min-height:34px;line-height:1.7}
+.ob .show.fresh{color:#1d4ed8}
+.ob button{padding:5px 12px;font-size:12px;margin-right:6px}
+.ob:not(.on) .show{color:#94a3b8}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.ob.tick{animation:pop .4s}
+.arrowline{text-align:center;color:#94a3b8;font-size:13px;margin:-10px 0 12px}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:170px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>观察者模式 Observer <span class="tag">行为型</span></h1>
+  <p class="sub">一句话核心：<b>一对多依赖、状态变更自动广播</b> —— 天气站不认识观察者，观察者随进随出互不拖累</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 天气站广播</div>
+      <div class="station" id="station">
+        <h4>WeatherStation（被观察者 / Subject）</h4>
+        <div class="data" id="wdata">temperature=null, humidity=null（还没收到数据）</div>
+        <div class="cnt" id="wcnt">当前订阅者：0 个</div>
+      </div>
+      <div class="arrowline">↓ 只对"已订阅"的观察者广播 ↓</div>
+      <div class="observers" id="observers"></div>
+      <div class="btnrow" style="margin-top:14px">
+        <button onclick="newData()">measurementsChanged() 新数据到达</button>
+        <button class="ghost" onclick="toggle('web')">网页 WebDisplay 订阅/退订</button>
+        <button class="ghost" onclick="toggle('watch')">手表 WatchDisplay 订阅/退订</button>
+      </div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>松耦合</b>：天气站只知道"名单上有一堆 Display 接口"，不知道对方是手机还是大屏、update 之后要干什么</li>
+        <li data-n="2"><b>动态订阅关系</b>：register/remove 运行时增删；退订后广播到不了它（点退订再广播试试）</li>
+        <li data-n="3"><b>开闭原则</b>：新增"手表"显示端，天气站代码零修改 —— 每个观察者各干各的（发短信/刷新大屏）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        日常同款：GUI 监听器、Spring ApplicationEvent、MQ 广播。
+        工程版（按事件类型订阅 + 异常隔离）见 advanced/observer 的 EventBus。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 广播时循环逐个高亮</div>
+      <pre class="code" id="code">public class WeatherStation {
+    private final List&lt;Display&gt; displays = new ArrayList&lt;&gt;();
+
+    public void register(Display d) { displays.add(d); }      // 订阅
+    public void remove(Display d)   { displays.remove(d); }   // 退订
+
+    public void measurementsChanged(double t, double h) {
+        for (Display d : displays) {          // 只面向接口广播
+            d.update(t, h);                   // 观察者各自决定干什么
+        }
+    }
+}
+
+public class PhoneDisplay implements Display {
+    public void update(double t, double h) {
+        System.out.println("[手机] 当前 " + t + "℃");   // 各干各的
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|interface|implements|extends|return|new|this|void|for)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+const OBS={
+  phone:{name:'PhoneDisplay',title:'手机',sub:true,fmt:t=>'[手机] 当前 '+t.t+'℃，湿度 '+t.h+'%'},
+  board:{name:'BillboardDisplay',title:'户外大屏',sub:true,fmt:t=>'[大屏] === 今日温度 '+t.t+'℃ ==='},
+  web:{name:'WebDisplay',title:'网页',sub:false,fmt:t=>'[网页] 天气小组件刷新 '+t.t+'℃'},
+  watch:{name:'WatchDisplay',title:'手表',sub:false,fmt:t=>'[手表] 抬腕显示 '+t.t+'℃'}
+};
+let data=null;
+function renderObs(){
+  const box=$('observers');box.innerHTML='';
+  Object.keys(OBS).forEach(k=>{
+    const o=OBS[k];
+    const d=document.createElement('div');
+    d.className='ob'+(o.sub?' on':'');d.id='ob-'+k;
+    d.innerHTML='<h5>'+o.title+'<span class="tag2">'+(o.sub?'已订阅':'未订阅')+'</span></h5>'+
+      '<div class="show'+(o.fresh?' fresh':'')+'" id="sh-'+k+'">'+(o.last??'还没收到过数据（未订阅则一直这样）')+'</div>'+
+      (o.canToggle?'<button class="ghost" onclick="toggle(\''+k+'\')">'+(o.sub?'退订 remove()':'订阅 register()')+'</button>':'');
+    box.appendChild(d);
+  });
+  $('wcnt').textContent='当前订阅者：'+Object.values(OBS).filter(o=>o.sub).length+' 个';
+}
+async function newData(){
+  const t=(20+Math.random()*15).toFixed(1),h=Math.round(30+Math.random()*60);
+  data={t:t,h:h};
+  $('wdata').textContent='temperature='+t+', humidity='+h;
+  const st=$('station');st.classList.remove('ping');void st.offsetWidth;st.classList.add('ping');
+  log('measurementsChanged('+t+', '+h+') —— 广播给 '+Object.values(OBS).filter(o=>o.sub).length+' 个订阅者','ok');
+  on([8]);
+  const subs=Object.keys(OBS).filter(k=>OBS[k].sub);
+  for(let i=0;i<subs.length;i++){
+    const k=subs[i],o=OBS[k];
+    o.last=o.fmt(data);o.fresh=true;
+    on([8,9]);
+    const el=$('ob-'+k);el.classList.remove('tick');void el.offsetWidth;el.classList.add('tick');
+    log('　d.update() -> '+o.name+'：'+o.last,'info');
+    renderObs();
+    await new Promise(r=>setTimeout(r,420));
+  }
+  const offs=Object.keys(OBS).filter(k=>!OBS[k].sub);
+  if(offs.length)log('　未订阅的（'+offs.map(k=>OBS[k].title).join('、')+'）收不到广播 —— 没人 notify 它们','err');
+  on([]);
+}
+function toggle(k){
+  const o=OBS[k];o.sub=!o.sub;o.canToggle=true;
+  log(o.sub?('register('+o.name+') —— 进入订阅名单'):(o.name+' remove() —— 退出名单，之后的广播与它无关'),o.sub?'ok':'err');
+  on(o.sub?[3]:[4]);
+  setTimeout(()=>on([]),900);
+  renderObs();
+}
+OBS.phone.canToggle=OBS.board.canToggle=OBS.web.canToggle=OBS.watch.canToggle=true;
+paint($('code'));
+renderObs();
+log('点「新数据到达」广播；再把手机退订，广播一次对比','info');
+</script>
+</body>
+</html>

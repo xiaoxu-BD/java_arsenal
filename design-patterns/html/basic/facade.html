@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外观模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fde68a;color:#b45309}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#e2e8f0;color:#475569;border:none;padding:7px 14px;font-size:13px}
+.tabs button.on{background:#4f46e5;color:#fff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 设备 */
+.devices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 16px}
+.dev{border:2px solid #e2e8f0;border-radius:14px;padding:14px;text-align:center;background:#fff;transition:.3s;opacity:.92}
+.dev.on{border-color:#34d399;background:#ecfdf5}
+.dev .ic{font-size:24px;line-height:1}
+.dev b{display:block;margin:6px 0 2px;font-size:14px}
+.dev small{color:#94a3b8;font-size:11.5px}
+.stat{display:flex;gap:12px;margin-bottom:14px}
+.stat div{flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center}
+.stat b{font-size:22px;display:block;color:#4f46e5}
+.stat span{font-size:12px;color:#64748b}
+.banner{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7;display:none}
+.banner.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;display:block}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.dev.pulse{animation:pop .45s}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:160px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>外观模式 Facade <span class="tag">结构型</span></h1>
+  <p class="sub">一句话核心：<b>给复杂子系统一个总开关</b> —— 客户端只需要"看电影"，不必记住 3 台设备的开关顺序</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 想在家看个电影</div>
+      <div class="tabs">
+        <button id="tabM" class="on" onclick="setMode('m')">手动模式（没有门面）</button>
+        <button id="tabF" onclick="setMode('f')">一键模式（有门面）</button>
+      </div>
+      <div class="stat">
+        <div><b id="clicks">0</b><span>你手动点了 N 次</span></div>
+        <div><b id="readyState">未就绪</b><span>影院状态</span></div>
+      </div>
+      <div class="devices">
+        <div class="dev" id="d1"><div class="ic">▤</div><b>幕布 Screen</b><small id="s1">已升起 · off</small></div>
+        <div class="dev" id="d2"><div class="ic">▣</div><b>投影仪 Projector</b><small id="s2">已关机 · off</small></div>
+        <div class="dev" id="d3"><div class="ic">((·))</div><b>音响 Sound</b><small id="s3">已关机 · off</small></div>
+      </div>
+      <div class="btnrow" id="manualBtns">
+        <button class="ghost" onclick="toggle(1)">幕布.down()</button>
+        <button class="ghost" onclick="toggle(2)">投影仪.on()</button>
+        <button class="ghost" onclick="toggle(3)">音响.on()</button>
+      </div>
+      <div class="btnrow" id="facadeBtns" style="display:none">
+        <button onclick="watchMovie()">facade.watchMovie() 一键观影</button>
+        <button class="ghost" onclick="endMovie()">facade.endMovie() 一键关闭</button>
+      </div>
+      <div class="banner ok" id="banner"></div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>收口不改造</b>：门面不改子系统的任何代码，只是把"多步操作+顺序"编排成一个简单入口</li>
+        <li data-n="2"><b>最少知识原则</b>：客户端只认识 watchMovie/endMovie 两个词，与 3 个子系统解耦</li>
+        <li data-n="3"><b>编排是门面的责任</b>：真实项目里下单门面还负责异常语义翻译、扩展新步骤（见 advanced/facade 的 OrderFacade）</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        日常同款：日志门面 slf4j（背后 Logback/Log4j 随便换）、应用层 AppService。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动</div>
+      <pre class="code" id="code">public class HomeTheaterFacade {
+    private final Projector projector = new Projector();
+    private final Screen screen = new Screen();
+    private final SoundSystem soundSystem = new SoundSystem();
+
+    public void watchMovie() {          // 一键观影
+        screen.down();                  // ① 幕布降下
+        projector.on();                 // ② 投影仪开机
+        soundSystem.on();               // ③ 音响开机
+    }
+
+    public void endMovie() {            // 一键关闭（顺序还得反过来记）
+        soundSystem.off();
+        projector.off();
+        screen.up();
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let mode='m',clicks=0;
+const states={1:false,2:false,3:false};
+const NAMES={1:'幕布',2:'投影仪',3:'音响'};
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|final|new|return|void|this)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+function render(){
+  [1,2,3].forEach(i=>{
+    $('d'+i).classList.toggle('on',states[i]);
+    $('s'+i).textContent=(states[i]?'工作中 · on':'休眠 · off');
+  });
+  const all=states[1]&&states[2]&&states[3];
+  $('readyState').textContent=all?'已就绪':'未就绪';
+  $('readyState').parentElement.querySelector('b').style.color=all?'#059669':'#4f46e5';
+}
+function checkReady(src){
+  if(states[1]&&states[2]&&states[3]){
+    const b=$('banner');
+    b.style.display='block';
+    b.innerHTML='<b>影院就绪！</b>但你手动点了 <b>'+clicks+'</b> 次，还得自己记住顺序（关机时顺序要倒过来）。'+
+      (mode==='m'?'切换到「一键模式」再试一次，感受 1 次点击的差别。':'');
+    if(src==='manual')log('三台设备全部就绪 —— 手动操作 '+clicks+' 次','ok');
+  }
+}
+function toggle(i){
+  clicks++;$('clicks').textContent=clicks;
+  states[i]=!states[i];
+  const d=$('d'+i);d.classList.remove('pulse');void d.offsetWidth;d.classList.add('pulse');
+  on([i===1?6:i===2?7:8]);
+  log('手动调用 '+(i===1?(states[1]?'screen.down()':'screen.up()'):i===2?(states[2]?'projector.on()':'projector.off()'):(states[3]?'soundSystem.on()':'soundSystem.off()'))+'  (第'+clicks+'次点击)','info');
+  render();checkReady('manual');
+}
+async function watchMovie(){
+  clicks++;$('clicks').textContent=clicks;
+  log('facade.watchMovie() —— 客户端只点这一下','ok');
+  const order=[1,2,3];
+  for(let step=0;step<order.length;step++){
+    const i=order[step];
+    states[i]=true;
+    const d=$('d'+i);d.classList.remove('pulse');void d.offsetWidth;d.classList.add('pulse');
+    on([6+step]);
+    log('　门面内部：'+['screen.down()','projector.on()','soundSystem.on()'][step]+'（第'+(step+1)+'步，客户端无感）','info');
+    render();
+    await new Promise(r=>setTimeout(r,550));
+  }
+  const b=$('banner');b.style.display='block';
+  b.innerHTML='<b>影院就绪！</b>你只点了 <b>1 次</b>。顺序、异常、将来新增的设备（加湿器?）全部由门面统一编排。';
+  log('就绪 —— 一键模式点击数：1','ok');
+}
+function endMovie(){
+  [1,2,3].forEach(i=>states[i]=false);
+  on([12,13,14,15]);
+  log('facade.endMovie() —— 逆序关闭，客户端同样只点一下','ok');
+  render();$('banner').style.display='none';
+}
+function setMode(m){
+  mode=m;clicks=0;$('clicks').textContent=0;
+  [1,2,3].forEach(i=>states[i]=false);render();$('banner').style.display='none';
+  $('tabM').classList.toggle('on',m==='m');$('tabF').classList.toggle('on',m==='f');
+  $('manualBtns').style.display=m==='m'?'flex':'none';
+  $('facadeBtns').style.display=m==='f'?'flex':'none';
+  on([]);log(m==='m'?'手动模式：自己把三台设备按顺序开起来':'一键模式：门面代劳','info');
+}
+paint($('code'));
+setMode('m');
+log('先在手动模式把三台设备都打开，数数点了几次','info');
+</script>
+</body>
+</html>

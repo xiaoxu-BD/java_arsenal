@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单例模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600}
+.tag.c1{background:#bae6fd;color:#0369a1}.tag.c2{background:#fde68a;color:#b45309}.tag.c3{background:#fbcfe8;color:#be185d}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+button.danger{background:#fff;color:#dc2626;border-color:#fecaca}
+button.danger:hover{background:#fef2f2}
+button:disabled{opacity:.45;cursor:not-allowed}
+/* 舞台 */
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#e2e8f0;color:#475569;border:none;padding:7px 14px;font-size:13px}
+.tabs button.on{background:#4f46e5;color:#fff}
+.slot{border:2px dashed #cbd5e1;border-radius:14px;padding:20px;text-align:center;min-height:110px;transition:.3s}
+.slot .lbl{font-size:12px;color:#94a3b8;font-family:Consolas,monospace;margin-bottom:8px}
+.inst{display:inline-block;background:#ecfdf5;border:2px solid #34d399;color:#065f46;border-radius:12px;padding:10px 22px;font-family:Consolas,monospace;font-weight:700;font-size:15px}
+.null{display:inline-block;color:#94a3b8;font-family:Consolas,monospace;font-size:15px}
+.counters{display:flex;gap:12px;margin:14px 0}
+.counters div{flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;text-align:center}
+.counters b{font-size:22px;display:block;color:#4f46e5}
+.counters span{font-size:12px;color:#64748b}
+.chips{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+.chip{background:#eef2ff;border:1px solid #a5b4fc;color:#3730a3;border-radius:999px;padding:5px 12px;font:12px Consolas,monospace}
+.chip.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s 2;border-color:#f87171!important}
+/* 规则卡 */
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+/* 代码 */
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:340px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+/* 日志 */
+.console{background:#0f172a;border-radius:10px;padding:12px;height:200px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>单例模式 Singleton <span class="tag c1">创建型</span></h1>
+  <p class="sub">一句话核心：<b>全局只有一个实例</b> —— 私有构造器 + 静态获取入口。动手试试"违规 new"会发生什么</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 亲手制造/获取实例</div>
+      <div class="tabs">
+        <button id="tabEager" class="on" onclick="setMode('eager')">饿汉式（类加载即创建）</button>
+        <button id="tabLazy" onclick="setMode('lazy')">懒汉式（双重检锁 DCL）</button>
+      </div>
+      <div class="counters">
+        <div><b id="cntCall">0</b><span>getInstance() 调用次数</span></div>
+        <div><b id="cntNew">0</b><span>构造器执行次数</span></div>
+        <div><b id="cntChip">0</b><span>拿到的实例个数</span></div>
+      </div>
+      <div class="slot" id="slot">
+        <div class="lbl" id="slotLbl">static final EagerSingleton INSTANCE =</div>
+        <span id="slotVal" class="null">（类加载时就已创建好）</span>
+      </div>
+      <div style="height:14px"></div>
+      <div class="btnrow">
+        <button class="danger" onclick="tryNew()">违规操作：new Singleton()</button>
+        <button class="ghost" onclick="getInstance()">Singleton.getInstance()</button>
+        <button class="ghost" onclick="concurrent()">模拟 10 个线程并发获取</button>
+        <button class="ghost" onclick="reset()">重置</button>
+      </div>
+      <div style="height:14px"></div>
+      <div class="pt">每次调用拿到的实例（注意它们的身份号）：</div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则（考试就考这三条）</div>
+      <ul>
+        <li data-n="1"><b>私有构造器</b>：堵死外界 new 的入口，实例的"出生"只能由类自己控制</li>
+        <li data-n="2"><b>静态获取入口</b>：getInstance() 是拿实例的唯一通道，内部保证只造一次</li>
+        <li data-n="3"><b>构造器执行次数 = 1</b>：无论多少次调用、多少线程并发，身份号永远相同</li>
+      </ul>
+      <div style="font-size:12.5px;color:#64748b;line-height:1.7;border-top:1px dashed #e2e8f0;padding-top:10px">
+        饿汉式：简单但不管用不用都占内存｜懒汉式 DCL：第一次使用才创建，volatile 防止指令重排拿到"半成品"。
+        高级版见 advanced 包：静态内部类 Holder 与枚举单例，还能防反射/反序列化攻击。
+      </div>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 操作时对应行会高亮</div>
+      <pre class="code" id="codeEager">public class EagerSingleton {
+    private static final EagerSingleton INSTANCE = new EagerSingleton();
+
+    private EagerSingleton() {          // 私有构造：外界无法 new
+    }
+
+    public static EagerSingleton getInstance() {
+        return INSTANCE;                // 永远返回同一个
+    }
+}</pre>
+      <pre class="code" id="codeLazy" style="display:none">public class LazySingleton {
+    private static volatile LazySingleton instance;
+
+    private LazySingleton() {           // 私有构造：外界无法 new
+    }
+
+    public static LazySingleton getInstance() {
+        if (instance == null) {              // ① 一检：无锁快路径
+            synchronized (LazySingleton.class) {
+                if (instance == null) {      // ② 二检：防等锁线程重复创建
+                    instance = new LazySingleton();  // ③ 真正创建
+                }
+            }
+        }
+        return instance;               // ④ 永远返回同一个
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px;height:180px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const ID = '@' + Math.floor(1000 + Math.random()*9000);
+let mode='eager', created, calls=0, news=0;
+const $=id=>document.getElementById(id);
+
+function log(msg,cls){const d=document.createElement('div');d.className=cls||'';d.textContent=msg;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|static|final|class|interface|abstract|extends|implements|return|new|if|else|void|this|synchronized|volatile)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(preId,lines){document.querySelectorAll('#'+preId+' .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+
+function setMode(m){
+  mode=m;reset();
+  $('tabEager').classList.toggle('on',m==='eager');
+  $('tabLazy').classList.toggle('on',m==='lazy');
+  $('codeEager').style.display=m==='eager'?'':'none';
+  $('codeLazy').style.display=m==='lazy'?'':'none';
+  if(m==='eager'){created=true;news=1;$('cntNew').textContent=1;renderSlot();log('[类加载] EagerSingleton 加载完成，实例已在类加载期创建','info');}
+}
+function renderSlot(){
+  const v=$('slotVal');
+  if(created){v.className='inst';v.textContent='INSTANCE '+ID;}
+  else{v.className='null';v.textContent='null（还没创建，第一次调用才会造）';}
+}
+function addChip(){
+  const c=document.createElement('span');c.className='chip pop';c.textContent=ID+' ✓同一个';
+  $('chips').appendChild(c);
+}
+function getInstance(){
+  calls++;$('cntCall').textContent=calls;
+  if(mode==='eager'){
+    on('codeEager',[7]);addChip();
+    log('getInstance() -> '+ID+'（类加载时已创建，直接返回）','ok');
+  }else{
+    if(!created){
+      on('codeLazy',[6,8]);log('getInstance() ① 一检：instance == null，进入同步块','info');
+      setTimeout(()=>{on('codeLazy',[8,9]);log('　② 二检：仍是 null，准备创建','info');},450);
+      setTimeout(()=>{
+        news++;created=true;$('cntNew').textContent=news;on('codeLazy',[10]);log('　③ 构造器执行，instance 已创建','ok');
+      },900);
+      setTimeout(()=>{on('codeLazy',[13]);addChip();log('　④ 返回 '+ID+'（之后再调用全部走 ① 直返）','ok');},1350);
+    }else{
+      on('codeLazy',[6]);addChip();
+      log('getInstance() ① 一检：非 null，直接返回 '+ID+'（不抢锁）','ok');
+    }
+  }
+  $('cntChip').textContent=$('chips').children.length;
+}
+function concurrent(){
+  log('--- 10 个线程同时调用 getInstance() ---','info');
+  if(mode==='eager'){for(let i=0;i<10;i++)getInstance();return;}
+  if(!created){log('　线程们竞争：JVM 保证只有一个线程能执行构造','info');getInstance();
+    setTimeout(()=>{for(let i=0;i<9;i++){calls++;addChip();}$('cntCall').textContent=calls;$('cntChip').textContent=$('chips').children.length;on('codeLazy',[13]);log('　其余 9 个线程一检非 null，全部拿到同一个 '+ID,'ok');},1400);
+  }else{for(let i=0;i<10;i++)getInstance();}
+}
+function tryNew(){
+  const s=$('slot');s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake');
+  on(mode==='eager'?'codeEager':'codeLazy',[mode==='eager'?4:3]);
+  log('new Singleton()  ✗ 编译报错：Singleton() is not visible —— 私有构造器把后门焊死了','err');
+}
+function reset(){
+  created=(mode==='eager');calls=0;news=created?1:0;
+  $('cntCall').textContent=0;$('cntNew').textContent=news;$('cntChip').textContent=0;
+  $('chips').innerHTML='';renderSlot();
+  document.querySelectorAll('.ln').forEach(e=>e.classList.remove('on'));
+}
+document.querySelectorAll('pre.code').forEach(paint);
+reset();
+log('提示：先试左上角的「违规操作」感受私有构造器的作用','info');
+</script>
+</body>
+</html>

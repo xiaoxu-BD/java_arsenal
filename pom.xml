@@ -11,6 +11,7 @@
         <module>web_boot</module>
         <module>juc_demo</module>
         <module>design-mode</module>
+        <module>design-patterns</module>
         <module>common_services</module>
         <module>gateway_service</module>
         <module>business-service</module>

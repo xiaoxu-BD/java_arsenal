@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代理模式 · 交互课堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,'Segoe UI','Microsoft YaHei',sans-serif;background:#eef2f7;color:#1e293b}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:20px 26px}
+.back{color:#c7d2fe;font-size:13px;text-decoration:none}
+header h1{font-size:23px;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600;background:#fde68a;color:#b45309}
+.sub{margin-top:6px;font-size:13px;opacity:.85}
+main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:16px;padding:16px;max-width:1280px;margin:0 auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pt{font-size:12.5px;color:#64748b;letter-spacing:1px;margin-bottom:12px;font-weight:700}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:9px 16px;border:1px solid #c7d2fe;background:#4f46e5;color:#fff;font-weight:600;font-size:14px;transition:.15s}
+button:hover{background:#4338ca}
+button.ghost{background:#fff;color:#4f46e5}
+button.ghost:hover{background:#eef2ff}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+/* 时序舞台 */
+.seq{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:8px}
+.actor{border-radius:14px;padding:14px 10px;text-align:center;font-weight:700;font-size:14px;border:2px solid}
+.actor small{display:block;font-weight:400;font-size:11.5px;color:#64748b;margin-top:5px}
+.a-caller{border-color:#a5b4fc;background:#eef2ff;color:#3730a3}
+.a-agent{border-color:#f59e0b;background:#fffbeb;color:#92400e}
+.a-star{border-color:#34d399;background:#ecfdf5;color:#065f46}
+.lanes{position:relative;min-height:240px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:14px;padding:10px;overflow:hidden}
+.lane{position:absolute;top:10px;bottom:10px;width:2px;background:#e2e8f0}
+.msg{position:absolute;display:flex;align-items:center;gap:8px;left:20px;right:20px;height:34px;transition:.4s;opacity:0;transform:translateY(8px)}
+.msg.show{opacity:1;transform:translateY(0)}
+.msg .arrowline{flex:1;border-top:2.5px solid #64748b;position:relative}
+.msg .arrowline::after{content:'';position:absolute;right:-1px;top:-6px;border:6px solid transparent;border-left:9px solid #64748b}
+.msg .arrowline.back::after{left:-1px;right:auto;border-left:none;border-right:9px solid #64748b}
+.msg .t{font:12px Consolas,monospace;background:#fff;border:1px solid #cbd5e1;border-radius:8px;padding:3px 10px;color:#334155;white-space:nowrap}
+.msg.block .arrowline{border-top-style:dashed;border-color:#ef4444}
+.msg.block .arrowline::after{border-left-color:#ef4444}
+.msg.ok .arrowline{border-color:#059669}
+.msg.ok .arrowline::after{border-left-color:#059669}
+.hintbar{margin-top:12px;font-size:12.5px;color:#64748b;line-height:1.7;background:#f8fafc;border-radius:10px;padding:10px 14px;border:1px solid #e2e8f0}
+.rules li{margin:0 0 10px 0;font-size:13.5px;line-height:1.65;padding-left:26px;position:relative;list-style:none}
+.rules li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.rules b{color:#4338ca}
+pre.code{background:#0f172a;color:#cbd5e1;font:12px/1.7 Consolas,monospace;border-radius:10px;padding:12px;overflow:auto;max-height:330px}
+.ln{display:block;padding:0 10px;border-left:3px solid transparent;white-space:pre}
+.ln.on{background:rgba(250,204,21,.15);border-left-color:#facc15}
+.kw{color:#93c5fd;font-weight:600}.st{color:#fca5a5}.cm{color:#64748b;font-style:italic}
+.console{background:#0f172a;border-radius:10px;padding:12px;height:170px;overflow:auto;font:12px/1.8 Consolas,monospace;color:#94a3b8}
+.console .ok{color:#4ade80}.console .err{color:#f87171}.console .info{color:#e2e8f0}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../index.html">← 返回目录</a>
+  <h1>代理模式 Proxy <span class="tag">结构型</span></h1>
+  <p class="sub">一句话核心：<b>控制对目标的访问</b> —— 代理和真实对象同接口，能挡的挡（前置），必须转的转（转发），收尾自己扛（后置）</p>
+</header>
+<main>
+  <section>
+    <div class="panel">
+      <div class="pt">交互舞台 · 你是活动方，先跟谁打交道？</div>
+      <div class="seq">
+        <div class="actor a-caller">活动方<small>只拿到 Star 接口</small></div>
+        <div class="actor a-agent" id="agentBox">经纪人（代理）<small>前置检查 / 挡琐事 / 后置收尾</small></div>
+        <div class="actor a-star" id="starBox">明星本人<small>只干专业活：sing()</small></div>
+      </div>
+      <div class="lanes" id="lanes">
+        <div class="lane" style="left:16.5%"></div>
+        <div class="lane" style="left:50%"></div>
+        <div class="lane" style="left:83.5%"></div>
+        <span id="emptyHint" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px">消息会流动到这里（先选下面一个操作）</span>
+      </div>
+      <div class="btnrow" style="margin-top:12px">
+        <button onclick="call('negotiate')">negotiate() 面谈合作</button>
+        <button class="ghost" onclick="call('sing')">sing() 请她登台唱歌</button>
+        <button class="ghost" onclick="clearLanes()">清空消息</button>
+      </div>
+      <div class="hintbar" id="hintbar">活动方手里是 <b>Star 接口</b>，根本分不清（也不需要分清）对面是经纪人还是本人 —— 这就是"同接口"的意义。</div>
+    </div>
+  </section>
+  <aside style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel rules">
+      <div class="pt">核心规则</div>
+      <ul>
+        <li data-n="1"><b>同接口</b>：代理与真实对象实现同一接口，调用方无感切换</li>
+        <li data-n="2"><b>三段式</b>：前置（校验/挡请求）→ 转发（专业活给本人）→ 后置（记录/收尾）</li>
+        <li data-n="3"><b>意图区分</b>：结构长得像装饰器，但代理是"控制访问"，装饰器是"增强功能"；Spring AOP、MyBatis Mapper 就是代理（见 advanced/proxy 的 JDK 动态代理）</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="pt">代码联动 · 消息流动时高亮对应行</div>
+      <pre class="code" id="code">public class StarAgent implements Star {     // 经纪人：和明星同接口
+
+    private final Star star;                 // 持有真实对象
+
+    public StarAgent(Star star) { this.star = star; }
+
+    public void negotiate() {                // 琐事：代理直接挡下
+        System.out.println("经纪人：聊聊档期和报价");
+        // 不调用 star，本人无感
+    }
+
+    public void sing() {                     // 专业活：三段式
+        System.out.println("经纪人：资质检查通过，放行");   // ① 前置
+        star.sing();                         // ② 转发给本人
+        System.out.println("经纪人：结账收尾");             // ③ 后置
+    }
+}</pre>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <div class="pt" style="padding:12px 16px 0">运行日志</div>
+      <div class="console" id="log" style="border-radius:0 0 14px 14px"></div>
+    </div>
+  </aside>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function log(m,c){const d=document.createElement('div');d.className=c||'';d.textContent=m;$('log').appendChild(d);$('log').scrollTop=1e9;}
+function paint(pre){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  pre.innerHTML=pre.textContent.split('\n').map(line=>{
+    let cmt=null,ci=line.indexOf('//');
+    if(ci>=0){cmt=line.slice(ci);line=line.slice(0,ci);}
+    const holds=[];let l=esc(line).replace(/"[^"]*"/g,m=>{holds.push(m);return '\u0001'+(holds.length-1)+'\u0001';});
+    l=l.replace(/\b(public|private|protected|class|interface|extends|implements|return|new|this|final|void)\b/g,'<span class="kw">$1</span>');
+    l=l.replace(/\u0001(\d+)\u0001/g,(m,i)=>'<span class="st">'+holds[i]+'</span>');
+    if(cmt)l+='<span class="cm">'+esc(cmt)+'</span>';
+    return '<span class="ln">'+(l||' ')+'</span>';
+  }).join('');
+}
+function on(lines){document.querySelectorAll('#code .ln').forEach((el,i)=>el.classList.toggle('on',lines.includes(i)));}
+function addMsg(text,kind){
+  $('emptyHint').style.display='none';
+  const lanes=$('lanes');
+  const n=lanes.querySelectorAll('.msg').length;
+  const m=document.createElement('div');
+  m.className='msg '+(kind||'');
+  const reverse=kind==='back';
+  m.innerHTML='<span class="t">'+text+'</span><div class="arrowline'+(reverse?' back':'')+'"></div>'+(reverse?'<span class="t"></span>':'');
+  if(reverse){m.style.flexDirection='row';m.innerHTML='<span class="t"></span><div class="arrowline back"></div><span class="t">'+text+'</span>';}
+  m.style.top=(14+n*40)+'px';
+  lanes.appendChild(m);
+  requestAnimationFrame(()=>m.classList.add('show'));
+  if(n>4){const first=lanes.querySelector('.msg');first.style.opacity=0;setTimeout(()=>first.remove(),350);}
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function call(which){
+  if(which==='negotiate'){
+    on([7,8]);
+    addMsg('negotiate()','block');
+    log('活动方 -> 代理.negotiate()','info');
+    await sleep(500);
+    $('agentBox').style.background='#fef3c7';
+    log('经纪人：档期报价我来谈（明星本人未被骚扰 ✓）','ok');
+    $('hintbar').innerHTML='<b>挡下请求</b>：谈判是琐事，代理自己处理，<b>没有转发给本人</b> —— 控制访问的精髓。活动方还以为在跟"她"谈。';
+  }else{
+    log('活动方 -> 代理.sing()','info');
+    on([12]);addMsg('sing()');
+    await sleep(500);
+    log('　① 前置：检查商演资质 → 通过，放行','ok');
+    on([13]);addMsg('star.sing() 转发','ok');
+    await sleep(600);
+    $('starBox').style.background='#d1fae5';
+    log('　② 明星本人：登台唱歌（唯一被转发的专业活）','ok');
+    await sleep(500);
+    on([14]);addMsg('结账收尾','back');
+    log('　③ 后置：经纪人结账收尾','ok');
+    $('hintbar').innerHTML='<b>三段式</b>：前置校验 → 转发本人 → 后置收尾。日志与右侧代码行一一对应。';
+  }
+}
+function clearLanes(){
+  document.querySelectorAll('.msg').forEach(m=>m.remove());
+  $('emptyHint').style.display='flex';
+  $('agentBox').style.background='#fffbeb';$('starBox').style.background='#ecfdf5';
+  on([]);
+}
+paint($('code'));
+log('先点 negotiate() 看"挡"，再点 sing() 看"转"','info');
+</script>
+</body>
+</html>
