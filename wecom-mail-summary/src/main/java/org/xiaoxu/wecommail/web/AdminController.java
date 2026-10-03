@@ -1,6 +1,7 @@
 package org.xiaoxu.wecommail.web;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xiaoxu.wecommail.common.ApiResponse;
 import org.xiaoxu.wecommail.common.BusinessException;
 import org.xiaoxu.wecommail.common.EmailType;
+import org.xiaoxu.wecommail.common.PageResponse;
 import org.xiaoxu.wecommail.common.SendStatus;
 import org.xiaoxu.wecommail.entity.CargoDeclareInfo;
 import org.xiaoxu.wecommail.entity.ClientEmail;
@@ -249,29 +251,50 @@ public class AdminController {
 
     // ==================== 发送记录 ====================
 
-    /** 发送记录列表(弹窗) */
+    /** 发送记录列表(弹窗,旧接口,前端在用) */
     @GetMapping("/send-records")
     public ApiResponse<List<Map<String, Object>>> listRecords(@RequestParam(defaultValue = "20") int limit) {
         List<MailSendRecord> records = recordMapper.findLatest(Math.min(Math.max(limit, 1), 100));
         List<Map<String, Object>> result = new ArrayList<>();
         for (MailSendRecord r : records) {
-            Map<String, Object> item = new LinkedHashMap<>();
-            item.put("id", r.getId());
-            item.put("sendDate", r.getSendDate().toString());
-            item.put("roundNo", r.getRoundNo());
-            item.put("sendTime", r.getSendTime() == null ? null : r.getSendTime().toString());
-            item.put("createTime", r.getCreateTime().toString());
-            item.put("roomId", r.getRoomId());
-            item.put("groupName", groupNameOf(r));
-            item.put("sendStatus", r.getSendStatus().name());
-            item.put("messageCount", r.getMessageCount());
-            item.put("toAddresses", r.getToAddresses());
-            item.put("ccAddresses", r.getCcAddresses() == null ? "" : r.getCcAddresses());
-            item.put("errorMessage", r.getErrorMessage() == null ? "" : r.getErrorMessage());
-            item.put("retryCount", r.getRetryCount());
-            result.add(item);
+            result.add(recordItem(r));
         }
         return ApiResponse.ok(result);
+    }
+
+    /**
+     * 发送记录分页查询 —— PageResponse.of 用法案例:
+     * GET /api/send-records/page?page=1&pageSize=10
+     * 返回 { success, dataList, total, totalPage, currentPage, pageSize }
+     */
+    @GetMapping("/send-records/page")
+    public PageResponse<Map<String, Object>> listRecordsPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        Page<MailSendRecord> pager = recordMapper.selectPage(new Page<>(page, pageSize),
+                new LambdaQueryWrapper<MailSendRecord>()
+                        .orderByDesc(MailSendRecord::getCreateTime)
+                        .orderByDesc(MailSendRecord::getId));
+        List<Map<String, Object>> items = pager.getRecords().stream().map(this::recordItem).toList();
+        return PageResponse.of(items, (int) pager.getTotal(), pageSize, page);
+    }
+
+    private Map<String, Object> recordItem(MailSendRecord r) {
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("id", r.getId());
+        item.put("sendDate", r.getSendDate().toString());
+        item.put("roundNo", r.getRoundNo());
+        item.put("sendTime", r.getSendTime() == null ? null : r.getSendTime().toString());
+        item.put("createTime", r.getCreateTime().toString());
+        item.put("roomId", r.getRoomId());
+        item.put("groupName", groupNameOf(r));
+        item.put("sendStatus", r.getSendStatus().name());
+        item.put("messageCount", r.getMessageCount());
+        item.put("toAddresses", r.getToAddresses());
+        item.put("ccAddresses", r.getCcAddresses() == null ? "" : r.getCcAddresses());
+        item.put("errorMessage", r.getErrorMessage() == null ? "" : r.getErrorMessage());
+        item.put("retryCount", r.getRetryCount());
+        return item;
     }
 
     /** 发送详情(弹窗):记录字段 + 本封邮件包含的微信群消息 */
