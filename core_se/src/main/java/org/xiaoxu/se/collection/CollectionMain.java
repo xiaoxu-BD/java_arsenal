@@ -16,13 +16,15 @@ public class CollectionMain {
 //        copyOnWriter();
 
 
-        ArrayList<String> strings = new ArrayList<>();
+        List<String> strings = new ArrayList<>();
         strings.add("111100");
         strings.add("111111");
         strings.add("11113");
         strings.add("11114");
         strings.add("11112");
         strings.removeIf( e -> e.equals("111100"));
+
+        //Predicate 返回 true → 留下；返回 false → 过滤掉。
         List<String> list = strings.stream().filter(Objects::nonNull).filter(e ->  !e.equals("11114")).toList();
         list.forEach(System.out::println);
     }

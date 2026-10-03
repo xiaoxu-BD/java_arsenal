@@ -101,13 +101,19 @@ public class HashMapStudy {
      * 高位不同但低位相同的 key 会大量冲突
      *
      * 解决方案：高 16 位 XOR 低 16 位 → 高位特征混入低位 → 减少冲突
+     * ^ 规则： 相同为0 不同为1
      *
-     *   h =    1111 1111 0000 0000 1111 0000 1010 1010
+     *   h =    1111 1111 0000 0000      1111 0000 1010 1010
      *   h>>>16 =                        1111 1111 0000 0000
      *   XOR    =    1111 1111 0000 0000 0000 1111 1010 1010
      *                                        ^^^^
      *                                        ^^^^^^^^
      *                              低位现在混合了高位特征
+     *
+     *
+     *                              10101011001101101100000001101101
+     *                                              1010101100110110
+     *                              10101011001101100110101101011011
      */
     static void demonstrateHash() {
         System.out.println("===== Q3: hash 方法解析 =====\n");
@@ -440,7 +446,7 @@ public class HashMapStudy {
         System.out.println("===== Q10: 多线程问题演示 =====\n");
 
         // 演示并发 put 数据丢失
-        HashMap<Integer, Integer> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         int threadCount = 10;
         int perThread = 1000;
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -620,14 +626,14 @@ public class HashMapStudy {
         System.out.println("║       HashMap 12 个核心问题深度解析       ║");
         System.out.println("╚══════════════════════════════════════════╝\n");
 
-//        demonstratePutProcess();       // Q2
-//        System.out.println();
+/*        demonstratePutProcess();       // Q2
+        System.out.println();*/
 
 //        demonstrateHash();             // Q3
 //        System.out.println();
 
-        demonstrateBitwiseVsMod();     // Q4
-        System.out.println();
+/*        demonstrateBitwiseVsMod();     // Q4
+        System.out.println();*/
 //
 //        demonstratePowerOfTwo();       // Q5
 //        System.out.println();
@@ -644,8 +650,8 @@ public class HashMapStudy {
 //        demonstrateRedBlackVsAVL();    // Q9
 //        System.out.println();
 //
-//        demonstrateMultiThreadProblem();  // Q10
-//        System.out.println();
+        demonstrateMultiThreadProblem();  // Q10
+        System.out.println();
 //
 //        demonstrateJDK8StillUnsafe();  // Q11
 //        System.out.println();
