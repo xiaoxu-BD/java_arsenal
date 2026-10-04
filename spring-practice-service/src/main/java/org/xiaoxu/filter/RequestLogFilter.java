@@ -15,8 +15,8 @@ import java.util.UUID;
  * @description: 第一层 - Filter（Servlet容器层）
  */
 @Slf4j
-@Component
-@Order(1)
+//@Component
+//@Order(1)
 public class RequestLogFilter implements Filter {
 
     private static final String TRACE_ID = "traceId";

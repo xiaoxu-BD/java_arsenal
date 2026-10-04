@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  ============================================================================
+  【示例】MyBatis XML Mapper 最常用套路大全
+  ============================================================================
+  1. namespace 必须等于 Mapper 接口的全限定名,MyBatis 靠它把 XML 里的
+     <select id="xxx"> 和接口方法绑定起来。id 不匹配 / namespace 写错
+     -> 运行时报经典错误: Invalid bound statement (not found)
+  2. 本项目 mapper-locations 配置在 application.yml:
+     mybatis-plus.mapper-locations = classpath*:mapper/*.xml
+     (MyBatis-Plus 默认就是这个路径,显式写出是为了直观)
+  ============================================================================
+-->
+<mapper namespace="org.xiaoxu.mapper.PracticeProductMapper">
+
+    <!--
+      <resultMap>: 手写"列名 -> 属性名"的映射规则。
+      为什么需要它:数据库列是下划线(product_name),Java 属性是驼峰(productName)。
+      虽然 map-underscore-to-camel-case=true 能自动转,但以下场景仍必须手写 resultMap:
+        a) 两表 join 后列名冲突(都有 id/create_time),要用列别名区分;
+        b) association / collection 级联映射(见订单练习);
+        c) 列名和属性名差异太大,自动规则转不过来。
+      <id> 标签: 标记主键列。查询结果按它来判断"是不是同一行",
+      一对多 join 去重就靠它,不写会丢数据或重复数据。
+    -->
+    <resultMap id="BaseResultMap" type="org.xiaoxu.pojo.PracticeProduct">
+        <id     column="id"           property="id"/>
+        <result column="product_name" property="productName"/>
+        <result column="category"     property="category"/>
+        <result column="price"        property="price"/>
+        <result column="stock"        property="stock"/>
+        <result column="status"       property="status"/>
+        <result column="create_time"  property="createTime"/>
+        <result column="update_time"  property="updateTime"/>
+    </resultMap>
+
+    <!--
+      <sql> + <include>: 把公共 SQL 抽成片段复用,改表时只改一处。
+      几乎所有正式项目的 mapper 都会这么管理列清单,
+      而不是到处写 SELECT *(后者加一列全项目炸,而且无法走覆盖索引)。
+    -->
+    <sql id="Base_Column_List">
+        id, product_name, category, price, stock, status, create_time, update_time
+    </sql>
+
+    <!--
+      ==================================================================
+      套路一: <where> + <if> 动态多条件查询(出场率 No.1)
+      ==================================================================
+      <if test="..."> : 条件成立才把 SQL 片段拼进来。
+        test 里写的是 OGNL 表达式,判断的是"参数有没有传",不是 SQL 语法。
+        注意判断字符串用 ==,判断空串用 == ''。
+      <where> : MyBatis 的智能 WHERE 标签:
+        - 所有 <if> 都不成立时,整个 WHERE 不出现(而不是 WHERE 后面空着报语法错误);
+        - 第一个拼进来的条件若带 AND/OR 前缀,会被自动去掉(防 WHERE AND xxx 语法错误)。
+      #{} 与 ${} 的区别(面试高频):
+        #{} -> 预编译占位符,变成 JDBC 的 ?,防 SQL 注入,99% 场景用它;
+        ${} -> 字符串原样拼接,有注入风险,仅用于表名/列名/排序字段等
+               无法参数化的位置,且必须在代码里白名单校验。
+    -->
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM practice_product
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="minPrice != null">
+                AND price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND price &lt;= #{maxPrice}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <!--
+      ==================================================================
+      套路二: <foreach> 实现 IN 查询
+      ==================================================================
+      collection: 集合参数名,对应接口的 @Param("ids");
+                  不加 @Param 时单个 List 参数默认名是 list/array(坑,建议永远加 @Param)
+      item:       循环变量名,自己起,#{id} 取的就是它
+      open/close: 整个循环体外面裹一层 ( )
+      separator:  元素之间的分隔符,IN 查询用逗号
+      注意: collection 为空集合时,foreach 会拼成 IN () -> SQL 语法错误!
+      所以业务代码里要在进 Mapper 前判空(见 Controller 里的防御)。
+    -->
+    <select id="selectByIds" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM practice_product
+        WHERE id IN (
+        <foreach collection="ids" item="id"  separator=",">
+            #{id}
+        </foreach>
+        )
+<!--        <foreach collection="ids" item="id" open="(" separator="," close=")">        -->
+
+    </select>
+
+    <!--
+      ==================================================================
+      套路三: 插入 + 主键回填
+      ==================================================================
+      useGeneratedKeys="true" : 打开 JDBC 的 getGeneratedKeys
+      keyProperty="id"        : 把数据库生成的自增 id 回填到参数对象的 id 属性
+      插入前 product.getId() 是 null,插入后直接就有值了 —— 插完订单马上插明细就靠它
+    -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO practice_product (product_name, category, price, stock, status)
+        VALUES (#{productName}, #{category}, #{price}, #{stock}, #{status})
+    </insert>
+
+    <!--
+      ==================================================================
+      套路四: <foreach> 批量插入
+      ==================================================================
+      生成形如:
+        INSERT INTO ... VALUES (?,?,?,?),(?,?,?,?),(?,?,?,?)
+      一条 SQL 干完,比循环单条 insert 少 N-1 次网络往返。
+      注意: 单条 SQL 别拼太大(MySQL 默认 max_allowed_packet 4M),
+      超大集合要分批(如每批 500 条)。
+    -->
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO practice_product (product_name, category, price, stock, status)
+        VALUES
+        <foreach collection="list" item="p" separator=",">
+            (#{p.productName}, #{p.category}, #{p.price}, #{p.stock}, #{p.status})
+        </foreach>
+    </insert>
+
+    <!--
+      ==================================================================
+      套路五: <set> + <if> 选择性更新(动态更新)
+      ==================================================================
+      只 SET 对象里非 null 的字段,防止把没传的字段覆盖成 NULL。
+      <set> 标签的作用:
+        - 一个 <if> 都不成立时不生成 SET(全空更新会被 MySQL 拒绝,直接报错拦住你,是好事);
+        - 自动掐掉行尾多余的逗号。
+      WHERE id = #{id} 是绝对不能动态省的 —— 没有 WHERE 的 UPDATE 是全表更新事故。
+      (本项目 datasource-service 里配了 MP 的 BlockAttackInnerInterceptor 防全表更新,双保险)
+    -->
+    <update id="updateSelective" parameterType="org.xiaoxu.pojo.PracticeProduct">
+        UPDATE practice_product
+        <set>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--
+      ==================================================================
+      套路六: LIMIT 分页
+      ==================================================================
+      第几页是业务概念,偏移量是 SQL 概念,换算公式: offset = (pageNo-1)*size
+      放在 Controller/Service 换算,Mapper 保持纯粹只认 offset/size。
+      (深分页优化 OFFSET 很慢 -> 先查 id 再回表,属于进阶话题,先掌握基本式)
+    -->
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM practice_product
+        ORDER BY id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+</mapper>

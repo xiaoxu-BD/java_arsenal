@@ -17,10 +17,14 @@ spring:
       password: NFTurbo666
 
 
-#mybatis-plus:
-#  type-handlers-package: org.xiaoxu.handler
-#  configuration:
-#    map-underscore-to-camel-case: true
+# 手写 XML mapper 的两个关键配置:
+#   mapper-locations        -> XML 文件放哪,MyBatis 去哪加载(这 也是 Invalid bound statement 的排查点之一)
+#   map-underscore-to-camel-case -> 查询结果列名下划线自动转驼峰(resultType 直接接就靠它)
+mybatis-plus:
+  type-handlers-package: org.xiaoxu.handler
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 
 xxl:
   job:

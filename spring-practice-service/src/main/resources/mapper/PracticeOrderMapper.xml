@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  ============================================================================
+  【练习区】PracticeOrderMapper —— 由你来完成
+  ============================================================================
+  规则:
+  1. 每个 <select>/<update> 的 id 必须和接口方法名一致,否则 BindingException;
+  2. 每写完一个,启动服务(或重启 devtools)调 Controller 对应接口验证;
+  3. 需求详情见接口 PracticeOrderMapper.java 每个方法的注释;
+  4. 卡住了就翻同目录 PracticeProductMapper.xml,套路都是现成的。
+
+  建议顺序: 6(最简单,10行内) -> 5 -> 4 -> 1 -> 2 -> 3
+  ============================================================================
+-->
+<mapper namespace="org.xiaoxu.mapper.PracticeOrderMapper">
+
+    <!--
+      订单基础 resultMap,已给出,直接用。
+      练习2/3 需要另建新的 resultMap(含 association/collection),
+      命名建议: OrderWithUserResultMap / OrderDetailResultMap
+    -->
+    <resultMap id="BaseResultMap" type="org.xiaoxu.pojo.PracticeOrder">
+        <id     column="id"           property="id"/>
+        <result column="order_no"     property="orderNo"/>
+        <result column="user_id"      property="userId"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pay_time"     property="payTime"/>
+        <result column="remark"       property="remark"/>
+        <result column="create_time"  property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_no, user_id, total_amount, order_status, pay_time, remark, create_time
+    </sql>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+
+        select <include refid="Base_Column_List"/>
+        from practical_review.practice_order
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                and order_no = #{orderNo}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="statusList != null and statusList.size != 0">
+                and order_status in (
+                <foreach collection="statusList" item="status" separator=",">
+                    #{status}
+                </foreach>
+                )
+            </if>
+            <if test ="beginTime != null">
+                and create_time &gt;=#{beginTime}
+            </if>
+            <if test="endTime != null">
+                and pay_time &lt;= #{endTime}
+            </if>
+        </where>
+        order by id desc
+        limit #{offset},#{size}
+    </select>
+
+    <select id="selectOrderWithUser" resultType="org.xiaoxu.pojo.vo.OrderDetailVO">
+
+    </select>
+
+    <!-- TODO 练习1: selectByCondition   <where>+<if>+<foreach-IN>+时间范围+LIMIT -->
+    <!-- TODO 练习2: selectOrderWithUser  JOIN practice_user + <association> -->
+    <!-- TODO 练习3: selectOrderDetail    三表 JOIN + <association> + <collection> -->
+    <!-- TODO 练习4: statUserOrders       GROUP BY + COUNT/SUM,映射到 UserOrderStatVO -->
+    <!-- TODO 练习5: batchCancel          UPDATE ... WHERE id IN <foreach> AND order_status = 0 -->
+    <!-- TODO 练习6: deductStock          UPDATE ... WHERE stock >= #{quantity} -->
+
+</mapper>
