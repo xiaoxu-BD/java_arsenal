@@ -4,3 +4,8 @@ spring:
 
 server:
   port: 18081
+
+
+
+game:
+  name: LoL

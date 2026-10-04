@@ -1,5 +1,6 @@
 package org.xiaoxu.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class WebDemoController {
 
+    @Value("${game.name}")
+    private String gameName;
+
 
     @GetMapping("/run/{name}")
     public String remoteDebug(@PathVariable(value = "name") String name){
-        return "hello " + name;
+        return "hello " + name + gameName;
     }
 }
