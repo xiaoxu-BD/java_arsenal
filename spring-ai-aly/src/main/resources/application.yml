@@ -1,6 +1,35 @@
 # application.yml
 
-
-
 server:
-  port: 18080
+  port: 8000
+
+spring:
+  ai:
+    dashscope:
+      # 与 StreamController 中手写 HTTP 调用使用的是同一个 key，供 starter 自动装配 ChatModel
+      api-key: sk-6f85434255b44f4bad26ee2700d6b47f
+      chat:
+        options:
+          # 实测该账号下调 deepseek-r1 / deepseek-v3 均返回 "Model not exist"，
+          # qwen-plus 在原生 API（starter 走的路径）与兼容模式下都可用
+          model: qwen-plus
+
+#spring:
+#  autoconfigure:
+#    exclude:   # 关键：整体排除 DashScope 全家桶自动装配（chat/agent/embedding/...），容器里只留 openAiChatModel
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeChatAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeAgentAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeEmbeddingAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeImageAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeRerankAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeAudioSpeechAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeAudioTranscriptionAutoConfiguration
+#      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeVideoAutoConfiguration
+#  ai:
+#    openai:
+#      base-url: https://api.deepseek.com     # 客户端自动拼 /v1/chat/completions
+#      # 两种填法二选一：① 直接把 DeepSeek 密钥粘到冒号后面；② 设置环境变量 DEEPSEEK_API_KEY
+#      api-key:
+#      chat:
+#        options:
+#          model: deepseek-chat               # 或 deepseek-reasoner

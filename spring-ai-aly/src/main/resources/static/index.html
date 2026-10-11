@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 页面与后端返回的大模型内容都包含中文，必须声明 UTF-8 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流式 Markdown 渲染</title>
+    <!-- marked：Markdown -> HTML；DOMPurify：HTML 消毒，防止模型输出中的 script 造成 XSS -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: #f5f6f8;
+            color: #24292f;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0 0 20px;
+        }
+
+        /* 输入区：文本框 + 发送按钮 */
+        .input-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .input-bar input {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .input-bar input:focus {
+            border-color: #4096ff;
+        }
+
+        .input-bar button {
+            padding: 10px 22px;
+            font-size: 15px;
+            color: #fff;
+            background: #1677ff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .input-bar button:hover {
+            background: #4096ff;
+        }
+
+        .input-bar button:disabled {
+            background: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        /* 状态提示行：等待 / 接收中 / 完成 / 出错 */
+        .status {
+            min-height: 20px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #8a8f98;
+        }
+
+        .status.error {
+            color: #d93026;
+        }
+
+        /* Markdown 输出区：固定高度 + 垂直滚动，方便做自动滚到底部 */
+        #output {
+            height: 60vh;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            line-height: 1.7;
+        }
+
+        /* 下方样式让渲染出的 Markdown 更易读 */
+        #output pre {
+            padding: 12px;
+            background: #f6f8fa;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        #output code {
+            font-family: Consolas, Menlo, monospace;
+            font-size: 14px;
+        }
+
+        #output table {
+            border-collapse: collapse;
+        }
+
+        #output th,
+        #output td {
+            padding: 6px 12px;
+            border: 1px solid #d0d7de;
+        }
+
+        #output blockquote {
+            margin-left: 0;
+            padding-left: 14px;
+            border-left: 4px solid #d0d7de;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ChatClient</h1>
+
+    <!-- 输入区：文本框 + 发送按钮 -->
+    <div class="input-bar">
+        <input id="message" type="text" placeholder="例如：用三句话介绍 Java，带一个代码示例" autocomplete="off">
+        <button id="sendBtn">发送</button>
+    </div>
+
+    <!-- 状态提示 -->
+    <div id="status" class="status"></div>
+
+    <!-- Markdown 渲染输出区 -->
+    <div id="output"></div>
+</div>
+
+<script>
+    var messageInput = document.getElementById('message');
+    var sendBtn = document.getElementById('sendBtn');
+    var output = document.getElementById('output');
+    var statusEl = document.getElementById('status');
+
+    /**
+     * 把"当前完整缓冲区"整体渲染到输出区。
+     * 必须整体重渲染：流式过程中 Markdown 天然不完整（未闭合的 ** 或代码围栏），
+     * 只渲染新增片段会把被拆开的语法渲染错，整体重跑 marked 才能正确跟随补全。
+     * 渲染结果先经 DOMPurify 消毒再写入，防止模型输出里的 script 造成 XSS。
+     */
+    function renderAll(buf) {
+        try {
+            var rawHtml = marked.parse(buf);              // Markdown -> HTML
+            var safeHtml = DOMPurify.sanitize(rawHtml);   // 消毒，剔除 script 等危险内容
+            output.innerHTML = safeHtml;
+        } catch (err) {
+            // 个别畸形片段可能让 marked 抛异常，忽略这一帧，等待下一帧整体重渲染
+        }
+        // 自动滚动到底部（输出区固定高度、overflow-y: auto，scrollTop 可写）
+        output.scrollTop = output.scrollHeight;
+    }
+
+    /** 发送问题并订阅 SSE 流 */
+    function send() {
+        var message = messageInput.value.trim();
+        if (!message) {
+            statusEl.textContent = '请输入内容后再发送';
+            statusEl.className = 'status error';
+            return;
+        }
+
+        output.innerHTML = '';                 // 新一轮提问，清空上一轮渲染结果
+        statusEl.textContent = '连接中…';
+        statusEl.className = 'status';
+        sendBtn.disabled = true;
+
+        var buf = '';                          // 内存缓冲区：累积大模型吐出的 Markdown 原文
+        var finished = false;                  // 是否已正常结束（收到 [DONE]）
+
+        // EventSource 只支持 GET，参数必须拼在 URL 上并做 encodeURIComponent 编码
+        var url = '/stream/client?message=' + encodeURIComponent(message);
+        var es = new EventSource(url);
+
+        // 统一的收尾逻辑：关闭连接、恢复按钮
+        function finish(text, isError) {
+            es.close();
+            finished = true;
+            sendBtn.disabled = false;
+            statusEl.textContent = text;
+            statusEl.className = isError ? 'status error' : 'status';
+        }
+
+        // 每收到一条 SSE 消息（e.data 为该块的 percent 编码文本）
+        es.onmessage = function (e) {
+            // 哨兵事件：后端流结束的标志，主动关闭连接，
+            // 避免服务端断开后 EventSource 自动重连、把问题重复发送一遍
+            if (e.data === '[DONE]') {
+                finish('已完成', false);
+                return;
+            }
+            // 后端对每块做了 percent 编码：SSE 规范会剥掉 data 值开头的一个空格，
+            // 不编码时以空格开头的 token（如 " static"）会丢空格，代码粘成 publicclass
+            buf += decodeURIComponent(e.data); // 解码后追加到缓冲区
+            statusEl.textContent = '接收中…';
+            renderAll(buf);                    // 用整个缓冲区整体重渲染
+        };
+
+        // 出错（网络中断、后端异常等）同样关闭连接，防止自动重连
+        es.onerror = function () {
+            if (!finished) {
+                finish('连接已中断', true);
+            }
+        };
+    }
+
+    sendBtn.addEventListener('click', send);
+
+    // 回车发送（isComposing 时是中文输入法选词，不触发）
+    messageInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.isComposing) {
+            send();
+        }
+    });
+</script>
+</body>
+</html>
