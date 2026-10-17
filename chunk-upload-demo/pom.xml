@@ -29,9 +29,43 @@
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.17.4</version>
         </dependency>
+        <!-- 纯 Java 本地 OCR（PaddleOCR PP-OCRv6 ONNX 模型 + 结构化证件解析） -->
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-ppocr-spring-boot-starter</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
+        <!-- 父 pom 对 resources 全量开启 filtering（yml 占位符替换），会把 onnx/png 等二进制当文本改写损坏，
+             这里覆盖：文本资源继续 filtering，二进制目录（模型、示例图片）原样拷贝 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*/**</include>
+                </includes>
+                <excludes>
+                    <exclude>models/**</exclude>
+                    <exclude>image/**</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>models/**</include>
+                    <include>image/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

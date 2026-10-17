@@ -51,3 +51,5 @@ logs/
 node_modules
 .idea/
 dist/
+### mica-ppocr OCR models (31MB binaries, re-download from https://gitee.com/dreamlu/mica-ppocr if missing) ###
+chunk-upload-demo/src/main/resources/models/
