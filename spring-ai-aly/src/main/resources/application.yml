@@ -7,13 +7,30 @@ spring:
   ai:
     dashscope:
       # 与 StreamController 中手写 HTTP 调用使用的是同一个 key，供 starter 自动装配 ChatModel
-      api-key: sk-6f85434255b44f4bad26ee2700d6b47f
+      api-key: sk-ws-H.PEXMDXD.lDSd.MEUCIQCVJNOWtOIzU6z9AwoJWwUL6_jcxGYxpdLVUfP-6M8eTgIgBPmSyYhLqkRC5EpzS24pbx2AJpo4UDSiB3HtakAwGk8
       chat:
         options:
           # 实测该账号下调 deepseek-r1 / deepseek-v3 均返回 "Model not exist"，
           # qwen-plus 在原生 API（starter 走的路径）与兼容模式下都可用
           model: qwen-plus
 
+
+
+#   JdbcChatMemoryRepositoryProperties 的自动配置类
+    chat:
+      memory:
+        repository:
+          jdbc:
+            platform: mysql
+            initialize-schema: always
+
+
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.200.128:3306/llm_spring?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: NFTurbo666
 #spring:
 #  autoconfigure:
 #    exclude:   # 关键：整体排除 DashScope 全家桶自动装配（chat/agent/embedding/...），容器里只留 openAiChatModel
