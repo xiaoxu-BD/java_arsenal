@@ -28,6 +28,7 @@
         <module>stream-three-mq</module>
         <module>chunk-upload-demo</module>
         <module>excel-demo</module>
+        <module>spring-ai-rag</module>
     </modules>
 
 
