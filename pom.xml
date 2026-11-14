@@ -30,6 +30,7 @@
         <module>excel-demo</module>
         <module>spring-ai-rag</module>
         <module>rocketmq-native</module>
+        <module>rocketmq-spring</module>
     </modules>
 
 

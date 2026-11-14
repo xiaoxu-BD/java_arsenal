@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.xiaoxu</groupId>
+        <artifactId>java_arsenal</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>rocketmq-native</artifactId>
+    <packaging>jar</packaging>
+    <name>rocketmq-native</name>
+    <description>RocketMQ 原生客户端学习工程：不用 Spring 注解，纯 rocketmq-client API 练习</description>
+
+    <properties>
+        <!-- 与 three-major-mq-service 中 rocketmq-spring-boot-starter 2.3.5 内部依赖保持同代 -->
+        <rocketmq-client.version>5.1.4</rocketmq-client.version>
+        <!-- 父 pom 属性名笔误(project.sourceEncoding)，补标准属性名保证 Windows 下按 UTF-8 编译 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <!--
+            RocketMQ 经典客户端（4.x 时代 API 风格，5.x 服务端完全兼容）。
+            核心类：DefaultMQProducer（生产者）、DefaultMQPushConsumer（消费者）、Message（消息）。
+            注意：它和 5.x 全新的 gRPC 客户端 rocketmq-client-java 是两套 API，
+            市面上绝大多数资料/公司项目用的是本套经典 API，先把这套练熟。
+        -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>${rocketmq-client.version}</version>
+        </dependency>
+
+        <!-- rocketmq-client 5.x 用 slf4j-api 2.x，配同代 simple 实现让客户端内部日志输出到控制台 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+</project>

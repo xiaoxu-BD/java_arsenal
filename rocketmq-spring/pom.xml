@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.xiaoxu</groupId>
+        <artifactId>java_arsenal</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>rocketmq-spring</artifactId>
+    <packaging>jar</packaging>
+    <name>rocketmq-spring</name>
+    <description>RocketMQ 注解版学习工程：rocketmq-spring-boot-starter，与 rocketmq-native 一一映射对照</description>
+
+    <properties>
+        <!-- 2.3.x 起支持 Spring Boot 3；与 three-major-mq-service 里的版本一致 -->
+        <rocketmq-spring.version>2.3.5</rocketmq-spring.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            starter 帮你干了什么（对照原生）：
+            1. 自动配置 RocketMQTemplate（= 帮你 new DefaultMQProducer + start，
+               生命周期挂到 Spring 容器，容器关闭时自动 shutdown）
+            2. 扫描 @RocketMQMessageListener，每个注解自动创建一个 DefaultMQPushConsumer
+            3. rocketmq.* 配置绑定（name-server / producer.group 等）
+        -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>${rocketmq-spring.version}</version>
+        </dependency>
+
+        <!--
+            【依赖冲突坑】starter 2.3.5 的 DefaultRocketMQListenerContainer 会调用
+            client 5.2.0 新增的 setNamespaceV2()，但父 pom import 的
+            spring-cloud-alibaba-dependencies BOM 把 rocketmq-client 统一管到 5.1.4，
+            启动即 NoSuchMethodError。显式声明 5.2.0，直接依赖优先级高于 BOM，覆盖之。
+            （rocketmq-native 模块用的 5.1.4 不受影响，两模块独立。）
+        -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+</project>

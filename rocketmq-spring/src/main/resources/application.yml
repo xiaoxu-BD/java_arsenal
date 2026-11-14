@@ -1,0 +1,20 @@
+# rocketmq.* 配置 = 原生工程里的各种 set 方法（映射见 README）
+server:
+  port: 8099   # 避开本机常用端口；虚拟机上的 dashboard 是 192.168.200.128:8080，别搞混
+
+spring:
+  application:
+    name: rocketmq-spring-practice
+
+rocketmq:
+  # = producer.setNamesrvAddr(...) / consumer.setNamesrvAddr(...)
+  # 也等于原生工程的 MqConst.NAMESRV_ADDR
+  name-server: 192.168.200.128:9876
+  producer:
+    # = new DefaultMQProducer("spring-producer-group")
+    # 注意：starter 的 RocketMQTemplate 全局只有一个生产者组（原生里可以随意建多个）
+    group: spring-producer-group
+    # = producer.setSendMsgTimeout(5000)
+    send-message-timeout: 5000
+    # = producer.setRetryTimesWhenSendFailed(2) 同步发送失败重试次数
+    retry-times-when-send-failed: 2
