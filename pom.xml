@@ -29,6 +29,7 @@
         <module>chunk-upload-demo</module>
         <module>excel-demo</module>
         <module>spring-ai-rag</module>
+        <module>rocketmq-native</module>
     </modules>
 
 

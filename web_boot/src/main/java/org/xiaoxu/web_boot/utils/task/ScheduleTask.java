@@ -24,16 +24,16 @@ public class ScheduleTask {
      * cron            表达式，每隔  秒执行一次
      * 默认单线程，多任务串行，如果需要并行，需要配置线程池
      */
-//
-//    @Scheduled(fixedRate = 5000)
-//    public void scheduleTask() throws InterruptedException {
-//        System.out.println(Thread.currentThread().getName() + " -> task1 start");
-//        Thread.sleep(3000);
-//        System.out.println(Thread.currentThread().getName() + " -> task1 end");
-//    }
-//
-//    @Scheduled(fixedRate = 2000)
-//    public void task2() {
-//        System.out.println(Thread.currentThread().getName() + " -> task2 run");
-//    }
+
+    @Scheduled(fixedRate = 5000)
+    public void scheduleTask() throws InterruptedException {
+        System.out.println(Thread.currentThread().getName() + " -> task1 start");
+        Thread.sleep(3000);
+        System.out.println(Thread.currentThread().getName() + " -> task1 end");
+    }
+
+    @Scheduled(fixedRate = 2000)
+    public void task2() {
+        System.out.println(Thread.currentThread().getName() + " -> task2 run");
+    }
 }
