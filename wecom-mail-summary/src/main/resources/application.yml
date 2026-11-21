@@ -1,2 +1,17 @@
 server:
   port: 18099
+  tomcat:
+    max-swallow-size: 12MB
+    # 超限时 Tomcat 仍会读完请求体，这样客户端能收到正常的错误响应
+
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB      # 只传一张图时留点余量；批量上传按"张数 × 10MB"来配
+      file-size-threshold: 1MB    # 超过 1MB 写临时文件，不放内存
+
+#app:
+#  upload:
+#    value: uploads/images

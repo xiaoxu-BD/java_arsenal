@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>图片上传</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.9/dist/axios.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 32px 16px;
+            color: #202124;
+            background: #f5f7f8;
+            font: 15px/1.5 Arial, "Microsoft YaHei", sans-serif;
+        }
+        main { width: min(100%, 560px); margin: 0 auto; }
+        h1 { margin: 0 0 20px; font-size: 22px; }
+        .upload-form { padding: 20px; background: #fff; border: 1px solid #dadce0; border-radius: 6px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input[type="file"] { width: 100%; }
+        .hint { margin: 8px 0 16px; color: #5f6368; font-size: 13px; }
+        button {
+            min-height: 38px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 4px;
+            color: #fff;
+            background: #1769aa;
+            font: inherit;
+            cursor: pointer;
+        }
+        button:disabled { background: #9aa0a6; cursor: wait; }
+        #preview { display: none; max-width: 100%; max-height: 280px; margin-top: 16px; object-fit: contain; }
+        #message { min-height: 24px; margin: 14px 0 0; overflow-wrap: anywhere; }
+        #message.error { color: #b3261e; }
+        #message.success { color: #137333; }
+        @media (max-width: 480px) { body { padding-top: 20px; } .upload-form { padding: 16px; } }
+    </style>
+</head>
+<body>
+<main>
+    <h1>图片上传</h1>
+    <form class="upload-form" id="uploadForm">
+        <label for="file">选择图片</label>
+        <input id="file" name="file" type="file" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" required>
+        <p class="hint">支持 JPEG、PNG、GIF、BMP、WEBP，单张不超过 10 MB</p>
+        <button id="uploadButton" type="submit">上传图片</button>
+        <img id="preview" alt="图片预览">
+        <p id="message" role="status" aria-live="polite"></p>
+    </form>
+</main>
+<script>
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('file');
+    const uploadButton = document.getElementById('uploadButton');
+    const preview = document.getElementById('preview');
+    const message = document.getElementById('message');
+    const maxFileSize = 10 * 1024 * 1024;
+    let previewUrl;
+
+    fileInput.addEventListener('change', () => {
+        message.textContent = '';
+        message.className = '';
+        preview.style.display = 'none';
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.size > maxFileSize) {
+            showMessage('图片大小不能超过 10 MB', true);
+            fileInput.value = '';
+            return;
+        }
+        previewUrl = URL.createObjectURL(file);
+        preview.src = previewUrl;
+        preview.style.display = 'block';
+    });
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const file = fileInput.files[0];
+        if (!file) {
+            showMessage('请先选择一张图片', true);
+            return;
+        }
+        if (file.size > maxFileSize) {
+            showMessage('图片大小不能超过 10 MB', true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        uploadButton.disabled = true;
+        uploadButton.textContent = '上传中...';
+        showMessage('正在上传');
+        try {
+            const response = await axios.post('/upload/image', formData);
+            const result = response.data;
+
+            console.log(response.data.fileName);
+            console.log(response.data.size);
+            console.log(response.data.path);
+
+            showMessage(`上传成功：${result.fileName}（${formatSize(result.size)}），保存路径：${result.path}`);
+        } catch (error) {
+            const detail = error.response?.data?.detail || error.response?.data?.message;
+            showMessage(detail || '上传失败，请检查服务状态后重试', true);
+        } finally {
+            uploadButton.disabled = false;
+            uploadButton.textContent = '上传图片';
+        }
+    });
+
+    function showMessage(text, isError = false) {
+        message.textContent = text;
+        message.className = isError ? 'error' : 'success';
+    }
+
+    function formatSize(size) {
+        return `${(size / 1024 / 1024).toFixed(2)} MB`;
+    }
+</script>
+</body>
+</html>

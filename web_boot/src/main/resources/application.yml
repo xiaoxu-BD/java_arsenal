@@ -11,6 +11,9 @@ server:
 #    type: com.alibaba.druid.pool.DruidDataSource
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   datasource:
     ds1:
       url: jdbc:mysql://127.0.0.1:3306/revi_sq?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&socketTimeout=60000&connectTimeout=30000
