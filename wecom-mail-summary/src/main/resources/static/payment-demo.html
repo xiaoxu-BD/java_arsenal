@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>邮件汇总服务支付演示</title>
+  <style>
+    body { max-width: 720px; margin: 48px auto; padding: 0 20px; color: #202124; font: 16px/1.6 system-ui, sans-serif; }
+    h1 { font-size: 26px; }
+    button { padding: 10px 16px; margin: 8px 8px 8px 0; border: 0; border-radius: 4px; background: #1677ff; color: white; cursor: pointer; }
+    button:disabled { opacity: .55; cursor: wait; }
+    pre { background: #f4f6f8; padding: 14px; overflow-wrap: anywhere; white-space: pre-wrap; }
+    #message { min-height: 28px; }
+  </style>
+</head>
+<body>
+  <h1>邮件汇总服务 · 30 天</h1>
+  <p>演示商品：邮件汇总服务 30 天，19.90 元</p>
+  <button id="buy">创建订单并去支付</button>
+  <button id="refresh">查询订单 / 与支付宝对账</button>
+  <p id="message" role="status"></p>
+  <pre id="details">尚未创建订单</pre>
+  <p>本地商户用户 ID：1001；支付成功后将获得 30 天服务权益。</p>
+  <script>
+    const message = document.querySelector('#message');
+
+    const details = document.querySelector('#details');
+
+    const refreshButton = document.querySelector('#refresh');
+    let orderNo = new URLSearchParams(location.search).get('orderNo');
+
+    async function request(path, options) {
+      const response = await fetch(path, options);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || '请求失败');
+      return data;
+    }
+
+    async function refreshOrder(sync) {
+      if (!orderNo) return;              // 没有订单号就直接退出
+      refreshButton.disabled = true;     // 按钮先禁用，防止连点
+      try {
+        const order = await request(`/api/payments/orders/${orderNo}${sync ? '/sync' : ''}`, {
+          method: sync ? 'POST' : 'GET'
+        });
+        const entitlement = await request('/api/payments/entitlement');
+        details.textContent = JSON.stringify({ order, entitlement }, null, 2);
+        message.textContent = order.status === 'PAID'
+                ? '支付成功，服务权益已发放。'
+                : `当前订单状态：${order.status}`;
+      } catch (error) {
+        message.textContent = error.message;
+      } finally {
+        refreshButton.disabled = false;  // 不管成功失败，按钮都恢复
+      }
+    }
+
+    document.querySelector('#buy').addEventListener('click', async () => {
+      const button = document.querySelector('#buy');
+      button.disabled = true;
+      try {
+        const order = await request('/api/payments/orders', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requestId: crypto.randomUUID(), productCode: 'MAIL_MONTH' })
+        });
+        orderNo = order.orderNo;
+        const payment = await request(`/api/payments/orders/${orderNo}/pay`, { method: 'POST' });
+        location.href = payment.payUrl;
+      } catch (error) {
+        message.textContent = error.message;
+        button.disabled = false;
+      }
+    });
+
+    refreshButton.addEventListener('click', () => refreshOrder(true));
+    if (orderNo) refreshOrder(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.wecommail.payment.mapper.MailServiceGrantMapper">
+
+    <insert id="insert">
+        INSERT INTO mail_service_grant (order_no, user_id, service_days, granted_at)
+        VALUES (#{orderNo}, #{userId}, #{serviceDays}, #{grantedAt})
+    </insert>
+
+    <select id="sumServiceDays" resultType="int">
+        SELECT COALESCE(SUM(service_days), 0)
+        FROM mail_service_grant
+        WHERE user_id = #{userId}
+    </select>
+</mapper>

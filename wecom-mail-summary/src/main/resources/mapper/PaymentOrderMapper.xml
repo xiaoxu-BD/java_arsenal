@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaoxu.wecommail.payment.mapper.PaymentOrderMapper">
+
+    <sql id="Base_Column_List">
+        order_no, request_id, user_id, product_code, subject, amount, status, trade_no,
+        created_at, expires_at, paid_at
+    </sql>
+
+    <select id="selectByOrderNo" resultType="org.xiaoxu.wecommail.payment.entity.PaymentOrder">
+        SELECT <include refid="Base_Column_List"/>
+        FROM payment_order
+        WHERE order_no = #{orderNo}
+    </select>
+
+    <select id="selectByOrderNoForUpdate" resultType="org.xiaoxu.wecommail.payment.entity.PaymentOrder">
+        SELECT <include refid="Base_Column_List"/>
+        FROM payment_order
+        WHERE order_no = #{orderNo}
+        FOR UPDATE
+    </select>
+
+    <select id="selectByRequestId" resultType="org.xiaoxu.wecommail.payment.entity.PaymentOrder">
+        SELECT <include refid="Base_Column_List"/>
+        FROM payment_order
+        WHERE request_id = #{requestId}
+    </select>
+
+    <select id="selectWaitingOrders" resultType="org.xiaoxu.wecommail.payment.entity.PaymentOrder">
+        SELECT <include refid="Base_Column_List"/>
+        FROM payment_order
+        WHERE status = 'WAIT_PAY'
+        ORDER BY created_at
+        LIMIT #{limit}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO payment_order
+        (order_no, request_id, user_id, product_code, subject, amount, status, created_at, expires_at)
+        VALUES (#{orderNo}, #{requestId}, #{userId}, #{productCode}, #{subject}, #{amount},
+                'WAIT_PAY', #{createdAt}, #{expiresAt})
+    </insert>
+
+    <update id="updateMarkPaid">
+        UPDATE payment_order
+        SET status = 'PAID', trade_no = #{tradeNo}, paid_at = #{paidAt}
+        WHERE order_no = #{orderNo} AND status = 'WAIT_PAY'
+    </update>
+
+    <update id="updateClose">
+        UPDATE payment_order
+        SET status = 'CLOSED'
+        WHERE order_no = #{orderNo} AND status = 'WAIT_PAY'
+    </update>
+</mapper>

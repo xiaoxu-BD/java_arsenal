@@ -6,6 +6,23 @@ server:
 
 
 spring:
+  datasource:
+    # 支付演示库（含建表脚本 classpath:payment-schema.sql，启动时自动建表）
+    url: jdbc:mysql://${DB_HOST:192.168.200.128}:${DB_PORT:3306}/${DB_NAME:mydb}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PASS:NFTurbo666}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      # 用于防重复提交幂等与权益缓存，key 前缀 payment:
+      host: ${REDIS_HOST:192.168.200.128}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:NFTurbo666}
+      database: ${REDIS_DB:7}   # 与其它项目常用库区分，避免互相干扰
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:payment-schema.sql
   servlet:
     multipart:
       max-file-size: 10MB
@@ -15,3 +32,13 @@ spring:
 #app:
 #  upload:
 #    value: uploads/images
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true   # 表列 snake_case 自动映射到实体驼峰属性
+
+payment:
+  # 本地模拟支付宝向商户推送通知的地址；更改端口时随 server.port 自动变化
+  notify-url: http://127.0.0.1:${server.port}/api/payments/alipay/notify
+  reconcile-enabled: true
